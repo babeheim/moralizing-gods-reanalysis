@@ -1,5 +1,5 @@
 #Constructing RegrDat file for regression analyses
-setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
+#setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
 load("HS.Rdata")
 polities <- read.csv('polities.csv', header=TRUE) # There is an issue with compatibility between my polities.csv file and the one Peter was  using for HS. Resolging this as follows based on debugging the problem with non-matching PolID, identified by using the following code at the end of the original code rerun phylogeny section:
 #setdiff(levels(polities$PolID),levels(PolID))

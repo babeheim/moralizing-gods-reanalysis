@@ -1,0 +1,385 @@
+NGA,PolName,PolID,Start,End,World Region,Complexity,Dupl,Language,Genus,Family
+Latium,ItLatCA,ItLatCA,-3600,-1801,Europe,Early,n,Latin,Romance,Indo-European
+Latium,ItLatBA,ItLatBA,-1800,-1001,Europe,Early,n,Latin,Romance,Indo-European
+Latium,ItLatIA,ItLatIA,-1000,-717,Europe,Early,n,Latin,Romance,Indo-European
+Latium,ItRomRg,ItRomRg,-716,-510,Europe,Early,n,Latin,Romance,Indo-European
+Latium,ItRomER,ItRomER,-509,-265,Europe,Early,n,Latin,Romance,Indo-European
+Latium,ItRomMR,ItRomMR,-264,-134,Europe,Early,n,Latin,Romance,Indo-European
+Latium,ItRomLR,ItRomLR,-133,-29,Europe,Early,n,Latin,Romance,Indo-European
+Latium,ItRomPr,ItRomPr,-31,283,Europe,Early,n,Latin,Romance,Indo-European
+Latium,TrRomDm,TrRomDm,284,394,Europe,Early,y,Latin,Romance,Indo-European
+Latium,ItRomWe,ItRomWe,395,457,Europe,Early,n,Latin,Romance,Indo-European
+Latium,ItOstrg,ItOstrg,493,554,Europe,Early,n,Latin,Romance,Indo-European
+Latium,ItRav**,ItRav**,568,710,Europe,Early,n,Latin,Romance,Indo-European
+Latium,ItStPet,ItStPet,711,903,Europe,Early,n,Latin,Romance,Indo-European
+Latium,ItPapEM,ItPapEM,904,1197,Europe,Early,n,Latin,Romance,Indo-European
+Latium,ItPapHM,ItPapHM,1198,1308,Europe,Early,n,Latin,Romance,Indo-European
+Latium,ItPapRn,ItPapRn,1378,1526,Europe,Early,n,Latin,Romance,Indo-European
+Latium,ItPapM1,ItPapM1,1527,1647,Europe,Early,n,Latin,Romance,Indo-European
+Latium,ItPapM2,ItPapM2,1648,1800,Europe,Early,n,Latin,Romance,Indo-European
+Paris Basin,FrBeakr,FrBeakr,-3200,-2201,Europe,Medium,n,FrBeakr,FrBeakr,FrBeakr
+Paris Basin,FrAtlBA,FrAtlBA,-2200,-1001,Europe,Medium,n,FrAtlBA,FrAtlBA,FrAtlBA
+Paris Basin,FrHallA,FrHallA,-1000,-901,Europe,Medium,n,FrHallA,FrHallA,FrHallA
+Paris Basin,FrHallB,FrHallB,-900,-701,Europe,Medium,n,FrHallB,FrHallB,FrHallB
+Paris Basin,FrHallC,FrHallC,-700,-601,Europe,Medium,n,FrHallC,FrHallC,FrHallC
+Paris Basin,FrHallD,FrHallD,-600,-475,Europe,Medium,n,FrHallD,FrHallD,FrHallD
+Paris Basin,FrTeneA,FrTeneA,-474,-325,Europe,Medium,n,Gallic,Celtic,Indo-European
+Paris Basin,FrTeneB,FrTeneB,-324,-175,Europe,Medium,n,Gallic,Celtic,Indo-European
+Paris Basin,FrTeneC,FrTeneC,-174,-27,Europe,Medium,n,Gallic,Celtic,Indo-European
+Paris Basin,ItRomPr,ItRomPr,-31,283,Europe,Medium,y,Latin,Romance,Indo-European
+Paris Basin,TrRomDm,TrRomDm,284,473,Europe,Medium,y,Latin,Romance,Indo-European
+Paris Basin,FrMervE,FrMervE,481,542,Europe,Medium,n,Latin,Romance,Indo-European
+Paris Basin,FrMervM,FrMervM,543,686,Europe,Medium,n,Latin,Romance,Indo-European
+Paris Basin,FrMervL,FrMervL,687,750,Europe,Medium,n,Latin,Romance,Indo-European
+Paris Basin,FrCarlE,FrCarlE,752,839,Europe,Medium,n,Latin,Romance,Indo-European
+Paris Basin,FrCarlL,FrCarlL,840,986,Europe,Medium,n,French,Romance,Indo-European
+Paris Basin,FrCaptE,FrCaptE,987,1149,Europe,Medium,n,French,Romance,Indo-European
+Paris Basin,FrCaptL,FrCaptL,1150,1327,Europe,Medium,n,French,Romance,Indo-European
+Paris Basin,FrValoE,FrValoE,1328,1449,Europe,Medium,n,French,Romance,Indo-European
+Paris Basin,FrValoL,FrValoL,1450,1588,Europe,Medium,n,French,Romance,Indo-European
+Paris Basin,FrBurbE,FrBurbE,1589,1659,Europe,Medium,n,French,Romance,Indo-European
+Paris Basin,FrBurbL,FrBurbL,1660,1788,Europe,Medium,n,French,Romance,Indo-European
+Iceland,IsCommw,IsCommw,930,1261,Europe,Late,n,Old Norse,Germanic,Indo-European
+Iceland,NorKing,NorKing,1262,1380,Europe,Late,n,Old Norse,Germanic,Indo-European
+Upper Egypt,EgBadar,EgBadar,-4400,-3801,Africa,Early,n,Ancient Egyptian,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,EgNaqa1,EgNaqa1,-3800,-3551,Africa,Early,n,Ancient Egyptian,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,EgNaqa2,EgNaqa2,-3550,-3301,Africa,Early,n,Ancient Egyptian,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,EgNaqa3,EgNaqa3,-3300,-3101,Africa,Early,n,Ancient Egyptian,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,EgDyn1*,EgDyn1*,-3100,-2901,Africa,Early,n,Ancient Egyptian,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,EgDyn2*,EgDyn2*,-2900,-2651,Africa,Early,n,Ancient Egyptian,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,EgOldK1,EgOldK1,-2650,-2351,Africa,Early,n,Ancient Egyptian,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,EgOldK2,EgOldK2,-2350,-2151,Africa,Early,n,Ancient Egyptian,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,EgRegns,EgRegns,-2150,-2017,Africa,Early,n,Ancient Egyptian,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,EgMidKg,EgMidKg,-2016,-1721,Africa,Early,n,Ancient Egyptian,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,EgThebH,EgThebH,-1720,-1567,Africa,Early,n,Ancient Egyptian,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,EgNKThu,EgNKThu,-1550,-1294,Africa,Early,n,Ancient Egyptian,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,EgNKRam,EgNKRam,-1293,-1071,Africa,Early,n,Ancient Egyptian,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,EgThebL,EgThebL,-1070,-761,Africa,Early,n,Ancient Egyptian,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,SdKusht,SdKusht,-760,-656,Africa,Early,n,Ancient Egyptian,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,EgSaite,EgSaite,-655,-526,Africa,Early,n,Coptic,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,IrAchae,IrAchae,-525,-405,Africa,Early,y,Old Persian,Iranian,Indo-European
+Upper Egypt,EgIntOc,EgIntOc,-404,-343,Africa,Early,n,Coptic,Egyptian-Coptic,Afro-Asiatic
+Upper Egypt,EgPtol1,EgPtol1,-305,-218,Africa,Early,n,Greek,Greek,Indo-European
+Upper Egypt,EgPtol2,EgPtol2,-217,-32,Africa,Early,n,Greek,Greek,Indo-European
+Upper Egypt,ItRomPr,ItRomPr,-31,283,Africa,Early,y,Latin,Romance,Indo-European
+Upper Egypt,TrRomDm,TrRomDm,284,394,Africa,Early,y,Latin,Romance,Indo-European
+Upper Egypt,TrERom*,TrERom*,395,632,Africa,Early,y,Greek,Greek,Indo-European
+Upper Egypt,SyCalUm,SyCalUm,661,749,Africa,Early,y,Arabic,Semitic,Afro-Asiatic
+Upper Egypt,IqAbbs1,IqAbbs1,750,867,Africa,Early,y,Arabic,Semitic,Afro-Asiatic
+Upper Egypt,EgTulIk,EgTulIk,868,969,Africa,Early,n,Arabic,Semitic,Afro-Asiatic
+Upper Egypt,TnFatim,TnFatim,970,1170,Africa,Early,n,Arabic,Semitic,Afro-Asiatic
+Upper Egypt,EgAyyub,EgAyyub,1171,1259,Africa,Early,n,Arabic,Semitic,Afro-Asiatic
+Upper Egypt,EgMamBh,EgMamBh,1260,1347,Africa,Early,n,Arabic,Semitic,Afro-Asiatic
+Upper Egypt,EgMamCP,EgMamCP,1348,1411,Africa,Early,n,Arabic,Semitic,Afro-Asiatic
+Upper Egypt,EgMamBu,EgMamBu,1412,1516,Africa,Early,n,Arabic,Semitic,Afro-Asiatic
+Upper Egypt,TrOttm3,TrOttm3,1517,1682,Africa,Early,y,Turkish,Turkic,Altaic
+Upper Egypt,TrOttm4,TrOttm4,1683,1798,Africa,Early,y,Turkish,Turkic,Altaic
+Niger Inland Delta,MlJeJe1,MlJeJe1,-250,49,Africa,Medium,n,MlJeJe1,MlJeJe1,MlJeJe1
+Niger Inland Delta,MlJeJe2,MlJeJe2,50,399,Africa,Medium,n,MlJeJe2,MlJeJe2,MlJeJe2
+Niger Inland Delta,MlJeJe3,MlJeJe3,400,899,Africa,Medium,n,MlJeJe3,MlJeJe3,MlJeJe3
+Niger Inland Delta,MlJeJe4,MlJeJe4,900,999,Africa,Medium,n,MlJeJe4,MlJeJe4,MlJeJe4
+Niger Inland Delta,MrWagdM,MrWagdM,1000,1077,Africa,Medium,n,MrWagdM,MrWagdM,MrWagdM
+Niger Inland Delta,MrWagdL,MrWagdL,1100,1202,Africa,Medium,n,MrWagdL,MrWagdL,MrWagdL
+Niger Inland Delta,MlMali*,MlMali*,1235,1410,Africa,Medium,n,MlMali*,MlMali*,MlMali*
+Niger Inland Delta,MlSong2,MlSong2,1493,1590,Africa,Medium,n,MlSong2,MlSong2,MlSong2
+Niger Inland Delta,MaSaadi,MaSaadi,1591,1618,Africa,Medium,n,Arabic,Semitic,Afro-Asiatic
+Niger Inland Delta,MlSegou,MlSegou,1640,1711,Africa,Medium,n,Bambara,Western Mande,Mande
+Niger Inland Delta,MlBaman,MlBaman,1712,1818,Africa,Medium,n,Bambara,Western Mande,Mande
+Ghanaian Coast,GhAshnE,GhAshnE,1501,1701,Africa,Late,n,Akan,Kwa,Niger-Congo
+Ghanaian Coast,GhAshnL,GhAshnL,1702,1895,Africa,Late,n,Akan,Kwa,Niger-Congo
+Ghanaian Coast,GbEmpir,GbEmpir,1895,1914,Africa,Late,n,English,Germanic,Indo-European
+Crete,GrCrNeo,GrCrNeo,-7000,-3001,Europe,Add,n,GrCrNeo,GrCrNeo,GrCrNeo
+Crete,GrCrPre,GrCrPre,-3000,-1901,Europe,Add,n,GrCrPre,GrCrPre,GrCrPre
+Crete,GrCrOPa,GrCrOPa,-1900,-1701,Europe,Add,n,Minoan,Minoan,Minoan
+Crete,GrCrNPa,GrCrNPa,-1700,-1451,Europe,Add,n,Minoan,Minoan,Minoan
+Crete,GrCrMPa,GrCrMPa,-1450,-1301,Europe,Add,n,Minoan,Minoan,Minoan
+Crete,GrCrPPa,GrCrPPa,-1300,-1201,Europe,Add,n,Minoan,Minoan,Minoan
+Crete,GrCrFPa,GrCrFPa,-1200,-1001,Europe,Add,n,Minoan,Minoan,Minoan
+Crete,GrCrGeo,GrCrGeo,-1000,-711,Europe,Add,n,Doric Greek,Greek,Indo-European
+Crete,GrCrArc,GrCrArc,-710,-501,Europe,Add,n,Doric Greek,Greek,Indo-European
+Crete,GrCrCls,GrCrCls,-500,-322,Europe,Add,n,Doric Greek,Greek,Indo-European
+Crete,GrCrHel,GrCrHel,-323,-69,Europe,Add,n,Doric Greek,Greek,Indo-European
+Crete,ItRomPr,ItRomPr,-31,283,Europe,Add,y,Latin,Romance,Indo-European
+Crete,TrRomDm,TrRomDm,284,394,Europe,Add,y,Latin,Romance,Indo-European
+Crete,TrERom*,TrERom*,395,607,Europe,Add,y,Greek,Greek,Indo-European
+Crete,TrByzM1,TrByzM1,632,823,Europe,Add,y,Greek,Greek,Indo-European
+Crete,GrCrEmr,GrCrEmr,824,960,Europe,Add,n,Greek,Greek,Indo-European
+Crete,TrByzM2,TrByzM2,961,1072,Europe,Add,y,Greek,Greek,Indo-European
+Crete,TrByzM3,TrByzM3,1073,1203,Europe,Add,n,Greek,Greek,Indo-European
+Crete,GrCrVen,GrCrVen,1204,1669,Europe,Add,n,Italian,Romance,Indo-European
+Galilee,IlCanaa,IlCanaa,-2000,-1181,SouthwestAsia,Add,n,Canaanite,Semitic,Afro-Asiatic
+Galilee,LbAcPho,LbAcPho,-1180,-1031,SouthwestAsia,Add,n,Phoenecian,Semitic,Afro-Asiatic
+Galilee,IlYisrl,IlYisrl,-1030,-722,SouthwestAsia,Add,n,Hebrew,Semitic,Afro-Asiatic
+Galilee,IqNAssr,IqNAssr,-721,-539,SouthwestAsia,Add,n,Aramaic,Semitic,Afro-Asiatic
+Galilee,IrAchae,IrAchae,-538,-331,SouthwestAsia,Add,y,Old Persian,Iranian,Indo-European
+Galilee,EgPtol1,EgPtol1,-300,-199,SouthwestAsia,Add,y,Greek,Greek,Indo-European
+Galilee,IrSeleu,IrSeleu,-200,-104,SouthwestAsia,Add,y,Greek,Greek,Indo-European
+Galilee,IlJudea,IlJudea,-103,-62,SouthwestAsia,Add,n,Aramaic,Semitic,Afro-Asiatic
+Susiana,IrPrCer,IrPrCer,-7800,-7201,SouthwestAsia,Early,n,IrPrCer,IrPrCer,IrPrCer
+Susiana,IrForma,IrForma,-7200,-7001,SouthwestAsia,Early,n,IrForma,IrForma,IrForma
+Susiana,IrArcha,IrArcha,-7000,-6001,SouthwestAsia,Early,n,IrArcha,IrArcha,IrArcha
+Susiana,IrKhzE*,IrKhzE*,-6000,-5701,SouthwestAsia,Early,n,IrKhzE*,IrKhzE*,IrKhzE*
+Susiana,IrKhzEM,IrKhzEM,-5700,-5101,SouthwestAsia,Early,n,IrKhzEM,IrKhzEM,IrKhzEM
+Susiana,IrKhzM*,IrKhzM*,-5100,-4701,SouthwestAsia,Early,n,IrKhzM*,IrKhzM*,IrKhzM*
+Susiana,IrKhzL*,IrKhzL*,-4700,-4301,SouthwestAsia,Early,n,IrKhzL*,IrKhzL*,IrKhzL*
+Susiana,IrSusa1,IrSusa1,-4300,-3801,SouthwestAsia,Early,n,IrSusa1,IrSusa1,IrSusa1
+Susiana,IrSusa2,IrSusa2,-3800,-3101,SouthwestAsia,Early,n,Sumerian,Sumerian,Sumerian
+Susiana,IrSusa3,IrSusa3,-3100,-2676,SouthwestAsia,Early,n,Sumerian,Sumerian,Sumerian
+Susiana,IrAwanE,IrAwanE,-2675,-2251,SouthwestAsia,Early,n,Akkadian,Semitic,Afro-Asiatic
+Susiana,IqAkkad,IqAkkad,-2250,-2113,SouthwestAsia,Early,n,Akkadian,Semitic,Afro-Asiatic
+Susiana,IqUrIII,IqUrIII,-2112,-2029,SouthwestAsia,Early,n,Sumerian,Sumerian,Sumerian
+Susiana,IrShima,IrShima,-2028,-1901,SouthwestAsia,Early,n,Elamite,Elamite,Elamite
+Susiana,IrSukkE,IrSukkE,-1900,-1701,SouthwestAsia,Early,n,Elamite,Elamite,Elamite
+Susiana,IrSukkL,IrSukkL,-1700,-1501,SouthwestAsia,Early,n,Elamite,Elamite,Elamite
+Susiana,IrMElm1,IrMElm1,-1500,-1401,SouthwestAsia,Early,n,Elamite,Elamite,Elamite
+Susiana,IrMElm2,IrMElm2,-1400,-1201,SouthwestAsia,Early,n,Elamite,Elamite,Elamite
+Susiana,IrMElm3,IrMElm3,-1200,-1101,SouthwestAsia,Early,n,Elamite,Elamite,Elamite
+Susiana,IrElmCP,IrElmCP,-1100,-901,SouthwestAsia,Early,n,Elamite,Elamite,Elamite
+Susiana,IrNElm1,IrNElm1,-900,-744,SouthwestAsia,Early,n,Elamite,Elamite,Elamite
+Susiana,IrNElm2,IrNElm2,-743,-647,SouthwestAsia,Early,n,Elamite,Elamite,Elamite
+Susiana,IrNElm3,IrNElm3,-612,-540,SouthwestAsia,Early,n,Elamite,Elamite,Elamite
+Susiana,IrAchae,IrAchae,-539,-331,SouthwestAsia,Early,n,Old Persian,Iranian,Indo-European
+Susiana,IrSeleu,IrSeleu,-312,-144,SouthwestAsia,Early,n,Greek,Greek,Indo-European
+Susiana,IrPart1,IrPart1,-143,24,SouthwestAsia,Early,n,Greek,Greek,Indo-European
+Susiana,IrElym2,IrElym2,25,215,SouthwestAsia,Early,n,Greek,Greek,Indo-European
+Susiana,IrSasn1,IrSasn1,220,498,SouthwestAsia,Early,n,Pahlavi,Iranian,Indo-European
+Susiana,IrSasn2,IrSasn2,499,642,SouthwestAsia,Early,n,Pahlavi,Iranian,Indo-European
+Susiana,SyCalUm,SyCalUm,663,749,SouthwestAsia,Early,n,Arabic,Semitic,Afro-Asiatic
+Susiana,IqAbbs1,IqAbbs1,750,946,SouthwestAsia,Early,n,Arabic,Semitic,Afro-Asiatic
+Susiana,IrBuyid,IrBuyid,947,1055,SouthwestAsia,Early,n,Persian,Iranian,Indo-European
+Susiana,IrSeljq,IrSeljq,1056,1190,SouthwestAsia,Early,n,Arabic,Semitic,Afro-Asiatic
+Susiana,IqAbbs2,IqAbbs2,1191,1207,SouthwestAsia,Early,n,Arabic,Semitic,Afro-Asiatic
+Susiana,IrIlkhn,IrIlkhn,1263,1335,SouthwestAsia,Early,n,Persian,Iranian,Indo-European
+Susiana,UzTimur,UzTimur,1394,1470,SouthwestAsia,Early,y,Chagatai Turkish,Turkic,Altaic
+Susiana,IrAkKoy,IrAkKoy,1471,1504,SouthwestAsia,Early,n,Persian,Iranian,Indo-European
+Susiana,IrSafvd,IrSafvd,1505,1722,SouthwestAsia,Early,n,Persian,Iranian,Indo-European
+Susiana,IrQajar,IrQajar,1794,1925,SouthwestAsia,Early,n,Persian,Iranian,Indo-European
+Konya Plain,TrNeoER,TrNeoER,-9600,-7001,SouthwestAsia,Medium,n,TrNeoER,TrNeoER,TrNeoER
+Konya Plain,TrNeoCR,TrNeoCR,-7000,-6601,SouthwestAsia,Medium,n,TrNeoCR,TrNeoCR,TrNeoCR
+Konya Plain,TrNeoLT,TrNeoLT,-6600,-6001,SouthwestAsia,Medium,n,TrNeoLT,TrNeoLT,TrNeoLT
+Konya Plain,TrClcER,TrClcER,-6000,-5501,SouthwestAsia,Medium,n,TrClcER,TrClcER,TrClcER
+Konya Plain,Gap,GapKP1,-5500,-5001,SouthwestAsia,Medium,n,Gap,Gap,Gap
+Konya Plain,TrClcLT,TrClcLT,-5000,-3001,SouthwestAsia,Medium,n,TrClcLT,TrClcLT,TrClcLT
+Konya Plain,TrBrzER,TrBrzER,-3000,-2001,SouthwestAsia,Medium,n,TrBrzER,TrBrzER,TrBrzER
+Konya Plain,TrBrzMD,TrBrzMD,-2000,-1700,SouthwestAsia,Medium,n,TrBrzMD,TrBrzMD,TrBrzMD
+Konya Plain,TrHatOK,TrHatOK,-1650,-1501,SouthwestAsia,Medium,n,Hittite,Hittite,Indo-European
+Konya Plain,TrBrzL2,TrBrzL2,-1500,-1400,SouthwestAsia,Medium,n,Hittite,Hittite,Indo-European
+Konya Plain,TrHatNK,TrHatNK,-1344,-1181,SouthwestAsia,Medium,n,Hittite,Hittite,Indo-European
+Konya Plain,TrNHitt,TrNHitt,-1180,-901,SouthwestAsia,Medium,n,Luwian,Luwian,Indo-European
+Konya Plain,TrTabal,TrTabal,-900,-837,SouthwestAsia,Medium,n,Luwian,Luwian,Indo-European
+Konya Plain,TrPhryg,TrPhryg,-836,-696,SouthwestAsia,Medium,n,Phrygian,Phrygian,Indo-European
+Konya Plain,TrLydia,TrLydia,-670,-547,SouthwestAsia,Medium,n,Phrygian,Phrygian,Indo-European
+Konya Plain,IrAchae,IrAchae,-546,-334,SouthwestAsia,Medium,y,Old Persian,Iranian,Indo-European
+Konya Plain,TrLysim,TrLysim,-300,-282,SouthwestAsia,Medium,n,Greek,Greek,Indo-European
+Konya Plain,IrSeleu,IrSeleu,-281,-190,SouthwestAsia,Medium,y,Greek,Greek,Indo-European
+Konya Plain,TrCappL,TrCappL,-129,-95,SouthwestAsia,Medium,n,Greek,Greek,Indo-European
+Konya Plain,ItRomPr,ItRomPr,-31,283,SouthwestAsia,Medium,y,Latin,Romance,Indo-European
+Konya Plain,TrRomDm,TrRomDm,284,394,SouthwestAsia,Medium,n,Latin,Romance,Indo-European
+Konya Plain,TrERom*,TrERom*,395,607,SouthwestAsia,Medium,n,Greek,Greek,Indo-European
+Konya Plain,TrByzM1,TrByzM1,632,866,SouthwestAsia,Medium,n,Greek,Greek,Indo-European
+Konya Plain,TrByzM2,TrByzM2,867,1072,SouthwestAsia,Medium,n,Greek,Greek,Indo-European
+Konya Plain,TrRum**,TrRum**,1093,1243,SouthwestAsia,Medium,n,Turkish,Turkic,Altaic
+Konya Plain,IrIlkhn,IrIlkhn,1263,1326,SouthwestAsia,Medium,y,Persian,Iranian,Indo-European
+Konya Plain,TrOttm1,TrOttm1,1393,1402,SouthwestAsia,Medium,n,Turkish,Turkic,Altaic
+Konya Plain,TrOttm2,TrOttm2,1421,1516,SouthwestAsia,Medium,n,Turkish,Turkic,Altaic
+Konya Plain,TrOttm3,TrOttm3,1517,1682,SouthwestAsia,Medium,n,Turkish,Turkic,Altaic
+Konya Plain,TrOttm4,TrOttm4,1683,1838,SouthwestAsia,Medium,n,Turkish,Turkic,Altaic
+Konya Plain,TrOttm5,TrOttm5,1839,1922,SouthwestAsia,Medium,n,Turkish,Turkic,Altaic
+Yemeni Coastal Plain,YeHmyr2,YeHmyr2,378,525,SouthwestAsia,Late,n,Sabaic,Semitic,Afro-Asiatic
+Yemeni Coastal Plain,IrSasn2,IrSasn2,571,633,SouthwestAsia,Late,y,Pahlavi,Iranian,Indo-European
+Yemeni Coastal Plain,SyCalUm,SyCalUm,664,750,SouthwestAsia,Late,y,Arabic,Semitic,Afro-Asiatic
+Yemeni Coastal Plain,IqAbbs2,IqAbbs2,751,868,SouthwestAsia,Late,y,Arabic,Semitic,Afro-Asiatic
+Yemeni Coastal Plain,YeZiyad,YeZiyad,869,1037,SouthwestAsia,Late,n,Arabic,Semitic,Afro-Asiatic
+Yemeni Coastal Plain,YeWarLd,YeWarLd,1038,1174,SouthwestAsia,Late,n,Arabic,Semitic,Afro-Asiatic
+Yemeni Coastal Plain,EgAyyub,EgAyyub,1175,1228,SouthwestAsia,Late,y,Arabic,Semitic,Afro-Asiatic
+Yemeni Coastal Plain,YeRasul,YeRasul,1229,1453,SouthwestAsia,Late,n,Arabic,Semitic,Afro-Asiatic
+Yemeni Coastal Plain,YeTahir,YeTahir,1454,1517,SouthwestAsia,Late,n,Persian,Iranian,Indo-European
+Yemeni Coastal Plain,TrOttm3,TrOttm3,1538,1636,SouthwestAsia,Late,y,Turkish,Turkic,Altaic
+Yemeni Coastal Plain,YeQasmi,YeQasmi,1637,1805,SouthwestAsia,Late,n,Arabic,Semitic,Afro-Asiatic
+Yemeni Coastal Plain,YeOttoL,YeOttoL,1873,1919,SouthwestAsia,Late,n,Arabic,Semitic,Afro-Asiatic
+Kachi Plain,PkAcerN,PkAcerN,-7500,-5501,SouthAsia,Early,n,PkAcerN,PkAcerN,PkAcerN
+Kachi Plain,PkCeraN,PkCeraN,-5500,-4001,SouthAsia,Early,n,PkCeraN,PkCeraN,PkCeraN
+Kachi Plain,PkChalc,PkChalc,-4000,-3201,SouthAsia,Early,n,PkChalc,PkChalc,PkChalc
+Kachi Plain,PkPreUr,PkPreUr,-3200,-2501,SouthAsia,Early,n,PkPreUr,PkPreUr,PkPreUr
+Kachi Plain,PkUrbn1,PkUrbn1,-2500,-2101,SouthAsia,Early,n,PkUrbn1,PkUrbn1,PkUrbn1
+Kachi Plain,PkUrbn2,PkUrbn2,-2100,-1801,SouthAsia,Early,n,PkUrbn2,PkUrbn2,PkUrbn2
+Kachi Plain,PkPostU,PkPostU,-1800,-1301,SouthAsia,Early,n,PkPostU,PkPostU,PkPostU
+Kachi Plain,PkProto,PkProto,-1300,-551,SouthAsia,Early,n,PkProto,PkProto,PkProto
+Kachi Plain,IrAchae,IrAchae,-550,-329,SouthAsia,Early,y,Old Persian,Iranian,Indo-European
+Kachi Plain,InMaury,InMaury,-303,-194,SouthAsia,Early,n,Prakrit,Indic,Indo-European
+Kachi Plain,PkIndGr,PkIndGr,-145,-96,SouthAsia,Early,n,Greek,Greek,Indo-European
+Kachi Plain,IrPart1,IrPart1,-95,21,SouthAsia,Early,y,Greek,Greek,Indo-European
+Kachi Plain,AfKushn,AfKushn,30,250,SouthAsia,Early,y,Greek,Greek,Indo-European
+Kachi Plain,IrSasn1,IrSasn1,251,495,SouthAsia,Early,y,Pahlavi,Iranian,Indo-European
+Kachi Plain,AfHepht,AfHepht,496,531,SouthAsia,Early,y,Bactrian,Bactrian,Indo-European
+Kachi Plain,IrSasn2,IrSasn2,532,641,SouthAsia,Early,y,Pahlavi,Iranian,Indo-European
+Kachi Plain,SyCalUm,SyCalUm,670,750,SouthAsia,Early,y,Arabic,Semitic,Afro-Asiatic
+Kachi Plain,IqAbbs1,IqAbbs1,750,861,SouthAsia,Early,y,Arabic,Semitic,Afro-Asiatic
+Kachi Plain,PkSind1,PkSind1,862,1192,SouthAsia,Early,n,Arabic,Semitic,Afro-Asiatic
+Kachi Plain,AfGhurd,AfGhurd,1193,1206,SouthAsia,Early,n,Persian,Iranian,Indo-European
+Kachi Plain,InDelh*,InDelh*,1207,1339,SouthAsia,Early,n,Persian,Iranian,Indo-European
+Kachi Plain,PkSind2,PkSind2,1340,1519,SouthAsia,Early,n,Sindhi,Indic,Indo-European
+Kachi Plain,InMugl*,InMugl*,1526,1740,SouthAsia,Early,n,Persian,Iranian,Indo-European
+Kachi Plain,AfDurrn,AfDurrn,1748,1826,SouthAsia,Early,n,Pashto,Iranian,Indo-European
+Middle Ganga,InMahaJ,InMahaJ,-600,-325,SouthAsia,Add,n,InMahaJ,Indic,Indo-European
+Middle Ganga,InMaury,InMaury,-324,-188,SouthAsia,Add,y,Prakrit,Indic,Indo-European
+Middle Ganga,InSunga,InSunga,-187,-65,SouthAsia,Add,n,InSunga,Indic,Indo-European
+Middle Ganga,InAyodE,InAyodE,-64,34,SouthAsia,Add,n,InAyodE,Indic,Indo-European
+Middle Ganga,AfKushn,AfKushn,35,319,SouthAsia,Add,y,Greek,Greek,Indo-European
+Middle Ganga,InGupta,InGupta,320,514,SouthAsia,Add,n,InGupta,Indic,Indo-European
+Middle Ganga,InMagad,InMagad,550,606,SouthAsia,Add,n,InMagad,Indic,Indo-European
+Middle Ganga,InKanau,InKanau,650,779,SouthAsia,Add,n,InKanau,Indic,Indo-European
+Middle Ganga,InRasht,InRasht,780,809,SouthAsia,Add,n,InRasht,Indic,Indo-European
+Middle Ganga,InGurjr,InGurjr,810,1030,SouthAsia,Add,n,InGurjr,Indic,Indo-European
+Middle Ganga,InGhdvl,InGhdvl,1090,1202,SouthAsia,Add,n,InGhdvl,Indic,Indo-European
+Middle Ganga,InDelh*,InDelh*,1206,1525,SouthAsia,Add,y,Persian,Iranian,Indo-European
+Middle Ganga,InMugl*,InMugl*,1526,1803,SouthAsia,Add,y,Persian,Iranian,Indo-European
+Deccan,InDecNL,InDecNL,-2700,-1201,SouthAsia,Medium,n,InDecNL,InDecNL,InDecNL
+Deccan,InDecIA,InDecIA,-1200,-301,SouthAsia,Medium,n,Prakrit,Indic,Indo-European
+Deccan,InMaury,InMaury,-300,-206,SouthAsia,Early,y,Prakrit,Indic,Indo-European
+Deccan,InDecKg,InDecKg,-205,-101,SouthAsia,Medium,n,Prakrit,Indic,Indo-European
+Deccan,InSataL,InSataL,-100,203,SouthAsia,Medium,n,Kannada,Indic,Indo-European
+Deccan,InVakat,InVakat,286,335,SouthAsia,Medium,n,Sanskrit,Indic,Indo-European
+Deccan,Gap,GapDec,351,450,SouthAsia,Medium,n,Sanskrit,Indic,Indo-European
+Deccan,InKadam,InKadam,451,540,SouthAsia,Medium,n,Sanskrit,Indic,Indo-European
+Deccan,InChaBd,InChaBd,541,756,SouthAsia,Medium,n,Sanskrit,Indic,Indo-European
+Deccan,InRasht,InRasht,757,973,SouthAsia,Medium,n,Sanskrit,Indic,Indo-European
+Deccan,InChaKl,InChaKl,974,1055,SouthAsia,Medium,n,Kannada,Indic,Indo-European
+Deccan,InHoysa,InHoysa,1192,1253,SouthAsia,Medium,n,Kannada,Indic,Indo-European
+Deccan,InKampi,InKampi,1280,1310,SouthAsia,Medium,n,Kannada,Indic,Indo-European
+Deccan,InVijay,InVijay,1337,1646,SouthAsia,Medium,n,Sanskrit,Indic,Indo-European
+Deccan,InMugl*,InMugl*,1687,1720,SouthAsia,Medium,y,Persian,Iranian,Indo-European
+Deccan,InEInCo,InEInCo,1800,1857,SouthAsia,Medium,n,English,Germanic,Indo-European
+Deccan,InBritP,InBritP,1858,1946,SouthAsia,Medium,n,English,Germanic,Indo-European
+Garo Hills,InGaroE,InGaroE,1775,1867,SouthAsia,Late,n,Garo,Bodo-Garo,Sino-Tibetan
+Garo Hills,InGaroL,InGaroL,1868,1956,SouthAsia,Late,n,Garo,Bodo-Garo,Sino-Tibetan
+Cambodian Basin,KhFunaE,KhFunaE,225,539,SoutheastAsia,Early,n,Khmer,Khmer,Austro-Asiatic
+Cambodian Basin,KhFunaL,KhFunaL,540,639,SoutheastAsia,Early,n,Khmer,Khmer,Austro-Asiatic
+Cambodian Basin,KhChenl,KhChenl,640,801,SoutheastAsia,Early,n,Khmer,Khmer,Austro-Asiatic
+Cambodian Basin,KhAngkE,KhAngkE,802,1079,SoutheastAsia,Early,n,Khmer,Khmer,Austro-Asiatic
+Cambodian Basin,KhAngkC,KhAngkC,1080,1219,SoutheastAsia,Early,n,Khmer,Khmer,Austro-Asiatic
+Cambodian Basin,KhAngkL,KhAngkL,1220,1431,SoutheastAsia,Early,n,Khmer,Khmer,Austro-Asiatic
+Cambodian Basin,KhCambd,KhCambd,1432,1593,SoutheastAsia,Early,n,Thai,Kam-Tai,Tai-Kadai
+Cambodian Basin,ThAyuth,ThAyuth,1594,1767,SoutheastAsia,Early,n,Thai,Kam-Tai,Tai-Kadai
+Cambodian Basin,ThRattn,ThRattn,1782,1873,SoutheastAsia,Early,n,Thai,Kam-Tai,Tai-Kadai
+Central Java,IdCJBun,IdCJBun,-400,499,SoutheastAsia,Medium,n,IdCJBun,IdCJBun,IdCJBun
+Central Java,IdKalin,IdKalin,500,731,SoutheastAsia,Medium,n,IdKalin,IdKalin,IdKalin
+Central Java,IdMedng,IdMedng,732,1019,SoutheastAsia,Medium,n,Sanskrit,Indic,Indo-European
+Central Java,IdKedir,IdKedir,1049,1222,SoutheastAsia,Medium,n,Sanskrit,Indic,Indo-European
+Central Java,IdMajap,IdMajap,1291,1518,SoutheastAsia,Medium,n,Old Javanese,Javanese,Austronesian
+Central Java,IdMatrm,IdMatrm,1568,1703,SoutheastAsia,Medium,n,Javanese,Javanese,Austronesian
+Kapuasi Basin,IdBrokE,IdBrokE,1650,1841,SoutheastAsia,Late,n,Iban,Malayo-Sumbawan,Austronesian
+Kapuasi Basin,IdBrokL,IdBrokL,1842,1987,SoutheastAsia,Late,n,Iban,Malayo-Sumbawan,Austronesian
+Middle Yellow River Valley,CnYngsh,CnYngsh,-5000,-3001,EastAsia,Early,n,Archaic Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnLngsh,CnLngsh,-3000,-1900,EastAsia,Early,n,Archaic Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnErlit,CnErlit,-1850,-1651,EastAsia,Early,n,Archaic Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnErlig,CnErlig,-1650,-1251,EastAsia,Early,n,Archaic Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnShang,CnShang,-1250,-1123,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnWZhou,CnWZhou,-1122,-795,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnJinSA,CnJinSA,-794,-489,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnWeiWS,CnWeiWS,-488,-223,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnWHan*,CnWHan*,-202,9,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnEHan*,CnEHan*,25,219,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnErJin,CnErJin,265,317,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnNWei*,CnNWei*,386,557,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnSui**,CnSui**,581,617,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnTangE,CnTangE,618,762,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnTangL,CnTangL,763,907,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnNSong,CnNSong,960,1126,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnLrJin,CnLrJin,1127,1234,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnYuan*,CnYuan*,1271,1367,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnMing*,CnMing*,1368,1643,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnQingE,CnQingE,1644,1795,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Middle Yellow River Valley,CnQingL,CnQingL,1796,1912,EastAsia,Early,n,Chinese,Chinese,Sino-Tibetan
+Kansai,JpYayoi,JpYayoi,-300,249,EastAsia,Medium,n,Japanese,Japanese,Japanese
+Kansai,JpKofun,JpKofun,250,537,EastAsia,Medium,n,Japanese,Japanese,Japanese
+Kansai,JpAsuka,JpAsuka,538,710,EastAsia,Medium,n,Japanese,Japanese,Japanese
+Kansai,JpHeian,JpHeian,794,1184,EastAsia,Medium,n,Japanese,Japanese,Japanese
+Kansai,JpKamak,JpKamak,1185,1333,EastAsia,Medium,n,Japanese,Japanese,Japanese
+Kansai,JpAshik,JpAshik,1336,1466,EastAsia,Medium,n,Japanese,Japanese,Japanese
+Kansai,JpSengk,JpSengk,1467,1567,EastAsia,Medium,n,Japanese,Japanese,Japanese
+Kansai,JpAzMom,JpAzMom,1568,1602,EastAsia,Medium,n,Japanese,Japanese,Japanese
+Kansai,JpTokgw,JpTokgw,1603,1868,EastAsia,Medium,n,Japanese,Japanese,Japanese
+Southern China Hills,CnHQngL,CnHQngL,1701,1895,EastAsia,Late,n,Hmong,Hmong-Mien,Hmong-Mien
+Southern China Hills,CnHChin,CnHChin,1896,1941,EastAsia,Late,n,Hmong,Hmong-Mien,Hmong-Mien
+Sogdiana,TjSaraz,TjSaraz,-3500,-2001,CentralEurasia,Early,n,TjSaraz,TjSaraz,TjSaraz
+Sogdiana,KzAndro,KzAndro,-2000,-1401,CentralEurasia,Early,n,KzAndro,KzAndro,KzAndro
+Sogdiana,UzKok01,UzKok01,-1400,-1000,CentralEurasia,Early,n,UzKok01,UzKok01,UzKok01
+Sogdiana,UzKhw01,UzKhw01,-999,-751,CentralEurasia,Early,n,UzKhw01,UzKhw01,UzKhw01
+Sogdiana,UzKok02,UzKok02,-750,-600,CentralEurasia,Early,n,Ancient Iranian,Iranian,Indo-European
+Sogdiana,IrAchae,IrAchae,-520,-330,CentralEurasia,Early,y,Old Persian,Iranian,Indo-European
+Sogdiana,IrSeleu,IrSeleu,-300,-249,CentralEurasia,Early,y,Greek,Greek,Indo-European
+Sogdiana,AfGrBct,AfGrBct,-248,-130,CentralEurasia,Early,n,Greek,Greek,Indo-European
+Sogdiana,AfTochr,AfTochr,-129,29,CentralEurasia,Early,n,Tocharian,Tocharian,Indo-European
+Sogdiana,AfKushn,AfKushn,30,230,CentralEurasia,Early,n,Greek,Greek,Indo-European
+Sogdiana,IrSasn1,IrSasn1,231,425,CentralEurasia,Early,y,Pahlavi,Iranian,Indo-European
+Sogdiana,AfHepht,AfHepht,426,563,CentralEurasia,Early,n,Bactrian,Bactrian,Indo-European
+Sogdiana,KgWTurk,KgWTurk,564,603,CentralEurasia,Early,n,Sogdian,Sogdian,Indo-European
+Sogdiana,UzSogdi,UzSogdi,604,711,CentralEurasia,Early,n,Sogdian,Sogdian,Indo-European
+Sogdiana,IqAbbs1,IqAbbs1,750,875,CentralEurasia,Early,y,Arabic,Semitic,Afro-Asiatic
+Sogdiana,UzSamnd,UzSamnd,876,990,CentralEurasia,Early,n,Arabic,Semitic,Afro-Asiatic
+Sogdiana,KgKarKh,KgKarKh,991,1212,CentralEurasia,Early,n,Arabic,Semitic,Afro-Asiatic
+Sogdiana,UzChagt,UzChagt,1263,1361,CentralEurasia,Early,n,Middle Mongolian ,Mongolic,Altaic
+Sogdiana,UzTimur,UzTimur,1370,1526,CentralEurasia,Early,n,Chagatai Turkish,Turkic,Altaic
+Sogdiana,UzJanid,UzJanid,1599,1747,CentralEurasia,Early,n,Archaic Chinese,Chinese,Sino-Tibetan
+Orkhon Valley,MnXngnE,MnXngnE,-1400,-300,CentralEurasia,Medium,n,Xiongnu,Xiongnu,Xiongnu
+Orkhon Valley,MnXngnM,MnXngnM,-209,-60,CentralEurasia,Medium,n,Xiongnu,Xiongnu,Xiongnu
+Orkhon Valley,MnXngnL,MnXngnL,-59,99,CentralEurasia,Medium,n,Xiongnu,Xiongnu,Xiongnu
+Orkhon Valley,MnXianb,MnXianb,100,250,CentralEurasia,Medium,n,Xianbei,Xianbei,Xianbei
+Orkhon Valley,MnRourn,MnRourn,300,551,CentralEurasia,Medium,n,Rouran,Rouran,Rouran
+Orkhon Valley,MnETurk,MnETurk,583,630,CentralEurasia,Medium,n,Old Turkic ,Turkic,Altaic
+Orkhon Valley,MnTurk2,MnTurk2,684,744,CentralEurasia,Medium,n,Old Turkic ,Turkic,Altaic
+Orkhon Valley,MnUigur,MnUigur,745,840,CentralEurasia,Medium,n,Old Turkic ,Turkic,Altaic
+Orkhon Valley,MnShiwe,MnShiwe,841,907,CentralEurasia,Medium,n,MnShiwe,MnShiwe,MnShiwe
+Orkhon Valley,MnKhit2,MnKhit2,960,1125,CentralEurasia,Medium,n,Khitan,Khitan,Altaic
+Orkhon Valley,MnMongE,MnMongE,1126,1205,CentralEurasia,Medium,n,Mongolian,Mongolic,Altaic
+Orkhon Valley,MnMngKh,MnMngKh,1206,1367,CentralEurasia,Medium,n,Mongolian,Mongolic,Altaic
+Orkhon Valley,MnMongL,MnMongL,1368,1689,CentralEurasia,Medium,n,Khalkha,Mongolic,Altaic
+Orkhon Valley,MnZungh,MnZungh,1695,1745,CentralEurasia,Medium,n,Oirat,Mongolic,Altaic
+Orkhon Valley,CnQingL,CnQingL,1796,1912,CentralEurasia,Medium,y,Chinese,Chinese,Sino-Tibetan
+Lena River Valley,RuYakuE,RuYakuE,1400,1642,CentralEurasia,Late,n,Yakut,Turkic,Altaic
+Lena River Valley,RuYakuL,RuYakuL,1643,1900,CentralEurasia,Late,n,Yakut,Turkic,Altaic
+Valley of Oaxaca,MxTieLa,MxTieLa,-1400,-1151,NorthAmerica,Early,n,Proto-Zapotec,Zapotecan,Oto-Manguean
+Valley of Oaxaca,MxSanGu,MxSanGu,-1150,-701,NorthAmerica,Early,n,Proto-Zapotec,Zapotecan,Oto-Manguean
+Valley of Oaxaca,MxRosar,MxRosar,-700,-501,NorthAmerica,Early,n,Proto-Zapotec,Zapotecan,Oto-Manguean
+Valley of Oaxaca,MxAlb1E,MxAlb1E,-500,-301,NorthAmerica,Early,n,Zapotec,Zapotecan,Oto-Manguean
+Valley of Oaxaca,MxAlb1L,MxAlb1L,-300,-101,NorthAmerica,Early,n,Zapotec,Zapotecan,Oto-Manguean
+Valley of Oaxaca,MxAlb2*,MxAlb2*,-100,199,NorthAmerica,Early,n,Zapotec,Zapotecan,Oto-Manguean
+Valley of Oaxaca,MxAlb3A,MxAlb3A,200,499,NorthAmerica,Early,n,Zapotec,Zapotecan,Oto-Manguean
+Valley of Oaxaca,MxAlb3B,MxAlb3B,500,899,NorthAmerica,Early,n,Zapotec,Zapotecan,Oto-Manguean
+Valley of Oaxaca,MxAlb5*,MxAlb5*,900,1520,NorthAmerica,Early,n,Zapotec,Zapotecan,Oto-Manguean
+Valley of Oaxaca,EsHabsb,EsHabsb,1521,1700,NorthAmerica,Early,y,Spanish,Romance,Indo-European
+Cahokia,USMisEW,USMisEW,-600,-151,NorthAmerica,Medium,n,USMisEW,USMisEW,USMisEW
+Cahokia,USMisMW,USMisMW,-150,299,NorthAmerica,Medium,n,USMisMW,USMisMW,USMisMW
+Cahokia,USMisRo,USMisRo,300,449,NorthAmerica,Medium,n,USMisRo,USMisRo,USMisRo
+Cahokia,USMisMu,USMisMu,450,599,NorthAmerica,Medium,n,USMisMu,USMisMu,USMisMu
+Cahokia,USMisPa,USMisPa,600,749,NorthAmerica,Medium,n,USMisPa,USMisPa,USMisPa
+Cahokia,USMisSp,USMisSp,750,899,NorthAmerica,Medium,n,USMisSp,USMisSp,USMisSp
+Cahokia,USMisME,USMisME,900,1049,NorthAmerica,Medium,n,USMisME,USMisME,USMisME
+Cahokia,USCahoE,USCahoE,1050,1199,NorthAmerica,Medium,n,USCahoE,USCahoE,USCahoE
+Cahokia,USCahoL,USCahoL,1200,1274,NorthAmerica,Medium,n,USCahoL,USCahoL,USCahoL
+Cahokia,USMisSd,USMisSd,1275,1399,NorthAmerica,Medium,n,USMisSd,USMisSd,USMisSd
+Cahokia,USOneot,USOneot,1400,1639,NorthAmerica,Medium,n,USOneot,USOneot,USOneot
+Cahokia,USIllin,USIllin,1640,1717,NorthAmerica,Medium,n,Illinois,Algonquian,Algic
+Finger Lakes,UsIroqE,UsIroqE,1566,1713,NorthAmerica,Late,n,Oneida,Northern Iroquoian,Iroquoian
+Finger Lakes,UsIroqL,UsIroqL,1714,1848,NorthAmerica,Late,n,Oneida,Northern Iroquoian,Iroquoian
+Cuzco,PeCuzLF,PeCuzLF,1,199,SouthAmerica,Early,n,Quechua,Quechuan,Quechuan
+Cuzco,PeCuzE1,PeCuzE1,200,499,SouthAmerica,Early,n,Quechua,Quechuan,Quechuan
+Cuzco,PeCuzE2,PeCuzE2,500,649,SouthAmerica,Early,n,Quechua,Quechuan,Quechuan
+Cuzco,PeWari*,PeWari*,650,999,SouthAmerica,Early,n,Quechua,Quechuan,Quechuan
+Cuzco,PeCuzL1,PeCuzL1,1000,1249,SouthAmerica,Early,n,Aymara,Aymaran,Aymaran
+Cuzco,PeCuzL2,PeCuzL2,1250,1399,SouthAmerica,Early,n,Aymara,Aymaran,Aymaran
+Cuzco,PeInca*,PeInca*,1400,1531,SouthAmerica,Early,n,Quechua,Quechuan,Quechuan
+Cuzco,EsHabsb,EsHabsb,1532,1700,SouthAmerica,Early,n,Spanish,Romance,Indo-European
+North Colombia,CoNahua,CoNahua,250,1049,SouthAmerica,Medium,n,CoNahua,CoNahua,CoNahua
+North Colombia,CoTairo,CoTairo,1050,1524,SouthAmerica,Medium,n,CoTairo,CoTairo,CoTairo
+Lowland Andes,EcJivaE,EcJivaE,1534,1830,SouthAmerica,Late,n,Jivaro,Jivaroan,Jivaroan
+Lowland Andes,EcJivaL,EcJivaL,1831,1931,SouthAmerica,Late,n,Jivaro,Jivaroan,Jivaroan
+Big Island Hawaii,Hawaii1,Hawaii1,1000,1199,Oceania-Australia,Early,n,Old Hawaiian ,Oceanic,Austronesian
+Big Island Hawaii,Hawaii2,Hawaii2,1200,1649,Oceania-Australia,Early,n,Hawaiian,Oceanic,Austronesian
+Big Island Hawaii,Hawaii3,Hawaii3,1650,1777,Oceania-Australia,Early,n,Hawaiian,Oceanic,Austronesian
+Big Island Hawaii,USKameh,USKameh,1778,1819,Oceania-Australia,Early,n,Hawaiian,Oceanic,Austronesian
+Oro PNG,PgOrokE,PgOrokE,1734,1883,Oceania-Australia,Late,n,Orokaiva,Binanderean,Trans-New Guinea
+Oro PNG,PgOrokL,PgOrokL,1884,1942,Oceania-Australia,Late,n,Orokaiva,Binanderean,Trans-New Guinea
+Chuuk Islands,FmTrukE,FmTrukE,1775,1885,Oceania-Australia,Medium,n,Chuukese,Oceanic,Austronesian
+Chuuk Islands,FmTrukL,FmTrukL,1886,1948,Oceania-Australia,Medium,n,Chuukese,Oceanic,Austronesian

@@ -1,0 +1,226 @@
+Variable,Subsection,ShortName,Category,VarNumber,Section
+Polity Population,Social Scale,PolPop,scale,1,Social Complexity variables
+Polity territory,Social Scale,PolTerr,scale,2,Social Complexity variables
+Population of the largest settlement,Social Scale,CapPop,scale,3,Social Complexity variables
+Administrative levels,Hierarchical Complexity,AdmLev,levels,4,Social Complexity variables
+Military levels,Hierarchical Complexity,MilLev,levels,5,Social Complexity variables
+Religious levels,Hierarchical Complexity,ReligLev,levels,6,Social Complexity variables
+Settlement hierarchy,Hierarchical Complexity,SettlHier,levels,7,Social Complexity variables
+Professional military officers,Professions,ProfOfficer,government,8,Social Complexity variables
+Professional soldiers,Professions,ProfSoldier,government,9,Social Complexity variables
+Professional priesthood,Professions,ProfPriest,government,10,Social Complexity variables
+Full-time bureaucrats,Bureaucracy characteristics,FullTBur,government,11,Social Complexity variables
+Examination system,Bureaucracy characteristics,ExamSyst,government,12,Social Complexity variables
+Merit promotion,Bureaucracy characteristics,MeritProm,government,13,Social Complexity variables
+Specialized government buildings,Bureaucracy characteristics,GovtBldg,government,14,Social Complexity variables
+Courts,Law,Court,government,15,Social Complexity variables
+Formal legal code,Law,LegCode,government,16,Social Complexity variables
+Judges,Law,Judge,government,17,Social Complexity variables
+Professional Lawyers,Law,Lawyer,government,18,Social Complexity variables
+irrigation systems,Specialized Buildings: polity owned,Irrigation,infrastruct,19,Social Complexity variables
+drinking water supply systems,Specialized Buildings: polity owned,WaterSuppl,infrastruct,20,Social Complexity variables
+markets,Specialized Buildings: polity owned,Market,infrastruct,21,Social Complexity variables
+food storage sites,Specialized Buildings: polity owned,FoodStor,infrastruct,22,Social Complexity variables
+Roads,Specialized Buildings: polity owned,Road,infrastruct,23,Social Complexity variables
+Bridges,Specialized Buildings: polity owned,Bridge,infrastruct,24,Social Complexity variables
+Canals,Specialized Buildings: polity owned,Canal,infrastruct,25,Social Complexity variables
+Ports,Specialized Buildings: polity owned,Port,infrastruct,26,Social Complexity variables
+Mines or quarries,Specialized Buildings: polity owned,Mine,infrastruct,27,Social Complexity variables
+Couriers,Other,Courier,infrastruct,28,Social Complexity variables
+Postal stations,Other,PostStation,infrastruct,29,Social Complexity variables
+General postal service,Other,PostService,infrastruct,30,Social Complexity variables
+Mnemonic devices,Information,Mnemonic,writing,31,Social Complexity variables
+Nonwritten records,Information,NonWRecord,writing,32,Social Complexity variables
+Written records,Information,WRecord,writing,33,Social Complexity variables
+Script,Information,Script,writing,34,Social Complexity variables
+Non-phonetic writing,Information,NonPhWrit,writing,35,Social Complexity variables
+Phonetic alphabetic writing,Information,PhAlph,writing,36,Social Complexity variables
+Lists tables and classifications,Information,Lists,writing,37,Social Complexity variables
+Calendar,Information,Calendar,texts,38,Social Complexity variables
+Sacred Texts,Information,SacrTxt,texts,39,Social Complexity variables
+Religious literature,Information,ReligLit,texts,40,Social Complexity variables
+Practical literature,Information,PractLit,texts,41,Social Complexity variables
+History,Information,History,texts,42,Social Complexity variables
+Philosophy,Information,Philosophy,texts,43,Social Complexity variables
+Scientific literature,Information,SciLit,texts,44,Social Complexity variables
+Fiction,Information,Fiction,texts,45,Social Complexity variables
+Articles,Other,Article,money,46,Social Complexity variables
+Tokens,Other,Token,money,47,Social Complexity variables
+Precious metals,Other,PrecMetal,money,48,Social Complexity variables
+Foreign coins,Other,ForCoin,money,49,Social Complexity variables
+Indigenous coins,Other,IndigCoin,money,50,Social Complexity variables
+Paper currency,Other,PaperCurr,money,51,Social Complexity variables
+Copper,MilTech Metals,Copper,MilMetal,52,Warfare variables
+Bronze,MilTech Metals,Bronze,MilMetal,53,Warfare variables
+Iron,MilTech Metals,Iron,MilMetal,54,Warfare variables
+Steel,MilTech Metals,Steel,MilMetal,55,Warfare variables
+Javelins,MilTech Projectiles,Javelin,MilProj,56,Warfare variables
+Atlatl,MilTech Projectiles,Atlatl,MilProj,57,Warfare variables
+Slings,MilTech Projectiles,Sling,MilProj,58,Warfare variables
+Self bow,MilTech Projectiles,SelfBow,MilProj,59,Warfare variables
+Composite bow,MilTech Projectiles,CompBow,MilProj,60,Warfare variables
+Crossbow,MilTech Projectiles,Crossbow,MilProj,61,Warfare variables
+Tension siege engines,MilTech Projectiles,TensSiege,MilProj,62,Warfare variables
+Sling siege engines,MilTech Projectiles,SlingSiege,MilProj,63,Warfare variables
+Gunpowder siege artillery,MilTech Projectiles,Afrtillery,MilProj,64,Warfare variables
+Handheld firearms,MilTech Projectiles,HandGun,MilProj,65,Warfare variables
+War clubs,MilTech Handheld,WarClub,Weapon,66,Warfare variables
+Battle Axes,MilTech Handheld,BattleAxe,Weapon,67,Warfare variables
+Daggers,MilTech Handheld,Dagger,Weapon,68,Warfare variables
+Swords,MilTech Handheld,Sword,Weapon,69,Warfare variables
+Spears,MilTech Handheld,Spear,Weapon,70,Warfare variables
+Polearms,MilTech Handheld,Polearm,Weapon,71,Warfare variables
+Dogs,MilTech Animals,Dog,MilAnimal,72,Warfare variables
+Donkeys,MilTech Animals,Donkey,MilAnimal,73,Warfare variables
+Horses,MilTech Animals,Horse,MilAnimal,74,Warfare variables
+Camels,MilTech Animals,Camel,MilAnimal,75,Warfare variables
+Elephants,MilTech Animals,Elephant,MilAnimal,76,Warfare variables
+Wood bark etc,MilTech Armor,WoodArmor,Armor,77,Warfare variables
+Leather cloth,MilTech Armor,LeathArmor,Armor,78,Warfare variables
+Shields,MilTech Armor,Shield,Armor,79,Warfare variables
+Helmets,MilTech Armor,Helmet,Armor,80,Warfare variables
+Breastplates,MilTech Armor,Breastplate,Armor,81,Warfare variables
+Limb protection,MilTech Armor,LimbProt,Armor,82,Warfare variables
+Chainmail,MilTech Armor,Chainmail,Armor,83,Warfare variables
+Scaled armor,MilTech Armor,ScaleArmor,Armor,84,Warfare variables
+Laminar armor,MilTech Armor,LaminArmor,Armor,85,Warfare variables
+Plate armor,MilTech Armor,PlateArmor,Armor,86,Warfare variables
+Small vessels (canoes etc),MilTech Naval,SmallVessel,Naval,87,Warfare variables
+Merchant ships pressed into service,MilTech Naval,Merchant,Naval,88,Warfare variables
+Specialized military vessels,MilTech Naval,SpecVessel,Naval,89,Warfare variables
+Settlements in a defensive position,Fortifications,DefPosition,MilFort,90,Warfare variables
+Wooden palisades,Fortifications,Palisade,MilFort,91,Warfare variables
+Earth ramparts,Fortifications,Rampart,MilFort,92,Warfare variables
+Ditch,Fortifications,Ditch,MilFort,93,Warfare variables
+Moat,Fortifications,Moat,MilFort,94,Warfare variables
+Stone walls (non-mortared),Fortifications,NonMStone,MilFort,95,Warfare variables
+Stone walls (mortared),Fortifications,StoneWall,MilFort,96,Warfare variables
+Fortified camps,Fortifications,FortCamp,MilFort,97,Warfare variables
+Complex fortifications,Fortifications,ComplxFort,MilFort,98,Warfare variables
+Long walls,Fortifications,LongWall,MilFort,99,Warfare variables
+Modern fortifications,Fortifications,ModernFort,MilFort,100,Warfare variables
+Standing armies,Military Organization,StandArmy,MilOrg,101,Warfare variables
+Uniformity of equipment,Military Organization,UnifEquip,MilOrg,102,Warfare variables
+Army size,Military Organization,ArmySize,MilQuant,103,Warfare variables
+Largest fielded army,Military Organization,LargestArmy,MilQuant,104,Warfare variables
+Maximum logistical lag,Military Organization,MaxLogLag,MilQuant,105,Warfare variables
+Inter-polity wars,Types of Warfare,ExternalW,WarType,106,Warfare variables
+Internal wars,Types of Warfare,InternalW,WarType,107,Warfare variables
+Intra-elite conflicts,Types of Warfare,IntraElit,WarType,108,Warfare variables
+Popular uprisings,Types of Warfare,PopUprising,WarType,109,Warfare variables
+Military revolts,Types of Warfare,MilRevolt,WarType,110,Warfare variables
+Separatist rebellions,Types of Warfare,SepRebellion,WarType,111,Warfare variables
+Wars within same ethnic group,Cultural Distance,EthnicW,WarDist,112,Warfare variables
+Wars involving groups with different dialects,Cultural Distance,DiffDialectW,WarDist,113,Warfare variables
+Wars involving groups with different languages,Cultural Distance,DiffLangW,WarDist,114,Warfare variables
+Wars involving groups with different language families,Cultural Distance,DiffLFamW,WarDist,115,Warfare variables
+Wars between groups from different archaeological cultures,Cultural Distance,DiffArchW,WarDist,116,Warfare variables
+Wars between different religious sects,Cultural Distance,DiffCultW,WarDist,117,Warfare variables
+Wars between different world religions,Cultural Distance,DiffReligW,WarDist,118,Warfare variables
+Wars of world religion against tribal religion,Cultural Distance,ReligTribW,WarDist,119,Warfare variables
+Wars on Civilization/Barbarism frontier,Cultural Distance,CivBarbW,WarDist,120,Warfare variables
+Wars on steppe frontier,Cultural Distance,StepFrontW,WarDist,121,Warfare variables
+Wars on agricultural frontier,Cultural Distance,AgriFrontW,WarDist,122,Warfare variables
+Annexation,Intensity of warfare,Annexation,WarIntensity,123,Warfare variables
+Looting,Intensity of warfare,Looting,WarIntensity,124,Warfare variables
+Sack,Intensity of warfare,Sack,WarIntensity,125,Warfare variables
+Rape,Intensity of warfare,Rape,WarIntensity,126,Warfare variables
+Enslavement,Intensity of warfare,Enslavement,WarIntensity,127,Warfare variables
+Imprisonment,Intensity of warfare,Imprisonment,WarIntensity,128,Warfare variables
+Destruction,Intensity of warfare,Destruction,WarIntensity,129,Warfare variables
+Torture,Intensity of warfare,Torture,WarIntensity,130,Warfare variables
+Mutilation,Intensity of warfare,Mutilation,WarIntensity,131,Warfare variables
+Targeted massacre,Intensity of warfare,TargMassacre,WarIntensity,132,Warfare variables
+General massacre,Intensity of warfare,GenMassacre,WarIntensity,133,Warfare variables
+Extermination,Intensity of warfare,Extermination,WarIntensity,134,Warfare variables
+Ethnocide,Intensity of warfare,Ethnocide,WarIntensity,135,Warfare variables
+Skeletal evidence of violence,Warfare Archaeological Proxies,SkeletViol,ArchWar,136,Warfare variables
+Mass burials,Warfare Archaeological Proxies,MassBurial,ArchWar,137,Warfare variables
+Settlement destruction,Warfare Archaeological Proxies,SettlDestr,ArchWar,138,Warfare variables
+Pictorial evidence of warfare,Warfare Archaeological Proxies,PictorialW,ArchWar,139,Warfare variables
+Frequency for the ritual specialist,Largest scale collective ritual of the official cult,SpecFreqLR,Frequency,140,Ritual variables
+Frequency per participant,Largest scale collective ritual of the official cult,PartFreqLR,Frequency,141,Ritual variables
+Frequency for the audience,Largest scale collective ritual of the official cult,AudFreqLR,Frequency,142,Ritual variables
+Orthopraxy checks,Largest scale collective ritual of the official cult,OrthopraxyLR,Conformity,173,Ritual variables
+Orthodoxy checks,Largest scale collective ritual of the official cult,OrthodoxyLR,Conformity,174,Ritual variables
+Frequency for the ritual specialist,Most widespread collective ritual of the official cult,SpecFreqWR,Frequency,183,Ritual variables
+Frequency per participant,Most widespread collective ritual of the official cult,PartFreqWR,Frequency,184,Ritual variables
+Frequency for the audience,Most widespread collective ritual of the official cult,AudFreqWR,Frequency,185,Ritual variables
+Orthopraxy checks,Most widespread collective ritual of the official cult,OrthopraxyWR,Conformity,216,Ritual variables
+Orthodoxy checks,Most widespread collective ritual of the official cult,OrthodoxyWR,Conformity,217,Ritual variables
+Frequency for the ritual specialist,Most frequent collective ritual of the official cult,SpecFreqFR,Frequency,226,Ritual variables
+Frequency per participant,Most frequent collective ritual of the official cult,PartFreqFR,Frequency,227,Ritual variables
+Frequency for the audience,Most frequent collective ritual of the official cult,AudFreqFR,Frequency,228,Ritual variables
+Orthopraxy checks,Most frequent collective ritual of the official cult,OrthopraxyFR,Conformity,259,Ritual variables
+Orthodoxy checks,Most frequent collective ritual of the official cult,OrthodoxyFR,Conformity,260,Ritual variables
+Frequency for the ritual specialist,Most euphoric collective ritual of the official cult,SpecFreqER,Frequency,269,Ritual variables
+Frequency per participant,Most euphoric collective ritual of the official cult,PartFreqER,Frequency,270,Ritual variables
+Frequency for the audience,Most euphoric collective ritual of the official cult,AudFreqER,Frequency,271,Ritual variables
+Orthopraxy checks,Most euphoric collective ritual of the official cult,OrthopraxyER,Conformity,302,Ritual variables
+Orthodoxy checks,Most euphoric collective ritual of the official cult,OrthodoxyER,Conformity,303,Ritual variables
+Frequency for the ritual specialist,Most dysphoric collective ritual of the official cult,SpecFreqDR,Frequency,312,Ritual variables
+Frequency per participant,Most dysphoric collective ritual of the official cult,PartFreqDR,Frequency,313,Ritual variables
+Frequency for the audience,Most dysphoric collective ritual of the official cult,AudFreqDR,Frequency,314,Ritual variables
+Orthopraxy checks,Most dysphoric collective ritual of the official cult,OrthopraxyDR,Conformity,345,Ritual variables
+Orthodoxy checks,Most dysphoric collective ritual of the official cult,OrthodoxyDR,Conformity,346,Ritual variables
+Number of officially sanctioned supernatural beings,Normative Ideological precepts concerning morality/supernatural beings,Monotheism,Morality,395,Religion and Normative Ideology
+Omnipresent supernatural beings,Normative Ideological precepts concerning morality/supernatural beings,Omnipresence,Morality,396,Religion and Normative Ideology
+Omniscient supernatural beings,Normative Ideological precepts concerning morality/supernatural beings,Omniscience,Morality,397,Religion and Normative Ideology
+Omnipotent supernatural beings,Normative Ideological precepts concerning morality/supernatural beings,Omnipotence,Morality,398,Religion and Normative Ideology
+High Gods (creator gods),Normative Ideological precepts concerning morality/supernatural beings,HighGods,Morality,399,Religion and Normative Ideology
+supernatural enforcement against harm,Normative Ideological precepts concerning morality/supernatural beings,SEHarm,Morality,400,Religion and Normative Ideology
+supernatural enforcement of fairness,Normative Ideological precepts concerning morality/supernatural beings,SEFair,Morality,401,Religion and Normative Ideology
+supernatural enforcement of human reciprocity,Normative Ideological precepts concerning morality/supernatural beings,SERecip,Morality,402,Religion and Normative Ideology
+supernatural enforcement of property rights,Normative Ideological precepts concerning morality/supernatural beings,SEProperty,Morality,403,Religion and Normative Ideology
+supernatural enforcement of kinship obligations,Normative Ideological precepts concerning morality/supernatural beings,SEKinship,Morality,404,Religion and Normative Ideology
+supernatural enforcement of in-group loyalty,Normative Ideological precepts concerning morality/supernatural beings,SEIngroup,Morality,405,Religion and Normative Ideology
+supernatural enforcement of respect,Normative Ideological precepts concerning morality/supernatural beings,SERespect,Morality,406,Religion and Normative Ideology
+supernatural enforcement of bravery,Normative Ideological precepts concerning morality/supernatural beings,SEBravery,Morality,407,Religion and Normative Ideology
+supernatural enforcement of purity,Normative Ideological precepts concerning morality/supernatural beings,SEPurity,Morality,408,Religion and Normative Ideology
+general supernatural enforcement of morality,Normative Ideological precepts concerning morality/supernatural beings,SEGeneral,Morality,409,Religion and Normative Ideology
+other supernatural enforcement of piety,Normative Ideological precepts concerning morality/supernatural beings,SEAmoral,Morality,410,Religion and Normative Ideology
+other supernatural enforcement not related to piety,Normative Ideological precepts concerning morality/supernatural beings,SEAmoral,Morality,411,Religion and Normative Ideology
+Executive power is separate or independent from military,Limits on Power of the Chief Executive,ExecMilInd,,429,Institutional Variables
+Executive power is separate or independent from legislative,Limits on Power of the Chief Executive,ExecLegInd,,430,Institutional Variables
+Executive power is separate or independent from judiciary,Limits on Power of the Chief Executive,ExecJudInd,,431,Institutional Variables
+Right to petition executive,Limits on Power of the Chief Executive,ExecPetition,,432,Institutional Variables
+Critique of executive by government,Limits on Power of the Chief Executive,ExecCritGov,,433,Institutional Variables
+Critique of executive by non-government,Limits on Power of the Chief Executive,ExecCritNonGov,,434,Institutional Variables
+Sanction of executive by government,Limits on Power of the Chief Executive,ExecSancGov,,435,Institutional Variables
+Sanction of executive by non-government,Limits on Power of the Chief Executive,ExecSancNonGov,,436,Institutional Variables
+Constraint on executive by government,Limits on Power of the Chief Executive,ExecConsGov,,437,Institutional Variables
+Constraint on executive by non-government,Limits on Power of the Chief Executive,ExecConsNonGov,,438,Institutional Variables
+Impeachment,Limits on Power of the Chief Executive,Impeachment,,439,Institutional Variables
+Informal critique of executive,Limits on Power of the Chief Executive,InfCritExec,,440,Institutional Variables
+Informal sanction of executive,Limits on Power of the Chief Executive,InfSancExec,,441,Institutional Variables
+Informal constraint on executive,Limits on Power of the Chief Executive,InfConsExec,,442,Institutional Variables
+Informal impeachment,Limits on Power of the Chief Executive,InfImpeach,,443,Institutional Variables
+Critique of executive by religious agents,Limits on Power of the Chief Executive,ExecCritRelig,,444,Institutional Variables
+Sanction of executive by religious agents,Limits on Power of the Chief Executive,ExecSancRelig,,445,Institutional Variables
+Constraint on executive by religious agents,Limits on Power of the Chief Executive,ExecConsRelig,,446,Institutional Variables
+Constraint on executive by religious institutions,Limits on Power of the Chief Executive,ExecConsRelInst,,447,Institutional Variables
+Impeachment by religious agents,Limits on Power of the Chief Executive,ImpeachRelig,,448,Institutional Variables
+Subordination of the chief executive to a religious agent,Limits on Power of the Chief Executive,ExecSubRelig,,449,Institutional Variables
+Motivation by belief in supernatural agent,Limits on Power of the Chief Executive,ExecGodBelief,,450,Institutional Variables
+Customary mechanism,Limits on Power of the Chief Executive,CustomMech,,451,Institutional Variables
+Legal mechanism,Limits on Power of the Chief Executive,LegalMech,,452,Institutional Variables
+Number of power transitions,Limits on Power of the Chief Executive,NoTransitions,,453,Institutional Variables
+Number of contested transitions,Limits on Power of the Chief Executive,NoContestTrans,,454,Institutional Variables
+Number of successful overturns,Limits on Power of the Chief Executive,NoOverturn,,455,Institutional Variables
+Direct,Authority over state-level administrators,StateAuthDirec,,456,Institutional Variables
+Indirect,Authority over state-level administrators,StatAuthIndirec,,457,Institutional Variables
+Diffused,Authority over state-level administrators,SateAuthDiffu,,458,Institutional Variables
+Mixed,Authority over state-level administrators,StateAuthMix,,459,Institutional Variables
+Governmental control,Authority over state-level administrators,StateAuthGov,,460,Institutional Variables
+Non-governmental oversight,Authority over state-level administrators,StateAuthNonGov,,461,Institutional Variables
+Direct,Authority over local-level administrators,LocalAuthDirec,,462,Institutional Variables
+Indirect,Authority over local-level administrators,LocalAuthIndirec,,463,Institutional Variables
+Diffused,Authority over local-level administrators,LocalAuthDiffu,,464,Institutional Variables
+Mixed,Authority over local-level administrators,LocalAuthMix,,465,Institutional Variables
+Governmental control,Authority over local-level administrators,LocalAuthGov,,466,Institutional Variables
+Non-governmental oversight,Authority over local-level administrators,LocalAuthNonGov,,467,Institutional Variables
+Non-state judiciary,Informal Justice,InformJustNonState,,468,Institutional Variables
+Religious judiciary,Informal Justice,InformJustRelig,,469,Institutional Variables
+Corporal punishment by the state,Slavery,SlaveCorpPunState,,470,Institutional Variables
+elite status is hereditary,Status,HeredStatus,Stratification,471,Social Complexity variables
+formal system of hereditary social status,Status,FormalHStatus,Stratification,472,Social Mobility

@@ -1,5 +1,5 @@
 library(plotrix)
-setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
+#setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
 polities <- read.csv('polities.csv', header=TRUE)
 
 #New scripts for automated analysis of rates of change in social complexity pre/post moralising gods/doctrinal mode/writing

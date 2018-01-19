@@ -1,6 +1,6 @@
 # Pat Savage (2017, University of Oxford)
 
-setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
+#setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
 
 library("ggmap") 
 library(maptools) 

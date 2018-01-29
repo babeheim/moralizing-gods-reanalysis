@@ -1,17 +1,19 @@
 # moralizing-gods-test
-Code used for analyses in Whitehouse, Francois, Savage, et al., "Complex societies and doctrinal rituals precede moralizing gods throughout world history"
+#The following code was used for analyses in Whitehouse, Francois, Savage, et al., "Complex societies and doctrinal rituals precede moralizing gods throughout world history", with an "exportdat.csv" file scraped from the Seshat database on 19 Jan 2018.
+#This software was developed by Peter Turchin and Patrick Savage (Copyright 29 Jan 2018). For the general methodology underlying these analyses please refer to: 
+#Turchin, P. et al. Quantitative historical analysis uncovers a single dimension of complexity that structures global variation in human social organization. Proc. Natl. Acad. Sci. U. S. A. 115, E144-E151 (2018).
+#Turchin, P. Fitting dynamical regression models to Seshat data. Cliodynamics 9, (2018).
 
-Uploading code to share with collaborators, then reviewers, then readers
 
 #To run the primary analyses:
-1) Download all files
-2) Download exportdat.csv (sent privately)
-3) Open "!MI.R"
+1) Download all files from https://github.com/pesavage/moralizing-gods
+2) Download exportdat.csv (sent privately, or downloaded as Supplementary Table 1 [in which case it may need to be renamed as "exportdat.csv"])
+3) Open "!MoralizingGods.R"
 4) Modify the following code to set the working directory to the appropriate directory where you have saved these files:
 
 setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
 
-5) Copy and paste all code in "!MI.R" into R or R Studio, and then you're done (takes ~30 minutes, mainly to perform pre-check and run 20 imputations of the data
+5) Copy and paste all code in "!MoralizingGods.R" into R or R Studio, and then you're done (takes ~30 minutes, mainly to perform pre-check and run 20 imputations of the data
 6) Once you've run it once, you can save much time by starting at the following point in the !MI.R code:
 
 ######### end of the new scrape section
@@ -21,29 +23,29 @@ setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
 1) Removing hierarchy: 
 Re-run from "# end of the new scrape section" with following changes:
 
--Replace "5:13" with "c(5:7,9:13)" in !MI.R line 105 ("ImpDat <- ImpDatRepl[ImpDatRepl$irep==irep,5:13]")
+-Replace "5:13" with "c(5:7,9:13)" in !MoralizingGods.R line 105 ("ImpDat <- ImpDatRepl[ImpDatRepl$irep==irep,5:13]")
 
--Replace "9" with "8" in !MI.R line 101 ("Rotations <- matrix(NA,0,9)")
+-Replace "9" with "8" in !MoralizingGods.R line 101 ("Rotations <- matrix(NA,0,9)")
 
--Replace "9" with "8" in !MI.R line 102 ("PropVar <- matrix(NA,0,9)")
+-Replace "9" with "8" in !MoralizingGods.R line 102 ("PropVar <- matrix(NA,0,9)")
 
 2a) Scale variables only:
 Re-run from "# end of the new scrape section" with following changes:
 
--Replace "5:13" with "5:8" in !MI.R line 105 ("ImpDat <- ImpDatRepl[ImpDatRepl$irep==irep,5:13]")
+-Replace "5:13" with "5:8" in !MoralizingGods.R line 105 ("ImpDat <- ImpDatRepl[ImpDatRepl$irep==irep,5:13]")
 
--Replace "9" with "4" in !MI.R line 101 ("Rotations <- matrix(NA,0,9)")
+-Replace "9" with "4" in !MoralizingGods.R line 101 ("Rotations <- matrix(NA,0,9)")
 
--Replace "9" with "4" in !MI.R line 102 ("PropVar <- matrix(NA,0,9)")
+-Replace "9" with "4" in !MoralizingGods.R line 102 ("PropVar <- matrix(NA,0,9)")
 
 2b) Non-scale variables only:
 Re-run from "# end of the new scrape section" with following changes:
 
--Replace "5:13" with "9:13" in !MI.R line 105 ("ImpDat <- ImpDatRepl[ImpDatRepl$irep==irep,5:13]")
+-Replace "5:13" with "9:13" in !MoralizingGods.R line 105 ("ImpDat <- ImpDatRepl[ImpDatRepl$irep==irep,5:13]")
 
--Replace "9" with "5" in !MI.R line 101 ("Rotations <- matrix(NA,0,9)")
+-Replace "9" with "5" in !MoralizingGods.R line 101 ("Rotations <- matrix(NA,0,9)")
 
--Replace "9" with "5" in !MI.R line 102 ("PropVar <- matrix(NA,0,9)")
+-Replace "9" with "5" in !MoralizingGods.R line 102 ("PropVar <- matrix(NA,0,9)")
 
 3) Big gods:
 Re-run from "# end of the new scrape section" after replacing all instances in sub-scripts of "MoralisingGods" with "MoralisingHighGods". 

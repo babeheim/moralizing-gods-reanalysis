@@ -21,9 +21,9 @@ and cite:
 
 2) Turchin, P. et al. Quantitative historical analysis uncovers a single dimension of complexity that structures global variation in human social organization. Proc. Natl. Acad. Sci. U. S. A. 115, E144-E151 (2018).
 
-3) Turchin, P. Fitting dynamical regression models to Seshat data. Cliodynamics 9, (2018).
+3) Turchin, P. Fitting dynamical regression models to Seshat data. Cliodynamics 9(1):25-58 (2018).
 
-4) Turchin P. et al. 2015. Seshat: The Global History Databank. Cliodynamics 6(1):77–107. 
+4) Turchin P. et al. 2015. Seshat: The Global History Databank. Cliodynamics 6(1):77-107. 
 
 The views and conclusions contained in this document are those of the authors and should not be interpreted as representing the official positions, either expressed or implied, of the Seshat Databank, its collaborative scholarly community, or the Evolution Institute.
 
@@ -45,7 +45,7 @@ SOFTWARE.
 3) Open "!MoralizingGods.R"
 4) Modify the following code to set the working directory to the appropriate directory where you have saved these files:
 
-setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
+setwd("/Users/pesavage/Documents/Research/Papers/Unpublished/Whitehouse Francois Savage et al Moralizing Gods/Nature resubmission/Reanalysis R code")
 
 5) Copy and paste all code in "!MoralizingGods.R" into R or R Studio, and then you're done (takes ~30 minutes, mainly to perform pre-check and run 20 imputations of the data
 6) Once you've run it once, you can save much time by starting at the following point in the !MI.R code:
@@ -57,29 +57,29 @@ setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
 1) Removing hierarchy: 
 Re-run from "# end of the new scrape section" with following changes:
 
--Replace "5:13" with "c(5:7,9:13)" in !MoralizingGods.R line 105 ("ImpDat <- ImpDatRepl[ImpDatRepl$irep==irep,5:13]")
+-Replace "5:13" with "c(5:7,9:13)" in !MoralizingGods.R line 138 ("ImpDat <- ImpDatRepl[ImpDatRepl$irep==irep,5:13]")
 
--Replace "9" with "8" in !MoralizingGods.R line 101 ("Rotations <- matrix(NA,0,9)")
+-Replace "9" with "8" in !MoralizingGods.R line 134 ("Rotations <- matrix(NA,0,9)")
 
--Replace "9" with "8" in !MoralizingGods.R line 102 ("PropVar <- matrix(NA,0,9)")
+-Replace "9" with "8" in !MoralizingGods.R line 135 ("PropVar <- matrix(NA,0,9)")
 
 2a) Scale variables only:
 Re-run from "# end of the new scrape section" with following changes:
 
--Replace "5:13" with "5:8" in !MoralizingGods.R line 105 ("ImpDat <- ImpDatRepl[ImpDatRepl$irep==irep,5:13]")
+-Replace "5:13" with "5:8" in !MoralizingGods.R line 138 ("ImpDat <- ImpDatRepl[ImpDatRepl$irep==irep,5:13]")
 
--Replace "9" with "4" in !MoralizingGods.R line 101 ("Rotations <- matrix(NA,0,9)")
+-Replace "9" with "4" in !MoralizingGods.R line 134 ("Rotations <- matrix(NA,0,9)")
 
--Replace "9" with "4" in !MoralizingGods.R line 102 ("PropVar <- matrix(NA,0,9)")
+-Replace "9" with "4" in !MoralizingGods.R line 135 ("PropVar <- matrix(NA,0,9)")
 
 2b) Non-scale variables only:
 Re-run from "# end of the new scrape section" with following changes:
 
--Replace "5:13" with "9:13" in !MoralizingGods.R line 105 ("ImpDat <- ImpDatRepl[ImpDatRepl$irep==irep,5:13]")
+-Replace "5:13" with "9:13" in !MoralizingGods.R line 138 ("ImpDat <- ImpDatRepl[ImpDatRepl$irep==irep,5:13]")
 
--Replace "9" with "5" in !MoralizingGods.R line 101 ("Rotations <- matrix(NA,0,9)")
+-Replace "9" with "5" in !MoralizingGods.R line 134 ("Rotations <- matrix(NA,0,9)")
 
--Replace "9" with "5" in !MoralizingGods.R line 102 ("PropVar <- matrix(NA,0,9)")
+-Replace "9" with "5" in !MoralizingGods.R line 135 ("PropVar <- matrix(NA,0,9)")
 
 3) Big gods:
 Re-run from "# end of the new scrape section" after replacing all instances in sub-scripts of "MoralisingGods" with "MoralisingHighGods". 
@@ -97,3 +97,23 @@ Re-run from "# end of the new scrape section" with following changes:
 
 5b) All possible time-windows:
 Re-run from "# end of the new scrape section" after deleting/hashing out BigGodAnalysesEditedV2.R line 67 ("out <-subset(out, out[,5]<2050)")
+
+#To perform additional analyses described in the Methods focusing on role of doctrinal rituals rather than moralizing gods:
+
+1) Doctrinal ritual defined via religious hierarchy or ritual frequency:
+-Re-run from "# end of the new scrape section" after replacing all instances in sub-scripts of "MoralisingGods" with "DoctrinalMode"
+
+-Then, using this new "BigGodAnalysesEditeV2.R" file, re-run from "# end of the new scrape section" again with following changes:
+
+2) Doctrinal ritual defined via religious hierarchy only:
+-Add the following code to BigGodAnalysesEditedV2.R line 13:
+dat$DoctrinalMode<-ifelse(dat$ReligiousHier>=2,1,0)
+-and the following code to RegrDat.R line 18:
+data$DoctrinalMode<-ifelse(dat$ReligiousHier>=2,1,0) 
+
+
+3) Doctrinal ritual defined via ritual frequency only:
+-Add the following code to BigGodAnalysesEditedV2.R line 13:
+dat$DoctrinalMode<-ifelse(dat$FreqLR>4.5 | dat$FreqWR>4.5 | dat$FreqFR>4.5 | dat$FreqER>4.5 | dat$FreqDR>4.5,1,0)
+-and the following code to RegrDat.R line 18:
+data$DoctrinalMode<-ifelse(dat$FreqLR>4.5 | dat$FreqWR>4.5 | dat$FreqFR>4.5 | dat$FreqER>4.5 | dat$FreqDR>4.5,1,0) 

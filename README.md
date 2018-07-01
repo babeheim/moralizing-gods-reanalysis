@@ -103,7 +103,7 @@ Re-run from "# end of the new scrape section" after deleting/hashing out BigGodA
 1) Doctrinal ritual defined via religious hierarchy or ritual frequency:
 -Re-run from "# end of the new scrape section" after replacing all instances in sub-scripts of "MoralisingGods" with "DoctrinalMode"
 
--Then, using this new "BigGodAnalysesEditeV2.R" file, re-run from "# end of the new scrape section" again with following changes:
+-Then, using this new "BigGodAnalysesEditedV2.R" file, re-run from "# end of the new scrape section" again with following changes:
 
 2) Doctrinal ritual defined via religious hierarchy only:
 -Add the following code to BigGodAnalysesEditedV2.R line 13:

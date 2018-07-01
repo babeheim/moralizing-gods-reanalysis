@@ -1,6 +1,6 @@
 # moralizing-gods
 
-#The following code was used for analyses in Whitehouse, Francois, Savage, et al., "Complex societies and doctrinal rituals precede moralizing gods throughout world history", with an "exportdat.csv" file scraped from the Seshat database on 10 Jan 2018.
+#The following code was used for analyses in Whitehouse, Francois, Savage, et al., "Complex societies precede moralizing gods throughout world history", with an "exportdat.csv" file scraped from the Seshat database on 10 Jan 2018.
 
 ######
 CC By-NC SA License

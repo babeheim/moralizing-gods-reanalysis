@@ -82,7 +82,8 @@ Re-run from "# end of the new scrape section" with following changes:
 -Replace "9" with "5" in !MoralizingGods.R line 135 ("PropVar <- matrix(NA,0,9)")
 
 3) Moralizing High gods:
-Re-run from "# end of the new scrape section" after replacing all instances in sub-scripts of "MoralisingGods" with "MoralisingHighGods". 
+Re-run from "# end of the new scrape section" after replacing all instances in sub-scripts of "MoralisingGods" with "MoralisingHighGods". (This also requires removing Iceland from the analyses due to bugs due to a lack of pre-/post-MHG data. To do this, add the following code to line 12 of "BigGodAnalysesEditedV2.R": 
+NGAs <- NGAs[NGAs != "Iceland"] 
 
 4) Dating uncertainty:
 add following line between "MG<-..." and "MGAppear<-..." lines in BigGodAnalysesEditedV2.R: 

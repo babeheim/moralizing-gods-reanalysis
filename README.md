@@ -81,7 +81,7 @@ Re-run from "# end of the new scrape section" with following changes:
 
 -Replace "9" with "5" in !MoralizingGods.R line 135 ("PropVar <- matrix(NA,0,9)")
 
-3) Big gods:
+3) Moralizing High gods:
 Re-run from "# end of the new scrape section" after replacing all instances in sub-scripts of "MoralisingGods" with "MoralisingHighGods". 
 
 4) Dating uncertainty:

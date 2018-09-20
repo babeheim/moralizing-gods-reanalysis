@@ -83,6 +83,7 @@ Re-run from "# end of the new scrape section" with following changes:
 
 3) Moralizing High gods:
 Re-run from "# end of the new scrape section" after replacing all instances in sub-scripts of "MoralisingGods" with "MoralisingHighGods". (This also requires removing Iceland from the analyses due to bugs due to a lack of pre-/post-MHG data. To do this, add the following code to line 12 of "BigGodAnalysesEditedV2.R": 
+
 NGAs <- NGAs[NGAs != "Iceland"] 
 
 4) Dating uncertainty:

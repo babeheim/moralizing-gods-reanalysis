@@ -100,6 +100,12 @@ Re-run from "# end of the new scrape section" with following changes:
 5b) All possible time-windows:
 Re-run from "# end of the new scrape section" after deleting/hashing out BigGodAnalysesEditedV2.R line 67 ("out <-subset(out, out[,5]<2050)")
 
+6a-i) Using individual complexity characteristics without performing PCA:
+
+Re-run from "# end of the new scrape section", replacing "PCA" with "ImpDat" and replacing "[,1]" with "[,1]", "[,2]", "[,3]"..."[,9]" in the following line (line 143):
+
+"PC1 <- cbind(PC1,PCA[,1])"
+
 #To perform additional analyses described in the Methods focusing on role of doctrinal rituals rather than moralizing gods:
 
 1) Doctrinal ritual defined via religious hierarchy or ritual frequency:

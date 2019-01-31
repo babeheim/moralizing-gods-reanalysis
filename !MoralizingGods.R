@@ -16,7 +16,7 @@
 
 #and cite:
 
-#1) Whitehouse, Francois, Savage, et al., "Complex societies and doctrinal rituals precede moralizing gods throughout world history" (Submitted).
+#1) Whitehouse, Francois, Savage, et al., "Complex societies and doctrinal rituals precede moralizing gods throughout world history" (2019) Nature.
 
 #2) Turchin, P. et al. Quantitative historical analysis uncovers a single dimension of complexity that structures global variation in human social organization. Proc. Natl. Acad. Sci. U. S. A. 115, E144-E151 (2018).
 

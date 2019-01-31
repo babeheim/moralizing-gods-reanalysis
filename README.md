@@ -1,7 +1,7 @@
 # moralizing-gods
 
 #The following code was used for analyses in: 
-Whitehouse, H.*, François, P.*, Savage, P. E.*, Currie, T. E., Feeney, K. C., Cioni, E., Purcell, R., Ross, R. M., Larson, J., Baines, J., ter Haar, B., Covey, A., Turchin, P. (2019). Complex societies precede moralizing gods throughout world history. Nature.
+Whitehouse, H., François, P., Savage, P. E., Currie, T. E., Feeney, K. C., Cioni, E., Purcell, R., Ross, R. M., Larson, J., Baines, J., ter Haar, B., Covey, A., Turchin, P. (2019). Complex societies precede moralizing gods throughout world history. Nature.
 with an "exportdat.csv" file scraped from the Seshat database on 10 Jan 2018.
 
 ######

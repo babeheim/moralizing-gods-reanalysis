@@ -26,7 +26,7 @@ points(subset(x,map$Religion =="N"),subset(y,map$Religion =="N"), bg="grey", pch
 
 text(x,y, labels = map$kya, cex=.55,col="black")
 
-pos<-legend(-182,1, c("Zoroastrianism","Abrahamic","Other MHG","Buddhism","Other BSP","Absent"),pch=21, pt.bg=c('lightcoral', 'orange',"yellow","dodgerblue","mediumpurple1","grey"), bty='n', cex=0.8,pt.cex=1.6,title=expression(paste(bold("Earliest precolonial evidence\nof moralizing gods (kya)"))))
+pos<-legend(-182,1, c("Zoroastrianism","Abrahamic","Other MHG","Buddhism","Other BSP","Absent"),pch=21, pt.bg=c('lightcoral', 'orange',"yellow","dodgerblue","mediumpurple1","grey"), bty='n', cex=0.75,pt.cex=1.6,title=expression(paste(bold("Earliest precolonial evidence\nof moralizing gods (kya)"))))
 xleft <- pos$rect[["left"]]
 ytop <- pos$rect[["top"]]
 ybottom <- ytop - pos$rect[["h"]]

@@ -1,26 +1,34 @@
-# Pat Savage (2017, University of Oxford)
-
-#setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
-
-#library("ggmap") 
-#library(maptools) 
-#library(maps) 
+#setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/MoralizingGods")
 
 map<-read.csv("map.csv",header=TRUE,row.names=1)
 x<-map$Longitude
 y<-map$Latitude
 z<-3*sqrt(map$SC)
 
-cex<-1.9
-
 #USING MAPS
 
-#all NGAs outlined coloured by moralising gods, area proportional to SC, no distinctino between BG and BSP
 
-map("world", fill=TRUE, col="white", bg="gray90", ylim=c(-60, 90), mar=c(0,0,0,0)) 
-points(subset(x,map$MG=="Y"),subset(y,map$MG=="Y"), bg="gray50", pch=21,cex=subset(z,map$MG=="Y"))
-points(subset(x,map$MG=="N"),subset(y,map$MG=="N"), bg="gray90", pch=21,cex=subset(z,map$MG=="N"))
+#all NGAs outlined coloured by moralising gods, area proportional to SC, text = kya
 
-text(x,y, labels = row.names(map), cex=.6,col="black")
+map$kya[20]=".2"
+map$kya[19]=".2"
+map$kya[18]=".3"
+map$kya[17]=".5"
+map$kya[16]=".9"
 
-legend(-180,-23, c("Present","Absent"),pch=21, pt.bg=c('gray50',"gray90"), bty='y', cex=0.7,pt.cex=1.6,title="Precolonial evidence of moralizing gods")
+map("world", fill=TRUE, col="white", bg="lightblue", ylim=c(-60, 90), mar=c(0,0,0,0)) 
+points(subset(x,map$Religion=="Zoroastrianism"),subset(y,map$Religion =="Zoroastrianism"), bg="lightcoral", pch=21,cex=subset(z,map$Religion =="Zoroastrianism"))
+points(subset(x,map$Religion=="Abrahamic"),subset(y,map$Religion =="Abrahamic"), bg="orange", pch=21,cex=subset(z,map$Religion =="Abrahamic"))
+points(subset(x,map$Religion=="Buddhism"),subset(y,map$Religion =="Buddhism"), bg="dodgerblue", pch=21,cex=subset(z,map$Religion =="Buddhism"))
+points(subset(x,map$Religion=="OtherMHG"),subset(y,map$Religion =="OtherMHG"), bg="yellow", pch=21,cex=subset(z,map$Religion =="OtherMHG"))
+points(subset(x,map$Religion =="OtherBSP"),subset(y,map$Religion =="OtherBSP"), bg="mediumpurple1", pch=21,cex=subset(z,map$Religion =="OtherBSP"))
+points(subset(x,map$Religion =="N"),subset(y,map$Religion =="N"), bg="grey", pch=21,cex=subset(z,map$Religion =="N"))
+
+text(x,y, labels = map$kya, cex=.55,col="black")
+
+pos<-legend(-182,1, c("Zoroastrianism","Abrahamic","Other MHG","Buddhism","Other BSP","Absent"),pch=21, pt.bg=c('lightcoral', 'orange',"yellow","dodgerblue","mediumpurple1","grey"), bty='n', cex=0.8,pt.cex=1.6,title=expression(paste(bold("Earliest precolonial evidence\nof moralizing gods (kya)"))))
+xleft <- pos$rect[["left"]]
+ytop <- pos$rect[["top"]]
+ybottom <- ytop - pos$rect[["h"]]
+xright <- xleft + pos$rect[["w"]]
+rect(xleft, ybottom+2, xright, ytop+8)

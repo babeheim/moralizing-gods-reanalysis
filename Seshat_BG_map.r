@@ -3,7 +3,7 @@
 map<-read.csv("map.csv",header=TRUE,row.names=1)
 x<-map$Longitude
 y<-map$Latitude
-z<-3*sqrt(map$SC)
+z<-2.8*sqrt(map$SC)
 
 #USING MAPS
 

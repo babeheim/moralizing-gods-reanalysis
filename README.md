@@ -1,6 +1,8 @@
 # moralizing-gods
 
-#The following code was used for analyses in Whitehouse, Francois, Savage, et al., "Complex societies precede moralizing gods throughout world history", with an "exportdat.csv" file scraped from the Seshat database on 10 Jan 2018.
+#The following code was used for analyses in: 
+Whitehouse, H.*, François, P.*, Savage, P. E.*, Currie, T. E., Feeney, K. C., Cioni, E., Purcell, R., Ross, R. M., Larson, J., Baines, J., ter Haar, B., Covey, A., Turchin, P. (2019). Complex societies precede moralizing gods throughout world history. Nature.
+with an "exportdat.csv" file scraped from the Seshat database on 10 Jan 2018.
 
 ######
 CC By-NC SA License
@@ -17,11 +19,11 @@ This research employed data from the Seshat Databank (seshatdatabank.info) under
 
 and cite:
 
-1) Whitehouse, Francois, Savage, et al., "Complex societies precede moralizing gods throughout world history"
+1) Whitehouse, Francois, Savage, et al. (2019) Complex societies precede moralizing gods throughout world history. Nature.
 
-2) Turchin, P. et al. Quantitative historical analysis uncovers a single dimension of complexity that structures global variation in human social organization. Proc. Natl. Acad. Sci. U. S. A. 115, E144-E151 (2018).
+2) Turchin, P. et al. (2018) Quantitative historical analysis uncovers a single dimension of complexity that structures global variation in human social organization. Proc. Natl. Acad. Sci. U. S. A. 115, E144-E151 .
 
-3) Turchin, P. Fitting dynamical regression models to Seshat data. Cliodynamics 9(1):25-58 (2018).
+3) Turchin, P. (2018) Fitting dynamical regression models to Seshat data. Cliodynamics 9(1):25-58 .
 
 4) Turchin P. et al. 2015. Seshat: The Global History Databank. Cliodynamics 6(1):77-107. 
 
@@ -41,17 +43,18 @@ SOFTWARE.
 
 #To run the primary analyses:
 1) Download all files from https://github.com/pesavage/moralizing-gods
-2) Download exportdat.csv (sent privately, or downloaded as Supplementary Table 1 [in which case it may need to be renamed as "exportdat.csv"])
-3) Open "!MoralizingGods.R"
-4) Modify the following code to set the working directory to the appropriate directory where you have saved these files:
+2) Open "!MoralizingGods.R"
+3) Modify the following code to set the working directory to the appropriate directory where you have saved these files:
 
 setwd("/Users/pesavage/Documents/Research/Papers/Unpublished/Whitehouse Francois Savage et al Moralizing Gods/Nature resubmission/Reanalysis R code")
 
-5) Copy and paste all code in "!MoralizingGods.R" into R or R Studio, and then you're done (takes ~30 minutes, mainly to perform pre-check and run 20 imputations of the data
-6) Once you've run it once, you can save much time by starting at the following point in the !MI.R code:
+4) Copy and paste all code in "!MoralizingGods.R" into R or R Studio, and then you're done (takes ~30 minutes, mainly to perform pre-check and run 20 imputations of the data
+5) Once you've run it once, you can save much time by starting at the following point in the !MI.R code:
 
 ######### end of the new scrape section
 (if you do need to redo the multiple imputation process from the beginning, make to sure to replace the "polities.csv" file with the original one, as during the analysis process the polities.csv file is changed in ways that won't allow it to be used again from the beginning)
+
+Note that multiple imputation is a stochastic method that gives sightly different results each time you run it. To directly replicate our analyses, start at the above point in the analysis using the supplied "ImpDatRepl.csv" file
 
 #To perform confirmatory analyses described in the Methods:
 1) Removing hierarchy: 

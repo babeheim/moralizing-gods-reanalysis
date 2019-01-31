@@ -1,0 +1,31 @@
+Number,Religious system,Polity name,Latitude,Longitude,City,SupernaturalPunishment,PrePostSPData,SC,MG,Family,PolID,Religion,kya
+1,Pharaonic religion,Dynasty II,25.73,32.71,Luxor,MHG,Y,0.61,Y,Afro-Asiatic,EgDyn2*,OtherMHG,4.8
+2,Akkadian religion,Akkadian Empire,32.38,48.24,Susa,BSP,Y,0.76,Y,Afro-Asiatic,IqAkkad,OtherBSP,4.2
+3,Hittite religion,Kingdom of Hatti,37.88,32.52,Konya,BSP,Y,0.68,Y,Indo-European,TrHatNK,OtherBSP,3.5
+4,Zhou,Zhou Dynasty,34.7,112.52,Luoyang,MHG,Y,0.76,Y,Sino-Tibetan,CnWZhou,OtherMHG,3
+5,Zoroastrianism,Achaemenid Empire,29.38,67.63,Mehrgarh,MHG,Y,0.9,Y,Indo-European,IrAchae,Zoroastrianism,2.5
+6,Zoroastrianism,Achaemenid Empire,39.63,66.94,Samarkand,MHG,Y,0.9,Y,Indo-European,IrAchae,Zoroastrianism,2.5
+7,Roman religion,Early Republic,41.89,12.49,Rome,BSP,Y,0.62,Y,Indo-European,ItRomER,OtherBSP,2.5
+8,Buddhism,Mauryan Empire,15.39,76.63,Kampli,BSP,Y,0.88,Y,Indo-European,InMaury,Buddhism,2.3
+9,Celtic religion,La Tène Gaul,48.87,2.31,Paris,BSP,Y,0.58,Y,Indo-European,FrTeneC,OtherBSP,2.1
+10,Buddhism,Early Funan,13.41,103.87,Angkor Wat,BSP,N,0.69,Y,Austro-Asiatic,KhFunaE,Buddhism,1.7
+11,Buddhism,Rouran Khaganate,47.2,102.85,Karakorum,BSP,Y,0.54,Y,Rouran,MnRourn,Buddhism,1.7
+12,Judaism,Himyarite Kingdom,14.85,43.32,Sanaa,MHG,N,0.74,Y,Afro-Asiatic,YeHmyr2,Abrahamic,1.6
+13,Buddhism,Asuka period,35.03,135.76,Kyoto,BSP,Y,0.76,Y,Japanese,JpAsuka,Buddhism,1.4
+14,Buddhism,Medang Kingdom,-6.99,110.4,Semarang,BSP,N,0.69,Y,Indo-European,IdMedng,Buddhism,1.2
+15,Norse religion,Icelandic Commonwealth,64.13,-21.89,Reykjavik,BSP,N,0.35,Y,Indo-European,IsCommw,OtherBSP,1
+16,Islam,Kingdom of Ghana,16.72,-3.04,Timbuctu,MHG,Y,0.73,Y,MrWagdL,MrWagdL,Abrahamic,0.9
+17,Akan religion,Pre-Ashanti period,5.57,-0.22,Accra,MHG,N,0.4,Y,Niger-Congo,GhAshnE,OtherMHG,0.5
+18,Iban religion,Pre-Brooke Raj period,0.77,112.41,Borneo,BSP,N,0.17,Y,Austronesian,IdBrokE,OtherBSP,0.3
+19,Hawaiian religion,Pre-Kamehameha period,19.53,-155.92,Kona,BSP,N,0.38,Y,Austronesian,USKameh,OtherBSP,0.2
+20,Chuuk religion,Pre-German period,7.35,151.6,Chuuk,BSP,N,0.16,Y,Austronesian,FmTrukE,OtherBSP,0.2
+21,Sakha religion,Pre-Russian period,63.46,129.38,Yakutsk,N,N,0.16,N,Altaic,RuYakuE,N,
+22,Garo religion,Pre-British period,25.44,90.52,Tura,N,N,0.23,N,Sino-Tibetan,InGaroE,N,
+23,Hmong religion,Late Qing period,27.54,103.99,Guizhou,N,N,0.5,N,Hmong-Mien,CnHQngL,N,
+24,Orokaiva religion,Pre-British period,-8.59,148.19,Oro,N,N,0.24,N,Trans-New Guinea,PgOrokE,N,
+25,Iroquois religion,Pre-British period,42.7,-77.02,Seneca Falls,N,N,0.33,N,Iroquoian,UsIroqE,N,
+26,Illinois religion,Illinois Confederacy,38.66,-90.06,St. Louis,N,N,0.3,N,Algic,USIllin,N,
+27,Zapotec religion,Monte Alban V period,17.04,-96.76,Monte Alban,N,N,0.37,N,Oto-Manguean,MxAlb5*,N,
+28,Tairona religion,Pre-Spanish period,10.78,-73.64,Santa Marta,N,N,0.45,N,CoTairo,CoTairo,N,
+29,Shuar religion,Pre-Ecuador period,-2.9,-77.67,Logrono,N,N,0.21,N,Jivaroan,EcJivaE,N,
+30,Inca religion,Inca Empire,-13.48,-72.07,Cuzco,N,N,0.61,N,Quechuan,PeInca*,N,

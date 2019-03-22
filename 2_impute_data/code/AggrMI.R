@@ -3,7 +3,7 @@
 # scale, levels, government = (professions, bureaucracy, law), infrastr, writing, texts, money
 # setwd("C:/Users/Peter Turchin/Google Drive/2.Seshat/1.R/PCA-MI")
 
-data <- read.table('./temp/MIoutput.csv', sep=",", header=TRUE)
+data <- read.table('MIoutput.csv', sep=",", header=TRUE)
 data <- data[data$PropCoded > 30,] # Omit sparsely coded polities with PropCoded < 30%
 row.names(data) <- NULL
 dat <- data[,5:96]
@@ -78,7 +78,7 @@ AggrDat$MoralisingGods<-ifelse(AggrDat$GeneralMoralisticPunishment>0.1 | AggrDat
 AggrDat$DoctrinalMode<-ifelse(AggrDat$FreqLR>4.5 | AggrDat$FreqWR>4.5 | AggrDat$FreqFR>4.5 | AggrDat$FreqER>4.5 | AggrDat$FreqDR>4.5 | AggrDat$ReligiousHier>=2,1,0)
 AggrDat$Writing<-ifelse(AggrDat$WrittenRecords>0.1,1,0)
 
-write.csv(AggrDat, file="./temp/MIAggrDat.csv",  row.names=FALSE)
+write.csv(AggrDat, file="MIAggrDat.csv",  row.names=FALSE)
 
 rm(dat,data,dt,row,rowNA,i,j,money)
 

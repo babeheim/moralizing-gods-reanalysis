@@ -3,6 +3,8 @@ library(plotrix)
 library(plyr) #(But maybe shouldn't load this when loading dplyr for confirmatory analyses) 
 library(tictoc)
 
+set.seed(1234)
+
 Section1 <- "Social Complexity variables"
 Section2 <- "Ritual variables"
 Section3 <- "Religion and Normative Ideology"

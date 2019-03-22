@@ -27,6 +27,8 @@ write.csv(PC1, file="./temp/PC1.csv",  row.names=FALSE)
 write.csv(Rotations, file="./temp/Rotations.csv",  row.names=TRUE)
 write.csv(PropVar, file="./temp/PropVar.csv",  row.names=FALSE)
 
+# all look right
+
 #rm(AggrDat, ImpDat, PCA, res)
 
 ##### gPC1.R
@@ -63,6 +65,7 @@ dat <- dt
 
 write.csv(dat, file="./temp/PC1_traj.csv",  row.names=FALSE)
 
+# still good
 
 
 ################################################
@@ -107,5 +110,4 @@ write.csv(dat, file="./temp/PC1_traj_merged.csv",  row.names=FALSE)
 
 dir_init("./output")
 
-files <- list.files("./temp", full.names = TRUE)
-file.copy(files, "./output")
+file.copy("./temp/PC1_traj_merged.csv", "./output")

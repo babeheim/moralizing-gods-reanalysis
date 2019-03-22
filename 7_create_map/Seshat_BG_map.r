@@ -1,6 +1,6 @@
 #setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/MoralizingGods")
 
-map<-read.csv("map.csv",header=TRUE,row.names=1)
+map<-read.csv("./input/map.csv",header=TRUE,row.names=1)
 x<-map$Longitude
 y<-map$Latitude
 z<-2.8*sqrt(map$SC)

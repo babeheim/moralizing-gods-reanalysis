@@ -1,7 +1,34 @@
 #Constructing RegrDat file for regression analyses
 #setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
-load("HS.Rdata")
-polities <- read.csv('polities.csv', header=TRUE) # There is an issue with compatibility between my polities.csv file and the one Peter was  using for HS. Resolving this as follows based on debugging the problem with non-matching PolID, identified by using the following code at the end of the original code rerun phylogeny section:
+
+rm(list = ls())
+source("../project_support.R")
+
+# load("./HS.Rdata")
+
+DistMatrix <- read.csv("./input/DistMatrix.csv", stringsAsFactors = FALSE)
+DistMatrix <- as.matrix(DistMatrix)
+colnames(DistMatrix) <- gsub("\\.", " ", colnames(DistMatrix))
+rownames(DistMatrix) <- colnames(DistMatrix)
+
+# this Rdata file contains:
+# "coords"     "DistMatrix" "NGAs"       "polities"   "RegrDat"
+
+# but polities is overwritten before being called
+# RegrDat is overwritten before being called
+# the DistMatrix is used!
+# NGAs and Coords are never used
+# so basically we just need the DistMatrix, not HS.Rdata!!
+
+dir_init("./temp")
+
+# polities here taken from impute_data...not! where did they change upstream??
+
+polities <- read.csv('./input/polities.csv', header=TRUE, stringsAsFactors = FALSE)
+# There is an issue with compatibility between my polities.csv file and
+# the one Peter was  using for HS. Resolving this as follows based on debugging
+# the problem with non-matching PolID, identified by using the following code at
+# the end of the original code rerun phylogeny section:
 #setdiff(levels(polities$PolID),levels(PolID))
 #setdiff(levels(PolID),levels(polities$PolID))
 #[1] "GapDec"  "GapKP1"  "IrQajar" "TrOttm5" "YeOttoL" "YeTahir" "YeZiyad"
@@ -10,10 +37,10 @@ polities <- polities[polities$PolID != "GapKP1",]
 polities <- polities[polities$PolID != "IrQajar",]
 polities <- polities[polities$PolID != "TrOttm5",]
 polities <- polities[polities$PolID != "YeOttoL",] 
-write.csv(polities, file="polities.csv",  row.names=FALSE) 
-polities <- read.csv('polities.csv', header=TRUE)
+write.csv(polities, file="./temp/polities.csv",  row.names=FALSE) 
+polities <- read.csv('./temp/polities.csv', header=TRUE, stringsAsFactors = FALSE)
 ##
-data <- read.table("PC1_traj_merged.csv", sep=",", header=TRUE)
+data <- read.table("./input/PC1_traj_merged.csv", sep=",", header=TRUE, stringsAsFactors = FALSE) # from 3_run_pca
 data[is.na(data)] <- 0 #This treats NA values as 0. Should checek later to see how much this affects results
 data$MG<-data$MoralisingGods
 
@@ -94,4 +121,6 @@ nm <- colnames(RegrDat)
 nm[length(nm)] <- "Phylogeny"
 colnames(RegrDat) <- nm
 
+dir_init("./output")
 
+write.csv(RegrDat, "./output/RegrDat.csv", row.names = FALSE)

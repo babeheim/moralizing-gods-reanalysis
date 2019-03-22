@@ -1,3 +1,14 @@
+
+
+rm(list = ls())
+source("../project_support.R")
+
+RegrDat <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
+
+RD1 <- RegrDat[is.na(RegrDat$Lag1) == FALSE,]
+RD2 <- RD1[is.na(RD1$Lag2) == FALSE,]
+LogistRegrDat = as.data.frame(cbind(RD2$MG,RD2[,c(36,51:54)]))
+
 ##### Logistic Regression 
 ## dat = 1st column response variable (binary), subsequent columns predictors
 LogistRegrDat <- LogistRegrDat[is.na(LogistRegrDat[,1])==FALSE,]

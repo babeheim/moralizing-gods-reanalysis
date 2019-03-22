@@ -1,9 +1,14 @@
+
+rm(list = ls())
+
+source("../project_support.R")
+
 # Checks Soc Complx data from exportdat.csv for error
-polities <- read.csv('polities.csv', header=TRUE)
+polities <- read.csv('./input/polities.csv', header=TRUE)
 polities <- polities[polities$Dupl=="n",]
-Vars <- as.matrix(read.csv('variables.csv', header=TRUE))
+Vars <- as.matrix(read.csv('./input/variables.csv', header=TRUE))
 SCdat <- matrix(nrow = 0, ncol = 0)
-dat <- read.table('exportdat.csv', sep=",", header=TRUE, quote = "", colClasses = "character")
+dat <- read.table('./input/exportdat.csv', sep=",", header=TRUE, quote = "", colClasses = "character")
 dat <- dat[dat$Section==Section1 | dat$Section==Section2 | dat$Section==Section3,] # Section is set in !MI.R
 
 Vars[,1] <- paste(Vars[,2],Vars[,1]) #Creating unique variable/section combinations
@@ -98,10 +103,10 @@ for(i in 1:nrow(dat)){
 }
 errors <- rbind(errors,dat[is.na(dat[,7]),])
 
-write.csv(errors, file="errors.csv",  row.names=FALSE)
-write.csv(SCdat, file="SCdat.csv",  row.names=FALSE)
+dir_init("./output")
 
-rm(i,j,var,dat,dt,datNA,a,polities,Vars)
+write.csv(errors, file="./output/errors.csv",  row.names=FALSE)
+write.csv(SCdat, file="./output/SCdat.csv",  row.names=FALSE)
 
 ## Checks for polity inclusions
 #dat <- read.table('exportdat.csv', sep=",", header=TRUE, quote = "", colClasses = "character")

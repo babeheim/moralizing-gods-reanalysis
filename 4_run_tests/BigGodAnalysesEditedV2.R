@@ -1,10 +1,16 @@
 #library(plotrix)
 #setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
-polities <- read.csv('polities.csv', header=TRUE)
+
+rm(list = ls())
+source("../project_support.R")
+
+dir_init("./temp")
+
+polities <- read.csv('./input/polities.csv', header=TRUE)
 
 #New scripts for automated analysis of rates of change in social complexity pre/post moralising gods/doctrinal mode/writing
 
-dat <- read.table("PC1_traj_merged.csv", sep=",", header=TRUE)
+dat <- read.table("./input/PC1_traj_merged.csv", sep=",", header=TRUE) # from 3_run_pca
 dat$NGA<-as.character(dat$NGA)
 NGAs <- levels(polities$NGA)
 NGAs <- NGAs[NGAs != "Crete"]    #### Remove new NGAs
@@ -24,11 +30,11 @@ for(i in 1:length(NGAs)){
 colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty")
 #mean(out$MGUncertainty) #Use this while replacing "MoralisingGods" as above to get uncertainty values for time-series
 
-write.csv(out, file="FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to read as numeric (there is probably a more elegant way to do this)
-out<-read.table("FullRates.csv", sep=",", header=TRUE)
+write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to read as numeric (there is probably a more elegant way to do this)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 
 out$Difference<-out[,2]-out[,3]
-write.csv(out, file="FullRates.csv",  row.names=FALSE)
+write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
 
 #Full time windows (up to 10,000 years before and after moralizing gods)
@@ -52,8 +58,8 @@ colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
 
 #mean(out$MGUncertainty) #Use this while replacing "MoralisingGods" as above to get uncertainty values for time-series
 
-write.csv(out, file="FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to read as numeric (there is probably a more elegant way to do this)
-out<-read.table("FullRates.csv", sep=",", header=TRUE)
+write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to read as numeric (there is probably a more elegant way to do this)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 
 out$Difference<-out[,3]-out[,2]
 
@@ -62,11 +68,11 @@ for(i in 2:length(out[,5])){
 }
 out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in each NGA
 
-write.csv(out, file="FullRates.csv",  row.names=FALSE)
+write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
 out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years pre/post moralizing gods (<750) or # out to use full time-window
 
-write.csv(out, file="EqualRates.csv",  row.names=FALSE)
+write.csv(out, file="./temp/EqualRates.csv",  row.names=FALSE)
 
 #bar chart paired
 my.values<-mean(1000*out[,6],na.rm=TRUE)
@@ -105,44 +111,58 @@ for(i in 1:length(NGAs)){
   data <- rbind(data,my.values)
 }
 colnames(data)<-c("NGA","PostRate","PreRate","PostConfInt","PreConfInt")
-write.csv(data, file="PrePostComparisonFull.csv",  row.names=FALSE)
-data<-read.table("PrePostComparisonFull.csv", sep=",", header=TRUE)
+write.csv(data, file="./temp/PrePostComparisonFull.csv",  row.names=FALSE)
+data<-read.table("./temp/PrePostComparisonFull.csv", sep=",", header=TRUE)
 data<-as.data.frame(data)
 data$Difference<-data[,2]-data[,3]
 data[,2:6]<-data[,2:6]*1000
-write.csv(data, file="PrePostComparisonFull.csv",  row.names=FALSE)
+write.csv(data, file="./temp/PrePostComparisonFull.csv",  row.names=FALSE)
 
 
 
 #Full values for matching pre-/post-NGAs
 out <-subset(out, out[,6]<1000) #Removing windows without matching pre-/post-MG rates
-write.csv(out, file="FullRates.csv",  row.names=FALSE)
-out <- read.table("FullRates.csv", sep=",", header=TRUE)
+write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
+out <- read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 NGAs <- levels(out$NGA)
 
 data <- matrix(NA, nrow=0, ncol=15)
 
+# error in this loop:
 for(i in 1:length(NGAs)){
-  dt <- out[out$NGA == NGAs[i],]
-  ot <- dat[dat$NGA == NGAs[i],]
-  MG<-subset(ot,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
-  #library(dplyr)
-  #MG<-as.data.frame(MG %>% group_by(PolID) %>% sample_n(size = 1)) #randomly samples so there is only one century per polity
-  MGAppear<-subset(MG, Time==min(Time))
-  DM<-subset(ot,DoctrinalMode=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
-  DMAppear<-subset(DM, Time==min(Time))
-  WR<-subset(ot,Writing=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
-  WRAppear<-subset(WR, Time==min(Time))
-  my.values<-c(NGAs[i],mean(dt[,3]),mean(dt[,2]),1.96*std.error(dt[,3]),1.96*std.error(dt[,2]),t.test(dt[,3],dt[,2])$p.value,t.test(dt[,3],dt[,2])$parameter,length(dt[,2]),t.test(dt[,3],dt[,2])$statistic, DMAppear$Time-MGAppear$Time,WRAppear$Time-MGAppear$Time,MGAppear$End-MGAppear$Start,DMAppear$End-DMAppear$Start,WRAppear$End-WRAppear$Start, MGAppear$Time)
-  data <- rbind(data,my.values)
+  if (sum(out$NGA == NGAs[i]) > 1) { # added b/c NGA = Cusco has only 1 observation, can't do t-test
+    dt <- out[out$NGA == NGAs[i],]
+    ot <- dat[dat$NGA == NGAs[i],]
+    MG<-subset(ot,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+    #library(dplyr)
+    #MG<-as.data.frame(MG %>% group_by(PolID) %>% sample_n(size = 1)) #randomly samples so there is only one century per polity
+    MGAppear<-subset(MG, Time==min(Time))
+    DM<-subset(ot,DoctrinalMode=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+    DMAppear<-subset(DM, Time==min(Time))
+    WR<-subset(ot,Writing=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+    WRAppear<-subset(WR, Time==min(Time))
+    my.values<-c(NGAs[i], mean(dt[,3]), mean(dt[,2]),
+      1.96 * std.error(dt[,3]), 1.96 * std.error(dt[,2]),
+      t.test(dt[,3],dt[,2])$p.value,
+      t.test(dt[,3],dt[,2])$parameter, length(dt[,2]),
+      t.test(dt[,3],dt[,2])$statistic, DMAppear$Time - MGAppear$Time,
+      WRAppear$Time - MGAppear$Time,
+      MGAppear$End - MGAppear$Start,
+      DMAppear$End - DMAppear$Start,
+      WRAppear$End - WRAppear$Start,
+      MGAppear$Time
+    )
+    data <- rbind(data,my.values)
+  }
 }
+
 colnames(data)<-c("NGA","PostRate","PreRate","PostConfInt","PreConfInt","p","df","n","t","PreMGRitual","PreMGWriting","RangeMGAppear","RangeDMAppear","RangeWRAppear","MGAppear")
-write.csv(data, file="PrePostComparison.csv",  row.names=FALSE)
-data<-read.table("PrePostComparison.csv", sep=",", header=TRUE)
+write.csv(data, file="./temp/PrePostComparison.csv",  row.names=FALSE)
+data<-read.table("./temp/PrePostComparison.csv", sep=",", header=TRUE)
 data<-as.data.frame(data)
 data$Difference<-data[,2]-data[,3]
 data[,c(2:5,16)]<-data[,c(2:5,16)]*1000
-write.csv(data, file="PrePostComparison.csv",  row.names=FALSE)
+write.csv(data, file="./temp/PrePostComparison.csv",  row.names=FALSE)
 
 #Test signifiance of doctrinal ritual preceding moralizing gods
 print(t.test(data$PreMGRitual))
@@ -159,10 +179,10 @@ for(i in 1:length(NGAs)){
   out <- rbind(out,dt)
 }
 out$MGUncertainty<-out$End-out$Start
-write.csv(out, file="TimeNorm.csv",  row.names=FALSE) 
+write.csv(out, file="./temp/TimeNorm.csv",  row.names=FALSE) 
 
 #Merge Normalized times
-dat <- read.table("TimeNorm.csv", sep=",", header=TRUE)
+dat <- read.table("./temp/TimeNorm.csv", sep=",", header=TRUE)
 out<-unique(dat$Time.norm)
 
 #library(plyr)
@@ -177,15 +197,15 @@ MeanPCs<-out[,2:(1+length(NGAs))]
 out$Mean <- apply(MeanPCs,1,mean,na.rm=TRUE)
 out$Lower <- out$Mean - 1.96*apply(MeanPCs,1, std.error,na.rm=TRUE)
 out$Upper <- out$Mean + 1.96*apply(MeanPCs,1, std.error,na.rm=TRUE)
-write.csv(out, file="SCNorm.csv",  row.names=FALSE) 
+write.csv(out, file="./temp/SCNorm.csv",  row.names=FALSE) 
 
 #plot normalized times
-FullImpDat<-read.csv('SCNorm.csv', header=TRUE)
+FullImpDat<-read.csv('./temp/SCNorm.csv', header=TRUE)
 
 ####Plot 12 NGA time-series with pre- and post-moralizing god SC data
 #First average normalized to moralizing gods time
-out<-read.csv('SCNorm.csv', header=TRUE)
-data<-read.csv('PrePostComparison.csv', header=TRUE)
+out<-read.csv('./temp/SCNorm.csv', header=TRUE)
+data<-read.csv('./temp/PrePostComparison.csv', header=TRUE)
 
 #data <- FullImpDat
 y <- out$Mean
@@ -238,12 +258,12 @@ lines(x, l,type="l",lty="dotted")
 #abline(h=0.6,lty="dashed")
 
 ####Next plot each NGA individually without normalizing time
-data <- read.table("TimeNorm.csv", sep=",", header=TRUE)
+data <- read.table("./temp/TimeNorm.csv", sep=",", header=TRUE)
 y <- data$Mean
 x <- data$Time
 l <- data$Lower
 u <- data$Upper
-earliest<-read.csv('PrePostComparison.csv', header=TRUE)
+earliest<-read.csv('./temp/PrePostComparison.csv', header=TRUE)
 MG<-earliest[,15]
 DM<-earliest[,10]+MG
 WR<-earliest[,11]+MG

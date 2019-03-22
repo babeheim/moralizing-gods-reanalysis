@@ -1,3 +1,4 @@
+library(rethinking)
 library(maps)
 library(plotrix)
 library(plyr) #(But maybe shouldn't load this when loading dplyr for confirmatory analyses) 

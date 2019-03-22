@@ -2,12 +2,14 @@
 rm(list = ls())
 source("../project_support.R")
 
-Vars <- as.matrix(read.csv('variables.csv', header=TRUE))
+dir_init("./temp")
+
+Vars <- as.matrix(read.csv('./input/variables.csv', header=TRUE))
 Vars <- Vars[Vars[,6]==Section1 | Vars[,6]==Section2 | Vars[,6]==Section3,] # Reduce the variables list to the Section set above
 
 Vars[,1] <- paste(Vars[,2],Vars[,1]) #Creating unique variable/section combinations
 
-polities <- read.csv('polities.csv', header=TRUE)
+polities <- read.csv('./input/polities.csv', header=TRUE)
 polities <- polities[polities$NGA != "Crete",] #### Remove new NGAs
 polities <- polities[polities$NGA != "Galilee",]
 polities <- polities[polities$NGA != "Middle Ganga",]
@@ -21,8 +23,8 @@ polities <- polities[polities$PolID != "InBritP",]
 polities <- polities[polities$PolID != "RuYakuL",]
 polities <- polities[polities$PolID != "UsIroqL",]
 
-write.csv(polities, file="polities.csv",  row.names=FALSE)
-polities <- read.csv('polities.csv', header=TRUE)
+write.csv(polities, file="./temp/polities.csv",  row.names=FALSE)
+polities <- read.csv('./temp/polities.csv', header=TRUE)
 NGAs <- levels(polities$NGA)
 
 nrep <- 20
@@ -40,13 +42,13 @@ for(irep in 1:nrep){
 
 ####### Remove polity-dates that didn't yield 20 repl #and post-colonial polities that couldn't be removed from multiple imputation due to bugs with only 1 polity/NGA
 
-polities <- read.csv('polities.csv', header=TRUE)
+polities <- read.csv('./temp/polities.csv', header=TRUE)
 polities <- polities[polities$PolID != "InGaroL",] #removing here because it caused bugs earlier
-write.csv(polities, file="polities.csv",  row.names=FALSE) 
+write.csv(polities, file="./temp/polities.csv",  row.names=FALSE) 
 polities <- polities[polities$PolID != "CnHChin",] #removing here because it caused bugs earlier
-write.csv(polities, file="polities.csv",  row.names=FALSE) 
+write.csv(polities, file="./temp/polities.csv",  row.names=FALSE) 
 polities <- polities[polities$PolID != "PgOrokL",] #removing here because it caused bugs earlier
-write.csv(polities, file="polities.csv",  row.names=FALSE) 
+write.csv(polities, file="./temp/polities.csv",  row.names=FALSE) 
 
 ImpDatRepl <- ImpDatRepl[ImpDatRepl$PolID != "InGaroL",] #removing here because it seemed to create bugs when you have only 1 polity in an NGA, so couldn't remove earlier
 ImpDatRepl <- ImpDatRepl[ImpDatRepl$PolID != "CnHChin",] #removing here because it seemed to create bugs when you have only 1 polity in an NGA, so couldn't remove earlier
@@ -70,9 +72,9 @@ for(i in 1:nrow(polities)){
 }
 ImpDatRepl <- dat_temp[dat_temp$irep!=-99999,]
 
-write.csv(ImpDatRepl, file="ImpDatRepl.csv",  row.names=FALSE)
+write.csv(ImpDatRepl, file="./temp/ImpDatRepl.csv",  row.names=FALSE)
 
 dir_init("./output")
 
-files <- c("./polities.csv", "./ImpDatRepl.csv", "./MIoutput.csv")
+files <- c("./temp/polities.csv", "./temp/ImpDatRepl.csv", "./temp/MIoutput.csv")
 file.copy(files, "./output")

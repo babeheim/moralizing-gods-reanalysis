@@ -1,6 +1,6 @@
 # Single Imputation function using stochastic regression 
 
-AggrDat <- read.table('MIAggrDat.csv', sep=",", header=TRUE)
+AggrDat <- read.table('./temp/MIAggrDat.csv', sep=",", header=TRUE)
 dat <- AggrDat[,5:13]
 dat[,1:3] <- log10(dat[,1:3])
 ImpDat <- dat

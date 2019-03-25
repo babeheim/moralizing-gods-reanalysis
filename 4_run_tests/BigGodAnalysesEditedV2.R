@@ -6,11 +6,13 @@ source("../project_support.R")
 
 dir_init("./temp")
 
+#library(plotrix)
+#setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
 polities <- read.csv('./input/polities.csv', header=TRUE)
 
 #New scripts for automated analysis of rates of change in social complexity pre/post moralising gods/doctrinal mode/writing
 
-dat <- read.table("./input/PC1_traj_merged.csv", sep=",", header=TRUE) # from 3_run_pca
+dat <- read.table("./input/PC1_traj_merged.csv", sep=",", header=TRUE)
 dat$NGA<-as.character(dat$NGA)
 NGAs <- levels(polities$NGA)
 NGAs <- NGAs[NGAs != "Crete"]    #### Remove new NGAs
@@ -20,8 +22,8 @@ NGAs <- NGAs[NGAs != "Galilee"]
 out <- matrix(NA, nrow=0, ncol=4)
 for(i in 1:length(NGAs)){
   dt <- dat[dat$NGA == NGAs[i],]
-  Earliest<-subset(dt,Time==min(Time))	
-  Latest<-subset(dt,Time==max(Time))	
+  Earliest<-subset(dt,Time==min(Time))  
+  Latest<-subset(dt,Time==max(Time))  
   MG<-subset(dt,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
   MGAppear<-subset(MG, Time==min(Time))
   rates<-cbind(MGAppear$NGA,(MGAppear$Mean-Earliest$Mean)/(MGAppear$Time-Earliest$Time),((Latest$Mean-MGAppear$Mean)/(Latest$Time-MGAppear$Time)),(MGAppear$End-MGAppear$Start))
@@ -128,34 +130,20 @@ NGAs <- levels(out$NGA)
 
 data <- matrix(NA, nrow=0, ncol=15)
 
-# error in this loop:
 for(i in 1:length(NGAs)){
-  if (sum(out$NGA == NGAs[i]) > 1) { # added b/c NGA = Cusco has only 1 observation, can't do t-test
-    dt <- out[out$NGA == NGAs[i],]
-    ot <- dat[dat$NGA == NGAs[i],]
-    MG<-subset(ot,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
-    #library(dplyr)
-    #MG<-as.data.frame(MG %>% group_by(PolID) %>% sample_n(size = 1)) #randomly samples so there is only one century per polity
-    MGAppear<-subset(MG, Time==min(Time))
-    DM<-subset(ot,DoctrinalMode=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
-    DMAppear<-subset(DM, Time==min(Time))
-    WR<-subset(ot,Writing=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
-    WRAppear<-subset(WR, Time==min(Time))
-    my.values<-c(NGAs[i], mean(dt[,3]), mean(dt[,2]),
-      1.96 * std.error(dt[,3]), 1.96 * std.error(dt[,2]),
-      t.test(dt[,3],dt[,2])$p.value,
-      t.test(dt[,3],dt[,2])$parameter, length(dt[,2]),
-      t.test(dt[,3],dt[,2])$statistic, DMAppear$Time - MGAppear$Time,
-      WRAppear$Time - MGAppear$Time,
-      MGAppear$End - MGAppear$Start,
-      DMAppear$End - DMAppear$Start,
-      WRAppear$End - WRAppear$Start,
-      MGAppear$Time
-    )
-    data <- rbind(data,my.values)
-  }
+  dt <- out[out$NGA == NGAs[i],]
+  ot <- dat[dat$NGA == NGAs[i],]
+  MG<-subset(ot,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+  #library(dplyr)
+  #MG<-as.data.frame(MG %>% group_by(PolID) %>% sample_n(size = 1)) #randomly samples so there is only one century per polity
+  MGAppear<-subset(MG, Time==min(Time))
+  DM<-subset(ot,DoctrinalMode=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+  DMAppear<-subset(DM, Time==min(Time))
+  WR<-subset(ot,Writing=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+  WRAppear<-subset(WR, Time==min(Time))
+  my.values<-c(NGAs[i],mean(dt[,3]),mean(dt[,2]),1.96*std.error(dt[,3]),1.96*std.error(dt[,2]),t.test(dt[,3],dt[,2])$p.value,t.test(dt[,3],dt[,2])$parameter,length(dt[,2]),t.test(dt[,3],dt[,2])$statistic, DMAppear$Time-MGAppear$Time,WRAppear$Time-MGAppear$Time,MGAppear$End-MGAppear$Start,DMAppear$End-DMAppear$Start,WRAppear$End-WRAppear$Start, MGAppear$Time)
+  data <- rbind(data,my.values)
 }
-
 colnames(data)<-c("NGA","PostRate","PreRate","PostConfInt","PreConfInt","p","df","n","t","PreMGRitual","PreMGWriting","RangeMGAppear","RangeDMAppear","RangeWRAppear","MGAppear")
 write.csv(data, file="./temp/PrePostComparison.csv",  row.names=FALSE)
 data<-read.table("./temp/PrePostComparison.csv", sep=",", header=TRUE)
@@ -171,8 +159,8 @@ print(t.test(data$PreMGRitual))
 out <- matrix(NA, nrow=0, ncol=0)
 for(i in 1:length(NGAs)){
   dt <- dat[dat$NGA == NGAs[i],]
-  Earliest<-subset(dt,Time==min(Time))	
-  Latest<-subset(dt,Time==max(Time))	
+  Earliest<-subset(dt,Time==min(Time))  
+  Latest<-subset(dt,Time==max(Time))  
   MG<-subset(dt,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
   MGAppear<-subset(MG, Time==min(Time))
   dt$Time.norm<-dt$Time-MGAppear$Time
@@ -385,3 +373,4 @@ polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) , c(subset(u,
 lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
 abline(h=h,lty=lty1)
 panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)), -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)), 1e6, col=c(col1,col3), border=NA)
+

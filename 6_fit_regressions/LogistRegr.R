@@ -3,6 +3,8 @@
 rm(list = ls())
 source("../project_support.R")
 
+dir_init("./temp")
+
 RegrDat <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
 
 RD1 <- RegrDat[is.na(RegrDat$Lag1) == FALSE,]
@@ -74,7 +76,7 @@ for (i in 1:nrow(d)) {
   d$pr_mg_ub[i] <- HPDI(has_mg)[2]
 }
 
-png("./replyfig.png", res = 300, height = 5, width = 10, units = "in")
+png("./temp/pred_comparison.png", res = 300, height = 5, width = 10, units = "in")
 
 par(mfrow = c(1, 2))
 

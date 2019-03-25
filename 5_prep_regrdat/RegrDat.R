@@ -1,28 +1,15 @@
-#Constructing RegrDat file for regression analyses
-#setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
 
 rm(list = ls())
 source("../project_support.R")
 
-# load("./HS.Rdata")
+dir_init("./temp")
+
+# load("./HS.Rdata") <- only DistMatrix was needed from this
 
 DistMatrix <- read.csv("./input/DistMatrix.csv", stringsAsFactors = FALSE)
 DistMatrix <- as.matrix(DistMatrix)
 colnames(DistMatrix) <- gsub("\\.", " ", colnames(DistMatrix))
 rownames(DistMatrix) <- colnames(DistMatrix)
-
-# this Rdata file contains:
-# "coords"     "DistMatrix" "NGAs"       "polities"   "RegrDat"
-
-# but polities is overwritten before being called
-# RegrDat is overwritten before being called
-# the DistMatrix is used!
-# NGAs and Coords are never used
-# so basically we just need the DistMatrix, not HS.Rdata!!
-
-dir_init("./temp")
-
-# polities here taken from impute_data...not! where did they change upstream??
 
 polities <- read.csv('./input/polities.csv', header=TRUE, stringsAsFactors = FALSE)
 # There is an issue with compatibility between my polities.csv file and
@@ -39,10 +26,15 @@ polities <- polities[polities$PolID != "TrOttm5",]
 polities <- polities[polities$PolID != "YeOttoL",] 
 write.csv(polities, file="./temp/polities.csv",  row.names=FALSE) 
 polities <- read.csv('./temp/polities.csv', header=TRUE, stringsAsFactors = FALSE)
-##
-data <- read.table("./input/PC1_traj_merged.csv", sep=",", header=TRUE, stringsAsFactors = FALSE) # from 3_run_pca
-data[is.na(data)] <- 0 #This treats NA values as 0. Should checek later to see how much this affects results
-data$MG<-data$MoralisingGods
+
+####
+
+data <- read.table("./input/PC1_traj_merged.csv",
+  sep=",", header=TRUE, stringsAsFactors = FALSE)
+
+data$MG_missing <- as.numeric(is.na(data$MG))
+data[is.na(data)] <- 0 
+# This treats NA values as 0. Should checek later to see how much this affects results
 
 refcols <- c("NGA", "PolID","Time","MG")
 data <- data[, c(refcols, setdiff(names(data), refcols))]

@@ -27,13 +27,13 @@ write.csv(polities, file="./temp/polities.csv",  row.names=FALSE)
 polities <- read.csv('./temp/polities.csv', header=TRUE)
 NGAs <- levels(polities$NGA)
 
-nrep <- 20
+nrep <- 3
 ImpDatRepl <- matrix(NA, nrow=0, ncol=0) 
 for(irep in 1:nrep){
   print(irep)
-  source("./code/ConstrMI.R")
-  source("./code/AggrMI.R")
-  source("./code/ImputeMI.R")
+  source("./code/1ConstrMI.R")
+  source("./code/2AggrMI.R")
+  source("./code/3ImputeMI.R")
   ones <- matrix(data=1,nrow=length(AggrDat[,1]),ncol=1)
   colnames(ones) <- "irep"
   ImpDat <- cbind(AggrDat[,1:4],ImpDat,(ones*irep),AggrDat[,14:32])

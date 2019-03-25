@@ -2,6 +2,11 @@
 rm(list = ls())
 source("../project_support.R")
 
+dir_init("./temp")
+
+library(viridis)
+library(dplyr)
+
 # visualize the missingness problem
 
 RegrDat <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
@@ -35,8 +40,6 @@ for (i in 1:length(NGAs)) {
     col = d$nga_col[my_rows], type = "l")
 }
 
-library(dplyr)
-
 d$mg_col <- case_when(
   d$MG == 1 ~ "black",
   d$MG == 0 ~ "white",
@@ -55,7 +58,7 @@ for (i in 1:length(NGAs)) {
   d$time_nga[my_rows] <- d$Time[my_rows] - min_year
 }
 
-png("test.png", res = 300, units = "in", height = 12, width = 16)
+png("./temp/Thirty.png", res = 300, units = "in", height = 12, width = 16)
 
 par(mfrow = c(5, 6))
 
@@ -98,7 +101,7 @@ NGA_keep <- NGAs[which(keep)]
 
 
 
-png("test2.png", res = 300, units = "in", height = 12, width = 8)
+png("./temp/Thirteen.png", res = 300, units = "in", height = 12, width = 8)
 
 par(mfrow = c(5, 3))
 
@@ -156,7 +159,7 @@ dev.off()
 
 NGA_keep <- c("North Colombia", "Big Island Hawaii", "Valley of Oaxaca", "Orkhon Valley", "Latium")
 
-png("test3.png", res = 300, units = "in", height = 4.8, width = 8)
+png("./temp/Five.png", res = 300, units = "in", height = 4.8, width = 8)
 
 par(mfrow = c(2, 3))
 
@@ -249,7 +252,7 @@ original_model <- alist(
 dm <- d[, c("MG", "Mean", "Lag1", "Lag2", "Phylogeny", "Space")]
 m1 <- map2stan(original_model, data = dm)
 
-
+save(m1, file = "./temp/m1.rdata")
 
 
 
@@ -286,10 +289,10 @@ revised_model <- alist(
 
 m2 <- map2stan(revised_model, data = dm)
 
+save(m2, file = "./temp/m2.rdata")
 
 
-
-png("./replyfig_stan.png", res = 300, height = 5, width = 10, units = "in")
+png("./temp/replyfig_stan.png", res = 300, height = 5, width = 10, units = "in")
 
 par(mfrow = c(1, 2))
 
@@ -578,10 +581,10 @@ for(i in 1:length(NGAs)) {
 
 nga_dat <- data.frame(NGA = NGAs, min_year_50, min_year_90)
 
-write.csv(nga_dat, "earliest_mg_estimates.csv", row.names = FALSE)
+write.csv(nga_dat, "./temp/earliest_mg_estimates.csv", row.names = FALSE)
 
 
-png("revised_EDfit1.png", res = 300, height = 8, width = 10, units = "in")
+png("./temp/revised_EDfit1.png", res = 300, height = 8, width = 10, units = "in")
 
 par(mfrow = c(3, 4))
 
@@ -595,24 +598,15 @@ for(i in 1:length(NGAs)) {
 
   polygon(c(dm$time_fa, rev(dm$time_fa)), c(dm$pr_mg_lb, rev(dm$pr_mg_ub)),
     border = NA, col = col.alpha("firebrick", 0.2))
-  # tar <- which(dm$hit == 1)
-  # points(dm$time_fa[tar], dm$pr_mg_lb[tar], pch = 20, col = "red")
   abline(h = 0.5, col = "red")
 }
 
 dev.off()
 
 
-# more than 90% sure more likely than not
-
-# now make that fukcing fig again
-
-
 
 rm(list = ls())
 source("../project_support.R")
-
-dir_init("./temp")
 
 polities <- read.csv('./input/polities.csv', header=TRUE)
 
@@ -811,7 +805,7 @@ out<-unique(dat$Time.norm)
 for(i in 1:length(NGAs)){
   dt <- dat[dat$NGA == NGAs[i],]
   out<-merge(out,dt[,c("Time.norm","Mean")],by.x="x",by.y="Time.norm",all=TRUE)
-  out<-rename(out, c("Mean" = NGAs[i]))
+  out<-plyr::rename(out, c("Mean" = NGAs[i]))
 }
 
 MeanPCs<-out[,2:(1+length(NGAs))]
@@ -876,7 +870,7 @@ col1<-rgb(0,0,0,max=255,alpha=50)
 #col2<-rgb(255,0,0,max=255,alpha=125)
 #col3<-rgb(0,255,0,max=255,alpha=125)
 
-png("revised_fig2.png", res = 300, height = 5, width = 5, units = "in")
+png("./temp/revised_fig2.png", res = 300, height = 5, width = 5, units = "in")
 
 plot(x, y, ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, yaxt=yaxt,type=type,xaxs=xaxs,yaxs=yaxs,
   main = "avg. emergence of MG by SC, no NA to 0", xlab = "years until first record of MG", ylab = "social complexity")
@@ -899,7 +893,7 @@ lines(x, l,type="l",lty="dotted")
 
 
 
-nga_dat <- read.csv("./earliest_mg_estimates.csv", stringsAsFactors = FALSE)
+nga_dat <- read.csv("./temp/earliest_mg_estimates.csv", stringsAsFactors = FALSE)
 
 min_year_50_mean <- mean(nga_dat$min_year_50)
 min_year_50_sd <- sd(nga_dat$min_year_50)/sqrt(nrow(nga_dat))

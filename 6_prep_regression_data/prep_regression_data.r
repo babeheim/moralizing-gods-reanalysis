@@ -1,6 +1,6 @@
 
 rm(list = ls())
-source("../project_support.R")
+source("../project_support.r")
 
 dir_init("./temp")
 
@@ -32,6 +32,7 @@ polities <- read.csv('./temp/polities.csv', header=TRUE, stringsAsFactors = FALS
 data <- read.table("./input/PC1_traj_merged.csv",
   sep=",", header=TRUE, stringsAsFactors = FALSE)
 
+data$MG <- data$MoralisingGods
 data$MG_missing <- as.numeric(is.na(data$MG))
 data[is.na(data)] <- 0 
 # This treats NA values as 0. Should checek later to see how much this affects results
@@ -116,3 +117,5 @@ colnames(RegrDat) <- nm
 dir_init("./output")
 
 write.csv(RegrDat, "./output/RegrDat.csv", row.names = FALSE)
+
+print("regression table RegrDat.csv created")

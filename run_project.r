@@ -1,0 +1,90 @@
+
+rm(list = ls())
+
+source("./project_support.r")
+
+dir_init("./1_precheck/input/")
+files <- c("./data/polities.csv", "./data/variables.csv", "./data/exportdat.csv")
+file.copy(files, "./1_precheck/input/")
+setwd("./1_precheck")
+source("precheck.r")
+setwd("..")
+
+dir_init("./2_impute_data/input/")
+files <- c("./data/polities.csv", "./data/variables.csv")
+files <- c(files, "./1_precheck/output/SCdat.csv")
+file.copy(files, "./2_impute_data/input/")
+setwd("./2_impute_data")
+source("./impute_data.r")
+setwd("..")
+
+dir_init("./3_run_pca/input")
+files <- c("./data/NGAcoords.csv")
+files <- c(files, "./2_impute_data/output/polities.csv",
+  "./2_impute_data/output/MIoutput.csv", "./2_impute_data/output/ImpDatRepl.csv")
+file.copy(files, "./3_run_pca/input/")
+setwd("./3_run_pca")
+source("./run_pca.r")
+setwd("..")
+
+dir_init("./4_prep_comparisons/input")
+files <- c("./2_impute_data/output/polities.csv")
+files <- c(files, "./3_run_pca/output/PC1_traj_merged.csv")
+file.copy(files, "./4_prep_comparisons/input/")
+setwd("./4_prep_comparisons")
+source("prep_comparisons.r")
+setwd("..")
+
+dir_init("./5_draw_figures/input")
+files <- c("./3_run_pca/output/PC1_traj_merged.csv")
+files <- c(files, "./4_prep_comparisons/output/PrePostComparison.csv")
+file.copy(files, "./5_draw_figures/input/")
+setwd("./5_draw_figures")
+source("draw_figures.r")
+setwd("..")
+
+dir_init("./6_prep_regression_data/input")
+files <- c("./data/DistMatrix.csv")
+files <- c(files, "./2_impute_data/output/polities.csv")
+files <- c(files, "./3_run_pca/output/PC1_traj_merged.csv")
+file.copy(files, "./6_prep_regression_data/input/")
+setwd("./6_prep_regression_data")
+source("prep_regression_data.r")
+setwd("..")
+
+dir_init("./7_fit_regressions/input")
+file.copy("./6_prep_regression_data/output/RegrDat.csv", "./7_fit_regressions/input/")
+setwd("./7_fit_regressions")
+source("fit_regressions.r")
+setwd("..")
+
+dir_init("./8_create_map/input")
+file.copy("./data/map.csv", "./8_create_map/input/")
+setwd("./8_create_map")
+source("create_map.r")
+setwd("..")
+
+# publication analysis above; reanalysis begins here
+
+dir_init("./9_draw_missingness/input")
+file.copy("./6_prep_regression_data/output/RegrDat.csv", "./9_draw_missingness/input/")
+setwd("./9_draw_missingness")
+source("draw_missingness.r")
+setwd("..")
+
+dir_init("./10_fit_new_regressions/input")
+file.copy("./6_prep_regression_data/output/RegrDat.csv", "./10_fit_new_regressions/input/")
+setwd("./10_fit_new_regressions")
+source("fit_new_regressions.r")
+setwd("..")
+
+dir_init("./11_draw_new_figures/input")
+file.copy("./4_prep_comparisons/output/PrePostComparison.csv", "./11_draw_new_figures/input/")
+file.copy("./5_draw_figures/output/SCNorm.csv", "./11_draw_new_figures/input/")
+file.copy("./6_prep_regression_data/output/RegrDat.csv", "./11_draw_new_figures/input/")
+file.copy("./10_fit_new_regressions/output/m1.rdata", "./11_draw_new_figures/input/")
+file.copy("./10_fit_new_regressions/output/m2.rdata", "./11_draw_new_figures/input/")
+setwd("./11_draw_new_figures")
+source("draw_new_figures.r")
+setwd("..")
+

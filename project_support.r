@@ -1,9 +1,17 @@
-library(rethinking)
 library(maps)
 library(plotrix)
-library(plyr) #(But maybe shouldn't load this when loading dplyr for confirmatory analyses) 
+library(dplyr)
+library(plyr) # manually call plyr::rename to avoid problems
+
+library(testthat)
+library(viridis)
+library(rethinking) # github.com/rmcelreath/rethinking
 
 set.seed(1234)
+
+# number of imputations in `2_impute_data`
+# this was 20 in the publication version
+nrep <- 5
 
 Section1 <- "Social Complexity variables"
 Section2 <- "Ritual variables"
@@ -31,10 +39,10 @@ dir_init <- function(path, verbose=FALSE, overwrite=TRUE){
 }
 
 col_alpha <- function (acol, alpha = 0.2){
-    acol <- col2rgb(acol)
-    acol.red <- acol["red",]/255
-    acol.green <- acol["green",]/255
-    acol.blue <- acol["blue",]/255
-    acol <- mapply(function(red, green, blue, alphas) rgb(red, green, blue, alphas), acol.red, acol.green, acol.blue, alpha)
-    return(as.character(acol))
+  acol <- col2rgb(acol)
+  acol.red <- acol["red",]/255
+  acol.green <- acol["green",]/255
+  acol.blue <- acol["blue",]/255
+  acol <- mapply(function(red, green, blue, alphas) rgb(red, green, blue, alphas), acol.red, acol.green, acol.blue, alpha)
+  return(as.character(acol))
 }

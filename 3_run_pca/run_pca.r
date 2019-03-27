@@ -1,6 +1,6 @@
 
 rm(list = ls())
-source("../project_support.R")
+source("../project_support.r")
 
 dir_init("./temp")
 
@@ -101,9 +101,8 @@ dat2 <- read.table("./input/polities.csv", sep=",", header=TRUE)
 dat <- merge(dat,dat2,by="PolID")
 dat2 <- read.table("./input/NGAcoords.csv", sep=",", header=TRUE)
 dat <- merge(dat,dat2,by.x="NGA.y",by.y="NGA")
-#library(plyr)
-dat<-rename(dat, c("NGA.y" = "NGA"))
-dat<-rename(dat, c("NGA.x" = "OriginalNGA"))
+dat<-plyr::rename(dat, c("NGA.y" = "NGA"))
+dat<-plyr::rename(dat, c("NGA.x" = "OriginalNGA"))
 dat<-dat[order(dat$NGA, dat$Time),]
 dat<-subset(dat,dat$Time>=dat$Start & dat$Time<=dat$End)
 write.csv(dat, file="./temp/PC1_traj_merged.csv",  row.names=FALSE)

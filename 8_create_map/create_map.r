@@ -1,4 +1,10 @@
-#setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/MoralizingGods")
+
+rm(list = ls())
+
+source("../project_support.r")
+
+dir_init("./temp")
+
 
 map<-read.csv("./input/map.csv",header=TRUE,row.names=1)
 x<-map$Longitude
@@ -16,6 +22,8 @@ map$kya[18]=".3"
 map$kya[17]=".5"
 map$kya[16]=".9"
 
+png("./temp/map.png", res = 300, height = 7, width = 10, units = "in")
+
 map("world", fill=TRUE, col="white", bg="lightblue", ylim=c(-60, 90), mar=c(0,0,0,0)) 
 points(subset(x,map$Religion=="Zoroastrianism"),subset(y,map$Religion =="Zoroastrianism"), bg="lightcoral", pch=21,cex=subset(z,map$Religion =="Zoroastrianism"))
 points(subset(x,map$Religion=="Abrahamic"),subset(y,map$Religion =="Abrahamic"), bg="orange", pch=21,cex=subset(z,map$Religion =="Abrahamic"))
@@ -32,3 +40,11 @@ ytop <- pos$rect[["top"]]
 ybottom <- ytop - pos$rect[["h"]]
 xright <- xleft + pos$rect[["w"]]
 rect(xleft, ybottom+2, xright, ytop+8)
+
+dev.off()
+
+dir_init("./output")
+
+file.copy("./temp/map.png", "./output")
+
+print("publication map created")

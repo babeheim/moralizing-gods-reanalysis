@@ -1,6 +1,6 @@
 
 rm(list = ls())
-source("../project_support.R")
+source("../project_support.r")
 
 dir_init("./temp")
 
@@ -27,7 +27,6 @@ write.csv(polities, file="./temp/polities.csv",  row.names=FALSE)
 polities <- read.csv('./temp/polities.csv', header=TRUE)
 NGAs <- levels(polities$NGA)
 
-nrep <- 3
 ImpDatRepl <- matrix(NA, nrow=0, ncol=0) 
 for(irep in 1:nrep){
   print(irep)
@@ -78,3 +77,5 @@ dir_init("./output")
 
 files <- c("./temp/polities.csv", "./temp/ImpDatRepl.csv", "./temp/MIoutput.csv")
 file.copy(files, "./output")
+
+print("multiple-imputation complete; ImpDatRepl.csv, MIoutput.csv created; polities.csv updated")

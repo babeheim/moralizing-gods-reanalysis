@@ -1,7 +1,7 @@
 
 rm(list = ls())
 
-source("../project_support.R")
+source("../project_support.r")
 
 # Checks Soc Complx data from exportdat.csv for error
 polities <- read.csv('./input/polities.csv', header=TRUE)
@@ -108,22 +108,4 @@ dir_init("./output")
 write.csv(errors, file="./output/errors.csv",  row.names=FALSE)
 write.csv(SCdat, file="./output/SCdat.csv",  row.names=FALSE)
 
-## Checks for polity inclusions
-#dat <- read.table('exportdat.csv', sep=",", header=TRUE, quote = "", colClasses = "character")
-#dat <- dat[dat$Section==Section,]
-#polities_wiki <- levels(as.factor(dat$Polity))
-#polities <- read.csv('polities.csv', header=TRUE)
-#polities <- polities[polities$Dupl=="n",]
-#polities <- levels(as.factor(polities$PolName))
-
-#extras <- vector(length=0)
-#for (i in 1:length(polities_wiki)){
-#   if(any(polities_wiki[i] == polities)==FALSE){extras <- c(extras, polities_wiki[i])}
-#}
-#missing <- vector(length=0)
-#for (i in 1:length(polities)){
-#   if(any(polities[i] == polities_wiki)==FALSE){missing <- c(missing, polities[i])}
-#}
-#write.csv(extras, file="extras.csv",  row.names=FALSE)
-#write.csv(missing, file="missing.csv",  row.names=FALSE)
-
+print("precheck complete; SCdat.csv and errors.csv created")

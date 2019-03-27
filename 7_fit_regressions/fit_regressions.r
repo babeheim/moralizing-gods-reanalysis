@@ -1,7 +1,7 @@
 
 
 rm(list = ls())
-source("../project_support.R")
+source("../project_support.r")
 
 dir_init("./temp")
 
@@ -92,8 +92,8 @@ print(paste(length(tar), "cases after lag1 = 0"))
 points(d$Mean[tar], d$pr_mg_mean[tar], pch = 16,
   col = col_alpha("black", 0.5))
 
-for (i in 1:length(tar)) lines(c(d$Mean[tar[i]], d$Mean[tar[i]]),
-  c(d$pr_mg_lb[tar[i]], d$pr_mg_ub[tar[i]]))
+# for (i in 1:length(tar)) lines(c(d$Mean[tar[i]], d$Mean[tar[i]]),
+#   c(d$pr_mg_lb[tar[i]], d$pr_mg_ub[tar[i]]))
 
 
 
@@ -251,8 +251,10 @@ print(paste(length(tar), "cases with same IDs in new version"))
 points(d$Mean[tar], d$pr_mg_mean[tar], pch = 16,
   col = col_alpha("black", 0.5))
 
-for (i in 1:length(tar)) lines(c(d$Mean[tar[i]], d$Mean[tar[i]]),
-  c(d$pr_mg_lb[tar[i]], d$pr_mg_ub[tar[i]]))
+# for (i in 1:length(tar)) lines(c(d$Mean[tar[i]], d$Mean[tar[i]]),
+#   c(d$pr_mg_lb[tar[i]], d$pr_mg_ub[tar[i]]))
 
 dev.off()
 
+
+print("regressions fit")

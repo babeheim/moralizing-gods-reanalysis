@@ -39,7 +39,7 @@ out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 out$Difference<-out[,2]-out[,3]
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-all(dim(out) == c(20, 5))
+expect_equal(dim(out), c(20, 5))
 
 #Full time windows (up to 10,000 years before and after moralizing gods)
 NGAs <- levels(out$NGA)
@@ -85,7 +85,7 @@ dim(out)
 
 write.csv(out, file="./temp/EqualRates.csv",  row.names=FALSE)
 
-all(dim(out) == c(399, 7))
+expect_equal(dim(out), c(399, 7))
 
 #bar chart paired
 png("./temp/rate_of_increase.png", res = 300, units = "in", height = 5, width = 8)
@@ -147,7 +147,18 @@ data$Difference<-data[,2]-data[,3]
 data[,c(2:5,16)]<-data[,c(2:5,16)]*1000
 write.csv(data, file="./temp/PrePostComparison.csv", row.names=FALSE)
 
-all(dim(data) == c(12, 16))
+expect_equal(dim(data), c(12, 16))
+
+NGA_column <- c(
+  "Deccan",                    "Kachi Plain",              
+  "Kansai",                    "Konya Plain",              
+  "Latium",                    "Middle Yellow River Valley",
+  "Niger Inland Delta",        "Orkhon Valley",            
+  "Paris Basin",               "Sogdiana",                 
+  "Susiana",                   "Upper Egypt"
+)
+
+expect_equal(as.character(data$NGA), NGA_column)
 
 #Test signifiance of doctrinal ritual preceding moralizing gods
 print(t.test(data$PreMGRitual))

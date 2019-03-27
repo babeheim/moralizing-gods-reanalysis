@@ -24,7 +24,7 @@ map$kya[16]=".9"
 
 png("./temp/map.png", res = 300, height = 7, width = 10, units = "in")
 
-map("world", fill=TRUE, col="white", bg="lightblue", ylim=c(-60, 90), mar=c(0,0,0,0)) 
+maps::map("world", fill=TRUE, col="white", bg="lightblue", ylim=c(-60, 90), mar=c(0,0,0,0)) 
 points(subset(x,map$Religion=="Zoroastrianism"),subset(y,map$Religion =="Zoroastrianism"), bg="lightcoral", pch=21,cex=subset(z,map$Religion =="Zoroastrianism"))
 points(subset(x,map$Religion=="Abrahamic"),subset(y,map$Religion =="Abrahamic"), bg="orange", pch=21,cex=subset(z,map$Religion =="Abrahamic"))
 points(subset(x,map$Religion=="Buddhism"),subset(y,map$Religion =="Buddhism"), bg="dodgerblue", pch=21,cex=subset(z,map$Religion =="Buddhism"))

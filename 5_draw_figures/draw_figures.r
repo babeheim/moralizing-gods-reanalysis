@@ -189,8 +189,7 @@ SCNorm$Lower <- SCNorm$Mean - 1.96*apply(MeanPCs,1, std.error,na.rm=TRUE)
 SCNorm$Upper <- SCNorm$Mean + 1.96*apply(MeanPCs,1, std.error,na.rm=TRUE)
 write.csv(SCNorm, file="./temp/SCNorm.csv",  row.names=FALSE) 
 
-all(dim(SCNorm) == c(127, 16))
-
+expect_equal(dim(SCNorm), c(127, 16))
 
 # plot main averaged figure
 

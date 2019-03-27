@@ -108,4 +108,7 @@ dir_init("./output")
 write.csv(errors, file="./output/errors.csv",  row.names=FALSE)
 write.csv(SCdat, file="./output/SCdat.csv",  row.names=FALSE)
 
+expect_equal(dim(SCdat), c(19427, 10))
+expect_equal(dim(errors), c(20, 10))
+
 print("precheck complete; SCdat.csv and errors.csv created")

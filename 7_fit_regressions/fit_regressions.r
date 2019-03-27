@@ -13,6 +13,9 @@ RD2 <- RD1[is.na(RD1$Lag2) == FALSE,]
 ## replaced this line with an explicit call
 LogistRegrDat <- RD2[,c("NGA", "Time", "MG", "Mean", "Lag1", "Lag2", "Phylogeny", "Space", "MG_missing")]
 
+expect_equal(dim(LogistRegrDat), c(801, 6 + 3)) # NGA, Time, MG_missing added
+expect_equal(sum(is.na(LogistRegrDat[,1])), 0)
+
 ##### Logistic Regression 
 ## dat = 1st column response variable (binary), subsequent columns predictors
 
@@ -27,6 +30,11 @@ appearances <- d$key[which(d$Lag1 == 0)] # preserve these cases for comparison
 reslt <- glm(MG ~ Mean + Lag1 + Lag2 + Phylogeny + Space, data = d, family=binomial(link='logit'))
 
 summary(reslt)
+
+# use loose thresholds here
+expect_true(abs(as.numeric(logLik(reslt)) - (-79)) < 1)
+expect_true(abs(coef(reslt)[1] - (-7.9)) < 0.15)
+expect_true(abs(coef(reslt)[2] - (9.9)) < 0.1)
 
 # make a plot to show its the same as what's about to come next
 

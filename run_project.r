@@ -64,7 +64,7 @@ setwd("./8_create_map")
 source("create_map.r")
 setwd("..")
 
-# publication analysis above; reanalysis begins here
+# publication analysis above; bret's reanalysis begins here
 
 dir_init("./9_draw_missingness/input")
 file.copy("./6_prep_regression_data/output/RegrDat.csv", "./9_draw_missingness/input/")

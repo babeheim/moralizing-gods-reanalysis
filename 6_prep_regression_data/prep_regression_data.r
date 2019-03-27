@@ -32,6 +32,12 @@ polities <- read.csv('./temp/polities.csv', header=TRUE, stringsAsFactors = FALS
 data <- read.table("./input/PC1_traj_merged.csv",
   sep=",", header=TRUE, stringsAsFactors = FALSE)
 
+expect_equal(dim(data), c(864, 49))
+expect_equal(length(unique(data$NGA)), 30)
+expect_equal(sum(is.na(data$MoralisingGods)), 528)
+expect_equal(sum(is.na(data$MoralisingHighGods)), 513)
+expect_equal(sum(is.na(data$GeneralMoralisticPunishment)), 545)
+
 data$MG <- data$MoralisingGods
 data$MG_missing <- as.numeric(is.na(data$MG))
 data[is.na(data)] <- 0 
@@ -54,6 +60,10 @@ for(i in 3:nrow(dat)){
   if(dat$Time[i] == dat$Time[i-2]+200){dat$Lag2[i] <- dat$MG[i-2]}
 }
 RegrDat <- dat
+
+expect_equal(dim(RegrDat), c(864, 52 + 1)) # i added MG_missing
+expect_equal(sum(is.na(RegrDat$Lag1)), c(32))
+expect_equal(sum(is.na(RegrDat$Lag2)), c(63))
 
 #### Calculate Space using the estimated d = 1000 km (suggested by Peter Turchin as default because this is approximate average distance between NGAs)
 dpar <- 1000
@@ -84,6 +94,8 @@ nm <- colnames(RegrDat)
 nm[length(nm)] <- "Space"
 colnames(RegrDat) <- nm
 
+expect_true(abs(mean(RegrDat$Space) - 0.2) < 0.01)
+
 #### Calculate Language = matrix of linguistic distances
 Phylogeny <- RegrDat[,1:4]
 Phylogeny[,4] <- NA
@@ -113,6 +125,8 @@ RegrDat <- cbind(RegrDat,Phylogeny$Phylogeny)
 nm <- colnames(RegrDat)
 nm[length(nm)] <- "Phylogeny"
 colnames(RegrDat) <- nm
+
+expect_true(abs(mean(RegrDat$Phylogeny) - 0.032) < 0.0003)
 
 dir_init("./output")
 

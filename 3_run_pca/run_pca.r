@@ -27,6 +27,10 @@ write.csv(PC1, file="./temp/PC1.csv",  row.names=FALSE)
 write.csv(Rotations, file="./temp/Rotations.csv",  row.names=TRUE)
 write.csv(PropVar, file="./temp/PropVar.csv",  row.names=FALSE)
 
+expect_equal(dim(PC1), c(414, nrep))
+expect_equal(dim(Rotations), c(9 * nrep, 9))
+expect_equal(dim(PropVar), c(nrep, 9))
+
 # all look right
 
 #rm(AggrDat, ImpDat, PCA, res)
@@ -65,7 +69,7 @@ dat <- dt
 
 write.csv(dat, file="./temp/PC1_traj.csv",  row.names=FALSE)
 
-# still good
+expect_equal(dim(dat), c(817, 36))
 
 
 ################################################
@@ -73,6 +77,8 @@ write.csv(dat, file="./temp/PC1_traj.csv",  row.names=FALSE)
 ### Graphs PCA results for Figure 3 of the PCA article. (see Figure3.R for more code) 
 ###    and for the Suppl Materials: all regions
 #setwd("C:/Users/Peter Turchin/Google Drive/2.Seshat/1.R/PCA-MI")
+
+png("./temp/figure3.png", units = "in", height = 5, width = 8, res = 300)
 dat <- read.table("./temp/PC1_traj.csv", sep=",", header=TRUE)
 NGAs <- c("Upper Egypt","Middle Yellow River Valley")
 
@@ -94,6 +100,8 @@ for(j in 1:length(NGAs)){
   #   text(x=x_ends[1], y=(y_ends[2] - .5*j), NGA, col=colors[j], pos=4)
 }
 
+dev.off()
+
 ################################################
 #Merge PC1_traj.csv with other key info
 dat <- read.table("./temp/PC1_traj.csv", sep=",", header=TRUE)
@@ -106,6 +114,8 @@ dat<-plyr::rename(dat, c("NGA.x" = "OriginalNGA"))
 dat<-dat[order(dat$NGA, dat$Time),]
 dat<-subset(dat,dat$Time>=dat$Start & dat$Time<=dat$End)
 write.csv(dat, file="./temp/PC1_traj_merged.csv",  row.names=FALSE)
+
+expect_equal(dim(dat), c(864, 49))
 
 dir_init("./output")
 

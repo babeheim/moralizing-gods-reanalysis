@@ -23,13 +23,19 @@ polities <- polities[polities$PolID != "InBritP",]
 polities <- polities[polities$PolID != "RuYakuL",]
 polities <- polities[polities$PolID != "UsIroqL",]
 
+expect_equal(dim(polities), c(335, 11))
+
 write.csv(polities, file="./temp/polities.csv",  row.names=FALSE)
 polities <- read.csv('./temp/polities.csv', header=TRUE)
 NGAs <- levels(polities$NGA)
 
+expect_equal(length(NGAs), 30)
+
+# `nrep` (number of imputations) now defined in project_support.r
+
 ImpDatRepl <- matrix(NA, nrow=0, ncol=0) 
 for(irep in 1:nrep){
-  print(irep)
+  print(paste("imputation", irep))
   source("./code/1ConstrMI.R")
   source("./code/2AggrMI.R")
   source("./code/3ImputeMI.R")
@@ -38,6 +44,8 @@ for(irep in 1:nrep){
   ImpDat <- cbind(AggrDat[,1:4],ImpDat,(ones*irep),AggrDat[,14:32])
   ImpDatRepl <- rbind(ImpDatRepl,ImpDat)
 }
+
+expect_equal(dim(ImpDatRepl), c(417 * nrep, 33))
 
 ####### Remove polity-dates that didn't yield 20 repl #and post-colonial polities that couldn't be removed from multiple imputation due to bugs with only 1 polity/NGA
 
@@ -48,6 +56,8 @@ polities <- polities[polities$PolID != "CnHChin",] #removing here because it cau
 write.csv(polities, file="./temp/polities.csv",  row.names=FALSE) 
 polities <- polities[polities$PolID != "PgOrokL",] #removing here because it caused bugs earlier
 write.csv(polities, file="./temp/polities.csv",  row.names=FALSE) 
+
+expect_equal(dim(polities), c(332, 11))
 
 ImpDatRepl <- ImpDatRepl[ImpDatRepl$PolID != "InGaroL",] #removing here because it seemed to create bugs when you have only 1 polity in an NGA, so couldn't remove earlier
 ImpDatRepl <- ImpDatRepl[ImpDatRepl$PolID != "CnHChin",] #removing here because it seemed to create bugs when you have only 1 polity in an NGA, so couldn't remove earlier
@@ -72,6 +82,9 @@ for(i in 1:nrow(polities)){
 ImpDatRepl <- dat_temp[dat_temp$irep!=-99999,]
 
 write.csv(ImpDatRepl, file="./temp/ImpDatRepl.csv",  row.names=FALSE)
+
+# 8280 rows in the original analysis, but it changes with nrep
+# expect_equal(dim(ImpDatRepl), c(8280, 33))
 
 dir_init("./output")
 

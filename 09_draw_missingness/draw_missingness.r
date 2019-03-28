@@ -5,15 +5,35 @@ source("../project_support.r")
 dir_init("./temp")
 
 
+# explore the missingness patterns
+
+d <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
+
+d$MG_known <- 1 - d$MG_missing
+
+m1 <- lm(PolPop ~ MG_known, data = d)
+
+10^(coef(m1)[1] + coef(m1)[2] * 1) # 2.9 million people
+10^(coef(m1)[1] + coef(m1)[2] * 0) # 7000 ppl
+
+m2 <- glm(Writing ~ MG_known, data = d, family = "binomial")
+
+logistic(coef(m2)[1] + coef(m2)[2]) # 0.92
+logistic(coef(m2)[1]) # 0.16
+exp(coef(m2)[2]) # OR: 64
+
+m3 <- lm(d$PolPop ~ d$Mean, data = d)
+
+10^(coef(m1)[1] + coef(m1)[2] * 0.2) # 23k
+10^(coef(m1)[1] + coef(m1)[2] * 0.4) # 78k
+10^(coef(m1)[1] + coef(m1)[2] * 0.6) # 260k
+
+
 # visualize the missingness problem
-
-RegrDat <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
-
-d <- RegrDat
 
 d$MG[d$MG_missing == 1] <- NA
 
-NGAs <- sort(unique(RegrDat$NGA))
+NGAs <- sort(unique(d$NGA))
 nga_col <- viridis(length(NGAs))
 
 d$nga_col <- nga_col[match(d$NGA, NGAs)]

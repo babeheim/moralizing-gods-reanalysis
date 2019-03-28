@@ -10,7 +10,7 @@ library(rethinking) # github.com/rmcelreath/rethinking
 set.seed(1234)
 
 # number of imputations in `2_impute_data`
-nrep <- 20
+nrep <- 5
 # this was 20 in the publication version
 
 Section1 <- "Social Complexity variables"

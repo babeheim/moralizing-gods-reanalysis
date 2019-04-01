@@ -4,12 +4,50 @@ source("../project_support.r")
 
 dir_init("./temp")
 
-
 # explore the missingness patterns
 
 d <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
 
 d$MG_known <- 1 - d$MG_missing
+
+d$MG_code <- case_when(
+  d$MG_known == 1 & d$MG == 1 ~ 3,
+  d$MG_known == 1 & d$MG == 0 ~ 2,
+  d$MG_known == 0 ~ 1
+)
+
+# a barbell plot
+
+png("./temp/barbell.png", res = 300, units = "in", height = 5, width = 6)
+
+plot(1, 1, type = "n", xlim = c(0.5, 3.5), ylim = c(0, 1),
+  frame.plot = FALSE, ylab = "social complexity", xaxt = "n",
+  xlab = "'moralizing gods' status")
+
+abline(h = seq(0, 1, 0.2), col = "gray")
+
+axis(1, at = c(1, 2, 3), col = NA, col.ticks = NA,
+  labels = c("\nunknown\nn=490", "\nabsent\nn=12", "\npresent\nn=311"))
+
+d$MG_col <- ifelse(d$MG == 1, "firebrick", "dodgerblue")
+
+boxplot(Mean ~ MG_code, data = d, add = TRUE, ann = FALSE,
+  frame.plot = FALSE, axes = FALSE, outline = FALSE, col = "white")
+
+tar <- which(d$MG_known == 0)
+points(1 + density_offset(d$Mean[tar], scale = 0.15), d$Mean[tar], pch = 16,
+  col = col.alpha("gray", 0.5))
+tar <- which(d$MG_known == 1 & d$MG == 0)
+points(2 + density_offset(d$Mean[tar], scale = 0.09), d$Mean[tar], pch = 16,
+  col = col_alpha(d$MG_col[tar], 0.8))
+tar <- which(d$MG_known == 1 & d$MG == 1)
+points(3 + density_offset(d$Mean[tar], scale = 0.15), d$Mean[tar], pch = 16,
+  col = col_alpha(d$MG_col[tar], 0.8))
+
+dev.off()
+
+
+# calc missingness patterns
 
 m1 <- lm(PolPop ~ MG_known, data = d)
 
@@ -142,7 +180,6 @@ lines(symbol_line + c(-0.3, 0.3), c(symbol_anchor, symbol_anchor) - 4)
 text(symbol_line + 0.5, symbol_anchor - 4, "no data on moralizing gods", pos = 4)
 # points(symbol_line, symbol_anchor - 4, col = col.alpha("gray", 0.8), pch = 1)
 
-
 for (i in 1:length(NGA_keep)) {
 
   my_rows <- which(d$NGA == NGA_keep[i])
@@ -173,7 +210,7 @@ for (i in 1:length(NGA_keep)) {
 
 dev.off()
 
-# subset to a representative **8** for discussion
+# subset to a representative 5 for discussion
 
 NGA_keep <- c("North Colombia", "Big Island Hawaii", "Valley of Oaxaca", "Orkhon Valley", "Latium")
 
@@ -200,8 +237,6 @@ lines(symbol_line + c(-0.3, 0.3), c(symbol_anchor, symbol_anchor) - 4)
 text(symbol_line + 0.5, symbol_anchor - 4, "no data on moralizing gods", pos = 4)
 points(symbol_line, symbol_anchor - 4, col = col.alpha("gray", 0.8), pch = 1)
 
-
-
 for (i in 1:length(NGA_keep)) {
 
   my_rows <- which(d$NGA == NGA_keep[i])
@@ -231,8 +266,3 @@ for (i in 1:length(NGA_keep)) {
 }
 
 dev.off()
-
-# this should be its own step...mb in the script that creates regrdat
-
-
-

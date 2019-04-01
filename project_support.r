@@ -7,6 +7,8 @@ library(testthat)
 library(viridis)
 library(rethinking) # github.com/rmcelreath/rethinking
 
+library(rmarkdown)
+
 set.seed(1234)
 
 # number of imputations in `2_impute_data`
@@ -45,4 +47,12 @@ col_alpha <- function (acol, alpha = 0.2){
   acol.blue <- acol["blue",]/255
   acol <- mapply(function(red, green, blue, alphas) rgb(red, green, blue, alphas), acol.red, acol.green, acol.blue, alpha)
   return(as.character(acol))
+}
+
+density_offset <- function(y, scale = 1) {
+  dens <- density(y)
+  y_dens <- sapply(y, function(z) dens$y[which.min(abs(z - dens$x))])
+  y_dens <- y_dens / max(y_dens)
+  y_offset <- rnorm(length(y), 0, sd = scale * sqrt(y_dens))
+  return(y_offset)
 }

@@ -5,33 +5,18 @@ source("../project_support.r")
 
 dir_init("./temp")
 
-
-# tapply(d$PolPop, d$MG_missing, mean)
-# tapply(d$Writing, d$MG_missing, mean)
-# tapply(d$Money, d$MG_missing, mean)
-
-# 92% of present had writing
-# (the remaining were documented by visitors)
-# 84% of the missingness were pre-literate
-
-# states w/o data avg was 375,000
-# states with data avg pop of 1.7 million
-
-# 
-
-# or were these values made up too??
-
-# the NAs are a problem here too, aren't they?
-
 # now plot
 
 load("./input/m1.rdata")
 
 d <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
 
+# add centering
+d$Mean_c <- d$Mean - 0.5
+
 post <- extract.samples(m1)
 
-scs <- seq(0, 1, by = 0.01)
+scs <- seq(0, 1, by = 0.01) - 0.5
 
 has_mg_mean <- rep(NA, length(scs))
 has_mg_sd <- rep(NA, length(scs))
@@ -59,7 +44,7 @@ for (i in 1:nrow(d)) {
       post$a +
       post$b_l1 * d$Lag1[i] +
       post$b_l2 * d$Lag2[i] +
-      post$b_sc * d$Mean[i] +
+      post$b_sc * d$Mean_c[i] +
       post$b_sp * d$Space[i] +
       post$b_ph * d$Phylogeny[i]
     )
@@ -70,8 +55,7 @@ for (i in 1:nrow(d)) {
   }
 }
 
-
-
+has_mg_mean_m1 <- has_mg_mean
 
 png("./temp/m1_predictions_missingness.png", res = 300, height = 5, width = 5, units = "in")
 
@@ -81,14 +65,15 @@ plot(scs, has_mg_mean, ylim = c(0, 1), type = "l",
 polygon(c(scs, rev(scs)), c(has_mg_ub, rev(has_mg_lb)),
   border = NA, col = col.alpha("dodgerblue", 0.2))
 
-axis(1, at = seq(0, 1, by = 0.2),
+axis(1, at = seq(0, 1, by = 0.2) - 0.5,
   labels = seq(0, 1, by = 0.2))
 
 tar <- which(d$MG_missing == 1)
-for (i in 1:length(tar)) lines(c(d$Mean[tar[i]], d$Mean[tar[i]]),
+
+for (i in 1:length(tar)) lines(c(d$Mean_c[tar[i]], d$Mean_c[tar[i]]),
   c(d$pr_mg_lb[tar[i]], d$pr_mg_ub[tar[i]]), col = col.alpha("dodgerblue", 0.05))
 
-points(d$Mean[tar], d$pr_mg_mean[tar], pch = 16, col = "dodgerblue", cex = 0.6)
+points(d$Mean_c[tar], d$pr_mg_mean[tar], pch = 16, col = "dodgerblue", cex = 0.6)
 
 
 # now add missingness plot picture-in-picture
@@ -96,12 +81,12 @@ points(d$Mean[tar], d$pr_mg_mean[tar], pch = 16, col = "dodgerblue", cex = 0.6)
 ## add interior plot
 
 ## bounding box of interior figure
-xmin <- 0.15
-xmax <- 0.62
+xmin <- 0.15 - 0.5
+xmax <- 0.62 - 0.5
 ymin <- 0.45
 ymax <- 0.95
 
-rect(xmin, xmax, ymin, ymax, border = NA, col = "white")
+rect(xmin, ymin, xmax, ymax, border = NA, col = "white")
 
 # prep variables on the new scale
 
@@ -162,7 +147,7 @@ load("./input/m2.rdata")
 
 d <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
 
-# 17 "0s", 319 "1s"
+d$Mean_c <- d$Mean - 0.5
 
 NGAs <- c(
   "Big Island Hawaii",         "Cambodian Basin",          
@@ -180,9 +165,6 @@ NGAs <- c(
   "Upper Egypt",               "Yemeni Coastal Plain"    
 )
 
-# center social complexity at 0.5
-d$Mean_c <- d$Mean - 0.5
-
 post <- extract.samples(m2)
 
 scs <- seq(0, 1, by = 0.01) - 0.5
@@ -193,7 +175,11 @@ has_mg_lb <- rep(NA, length(scs))
 has_mg_ub <- rep(NA, length(scs))
 
 for (i in 1:length(scs)) {
-  has_mg <- logistic(post$a + post$b_sc * scs[i])
+  logit_p <- post$a +
+    post$b_sc * scs[i] +
+    post$b_sp * 0.091 +
+    post$b_ph * 0.003
+  has_mg <- logistic(logit_p)
   has_mg_mean[i] <- mean(has_mg)
   has_mg_sd[i] <- sd(has_mg)
   has_mg_lb[i] <- HPDI(has_mg)[1]
@@ -208,7 +194,7 @@ d$pr_mg_ub <- NA
 for (i in 1:nrow(d)) {
   if(d$NGA[i] %in% NGAs) {
     nga <- match(d$NGA[i], NGAs)
-    nga_offset <- post$a[nga]
+    nga_offset <- post$a_nga[, nga]
   } else {
     nga_offset <- 0
   }
@@ -230,15 +216,15 @@ for (i in 1:nrow(d)) {
 
 # calculate "time of first appearance" and subtract off
 
-NGAs <- c("Upper Egypt", "Susiana", "Konya Plain",
+NGA_short <- c("Upper Egypt", "Susiana", "Konya Plain",
   "Middle Yellow River Valley", "Kachi Plain", "Sogdiana",
   "Latium", "Deccan", "Paris Basin", "Orkhon Valley", 
   "Kansai", "Niger Inland Delta")
 
 d$time_fa <- NA
 
-for (i in 1:length(NGAs)) {
-  my_rows <- which(d$NGA == NGAs[i])
+for (i in 1:length(NGA_short)) {
+  my_rows <- which(d$NGA == NGA_short[i])
   my_first_mg_row <- my_rows[min(which(d$MG[my_rows] == 1))]
   d$time_fa[my_rows] <- d$Time[my_rows] - d$Time[my_first_mg_row]
 }
@@ -247,13 +233,13 @@ png("./temp/revised_EDfit1.png", res = 300, height = 8, width = 10, units = "in"
 
 par(mfrow = c(3, 4))
 
-for(i in 1:length(NGAs)) {
-  dm <- d[which(d$NGA == NGAs[i]),]
+for(i in 1:length(NGA_short)) {
+  dm <- d[which(d$NGA == NGA_short[i]),]
   plot(dm$time_fa, dm$pr_mg_mean, ylim = c(0, 1),
     xlim = c(-4000, 100), type = "l",
     xlab ="years before first apperance", 
     ylab = "pr(moralizing gods present)",
-    main = NGAs[i])
+    main = NGA_short[i])
 
   polygon(c(dm$time_fa, rev(dm$time_fa)), c(dm$pr_mg_lb, rev(dm$pr_mg_ub)),
     border = NA, col = col.alpha("firebrick", 0.2))
@@ -263,9 +249,9 @@ for(i in 1:length(NGAs)) {
 dev.off()
 
 
-# now show the predictions for the missing values
+# now show the predictions for all missing values
 
-drop <- which(dm$MG_missing == 0)
+drop <- which(d$MG_missing == 0)
 dm <- d[-drop, ]
 
 png("./temp/m2_missingness_predictions.png", res = 300, height = 5, width = 5, units = "in")
@@ -278,85 +264,105 @@ polygon(c(scs, rev(scs)), c(has_mg_ub, rev(has_mg_lb)),
 
 axis(1, at = seq(0, 1, by = 0.2) - 0.5, labels = seq(0, 1, by = 0.2))
 
-for (i in 1:nrow(dm)) lines(c(dm$Mean_c[i], dm$Mean_c[i]),
-  c(dm$pr_mg_lb[i], dm$pr_mg_ub[i]), col = col.alpha("black", 0.05))
+# for (i in 1:nrow(dm)) lines(c(dm$Mean_c[i], dm$Mean_c[i]),
+#   c(dm$pr_mg_lb[i], dm$pr_mg_ub[i]), col = col.alpha("black", 0.05))
+
 points(dm$Mean_c, dm$pr_mg_mean, pch = 16, col = "black", cex = 0.6)
+
+points(scs, has_mg_mean_m1, col = "gray", type = "l", lty = 2)
 
 dev.off()
 
 
 
+
 # define the evidence threshold for "first appearance" analysis
 
+
+NGAs <- c(
+  "Big Island Hawaii",         "Cambodian Basin",          
+  "Central Java",              "Chuuk Islands",            
+  "Cuzco",                     "Deccan",                   
+  "Garo Hills",                "Ghanaian Coast",           
+  "Iceland",                   "Kachi Plain",              
+  "Kansai",                    "Kapuasi Basin",            
+  "Konya Plain",               "Latium",                   
+  "Lena River Valley",         "Lowland Andes",            
+  "Middle Yellow River Valley","Niger Inland Delta",       
+  "North Colombia",            "Orkhon Valley",            
+  "Oro PNG",                   "Paris Basin",              
+  "Sogdiana",                  "Susiana",                  
+  "Upper Egypt",               "Yemeni Coastal Plain"    
+)
+
+
+drop <- which(d$MG_missing == 0 | d$time_fa > 0)
+dm <- d[-drop, ]
+
 pr_threshold <- 0.5
-density_threshold <- 0.97
+density_threshold <- 0.8
 
-d$hit <- NA
+dm$hit <- NA
 
-for (i in 1:nrow(d)) {
-  if(d$NGA[i] %in% NGAs) {
-    nga <- match(d$NGA[i], NGAs)
-    nga_offset <- post$a[nga]
+for (i in 1:nrow(dm)) {
+  if(dm$NGA[i] %in% NGAs) {
+    nga <- match(dm$NGA[i], NGAs)
+    nga_offset <- post$a_nga[, nga]
   } else {
     nga_offset <- 0
   }
   has_mg <- logistic(
     post$a +
     nga_offset +
-    post$b_sc * d$Mean_c[i] +
-    post$b_sp * d$Space[i] +
-    post$b_ph * d$Phylogeny[i]
+    post$b_sc * dm$Mean_c[i] +
+    post$b_sp * dm$Space[i] +
+    post$b_ph * dm$Phylogeny[i]
   )
-  d$hit[i] <- mean(has_mg > pr_threshold) > density_threshold
+  dm$hit[i] <- mean(has_mg > pr_threshold) > density_threshold
 }
 
 min_year_50 <- rep(NA, length(NGAs))
 
 for(i in 1:length(NGAs)) {
-  dm <- d[which(d$NGA == NGAs[i]),]
-  min_year_50[i] <- min(dm$time_fa[dm$hit == 1])
+  dn <- dm[which(dm$NGA == NGAs[i]),]
+  if (any(dn$hit == 1)) min_year_50[i] <- min(dn$time_fa[dn$hit == 1])
 }
 
-
-
 pr_threshold <- 0.9
-density_threshold <- 0.97
+density_threshold <- 0.9
 
-d$hit <- NA
+dm$hit <- NA
 
-for (i in 1:nrow(d)) {
-  if(d$NGA[i] %in% NGAs) {
-    nga <- match(d$NGA[i], NGAs)
-    nga_offset <- post$a[nga]
+for (i in 1:nrow(dm)) {
+  if(dm$NGA[i] %in% NGAs) {
+    nga <- match(dm$NGA[i], NGAs)
+    nga_offset <- post$a_nga[, nga]
   } else {
     nga_offset <- 0
   }
   has_mg <- logistic(
     post$a +
     nga_offset +
-    post$b_sc * d$Mean_c[i] +
-    post$b_sp * d$Space[i] +
-    post$b_ph * d$Phylogeny[i]
+    post$b_sc * dm$Mean_c[i] +
+    post$b_sp * dm$Space[i] +
+    post$b_ph * dm$Phylogeny[i]
   )
-  d$hit[i] <- mean(has_mg > pr_threshold) > density_threshold
+  dm$hit[i] <- mean(has_mg > pr_threshold) > density_threshold
 }
 
 min_year_90 <- rep(NA, length(NGAs))
 
 for(i in 1:length(NGAs)) {
-  dm <- d[which(d$NGA == NGAs[i]),]
-  min_year_90[i] <- min(dm$time_fa[dm$hit == 1])
+  dn <- dm[which(dm$NGA == NGAs[i]),]
+  if (any(dn$hit == 1)) min_year_90[i] <- min(dn$time_fa[dn$hit == 1])
 }
 
 nga_dat <- data.frame(NGA = NGAs, min_year_50, min_year_90)
 
+drop <- which(!nga_dat$NGA %in% NGA_short)
+nga_dat <- nga_dat[-drop, ]
+
 write.csv(nga_dat, "./temp/earliest_mg_estimates.csv", row.names = FALSE)
-
-# its weird that min_year_90 for upper egypt is 800 years after first appearance
-
-
-
-
 
 
 
@@ -367,8 +373,8 @@ SCNorm <- read.csv('./input/SCNorm.csv', stringsAsFactors = FALSE)
 data <- read.csv('./input/PrePostComparison.csv', stringsAsFactors = FALSE)
 nga_dat <- read.csv("./temp/earliest_mg_estimates.csv", stringsAsFactors = FALSE)
 
-min_year_50_mean <- mean(nga_dat$min_year_50)
-min_year_50_sd <- sd(nga_dat$min_year_50)/sqrt(nrow(nga_dat))
+min_year_50_mean <- mean(nga_dat$min_year_50, na.rm = TRUE)
+min_year_50_sd <- sd(nga_dat$min_year_50, na.rm = TRUE)/sqrt(sum(!is.na(nga_dat$min_year_50)))
 
 
 png("./temp/revised_fig2.png", res = 300, height = 5, width = 5, units = "in")

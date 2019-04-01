@@ -4,21 +4,21 @@ source("../project_support.r")
 
 dir_init("./temp")
 
+############
+
+# load the data
+
 d <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
 
-dm <- d[, c("MG", "Mean", "Lag1", "Lag2", "Phylogeny", "Space")]
+# add centering
+d$Mean_c <- d$Mean - 0.5
 
-# original analysis dropped first and second observations for each NGA
-# because lag terms had to be missing
-drop <- which(is.na(dm$Lag1) | is.na(dm$Lag2))
-dm <- dm[-drop, ]
-
-nrow(dm) == 801
+# define models for analysis
 
 original_model <- alist(
   MG <- dbinom(1, p),
   logit(p) <- a +
-    b_sc * Mean +
+    b_sc * Mean_c +
     b_l1 * Lag1 + 
     b_l2 * Lag2 +
     b_ph * Phylogeny +
@@ -31,30 +31,114 @@ original_model <- alist(
   b_sp ~ dnorm(0, 7)
 )
 
+revised_model <- alist(
+  MG <- dbinom(1, p),
+  logit(p) <- a +
+    a_nga[nga] +
+    b_sc * Mean_c +
+    b_ph * Phylogeny +
+    b_sp * Space,
+  a ~ dnorm(0, 1),
+  a_nga[nga] ~ dnorm(0, a_sigma),
+  a_sigma ~ dexp(1),
+  b_sc ~ dnorm(0, 4),
+  b_ph ~ dnorm(0, 4),
+  b_sp ~ dnorm(0, 4)
+)
+
+# rerun the original analysis with NA's as 0's
+
+dm <- d[, c("MG", "Mean_c", "Lag1", "Lag2", "Phylogeny", "Space")]
+
+drop <- which(is.na(dm$Lag1) | is.na(dm$Lag2))
+dm <- dm[-drop, ]
+
+# 801 in the original analysis
+expect_equal(nrow(dm), 801)
+
 m1 <- map2stan(original_model, data = dm)
 
 save(m1, file = "./temp/m1.rdata")
 
-# these results should be comparable to published model
+# these should be comparable to the original results
 
+# original model but re-assign NAs according to another missingness rule:
 
+dm <- d[, c("NGA", "MG", "Mean_c", "Lag1", "Lag2", "Phylogeny", "Space")]
 
-dm <- d[, c("NGA", "MG", "Mean", "Phylogeny", "Space", "MG_missing", "Lag1", "Lag2")]
+imputation_prob <- 311 / 323 # occurance of 1's in known data
+
+dm$MG[dm$MG_missing == 1] <- rbinom(sum(dm$MG_missing == 1), 1, prob = imputation_prob)
+
+# recalculate lag terms accordingly
+
+NGAs <- sort(unique(dm$NGA))
+
+for (i in 1:length(NGAs)) {
+  my_rows <- which(dm$NGA == NGAs[i])
+  if (length(my_rows) > 1) {
+    for (j in 2:length(my_rows)) {
+      dm$Lag1[my_rows[j]] <- dm$MG[my_rows[j - 1]]
+    }
+  }
+  if (length(my_rows) > 2) {
+    for (j in 3:length(my_rows)) {
+      dm$Lag2[my_rows[j]] <- dm$MG[my_rows[j - 2]]
+    }
+  }
+}
+
+drop <- which(is.na(dm$Lag1) | is.na(dm$Lag2))
+if (length(drop) > 0) dm <- dm[-drop, ]
+
+m1_alt1 <- map2stan(original_model, data = dm)
+
+save(m1_alt1, file = "./temp/m1_alt1.rdata")
+
+# original model but re-assign NAs according to another missingness rule:
+
+dm <- d[, c("NGA", "MG", "Mean_c", "Lag1", "Lag2", "Phylogeny", "Space")]
+
+imputation_prob <- 0.5 # principle of indifference
+
+dm$MG[dm$MG_missing == 1] <- rbinom(sum(dm$MG_missing == 1), 1, prob = imputation_prob)
+
+# recalculate lag terms accordingly
+
+NGAs <- sort(unique(dm$NGA))
+
+for (i in 1:length(NGAs)) {
+  my_rows <- which(dm$NGA == NGAs[i])
+  if (length(my_rows) > 1) {
+    for (j in 2:length(my_rows)) {
+      dm$Lag1[my_rows[j]] <- dm$MG[my_rows[j - 1]]
+    }
+  }
+  if (length(my_rows) > 2) {
+    for (j in 3:length(my_rows)) {
+      dm$Lag2[my_rows[j]] <- dm$MG[my_rows[j - 2]]
+    }
+  }
+}
+
+drop <- which(is.na(dm$Lag1) | is.na(dm$Lag2))
+if (length(drop) > 0) dm <- dm[-drop, ]
+
+m1_alt2 <- map2stan(original_model, data = dm)
+
+save(m1_alt2, file = "./temp/m1_alt2.rdata")
+
+# now analyze complete cases only; drop the NA's!
+
+dm <- d[, c("NGA", "MG", "Mean_c", "Phylogeny", "Space", "MG_missing")]
 
 # drop all "unknown" outcomes
 drop <- which(dm$MG_missing == 1)
 dm <- dm[-drop, ]
 
-nrow(dm) == 336
-
-# if we also dropped cases where Lag1 is NA we have
-# 311 rows, because the 25 NGAs each have a first observation
-# we get to keep those if no lag terms
-
-# center social complexity at 0.5
-dm$Mean_c <- dm$Mean - 0.5
-
-# create an index for NGA varying effects
+expect_equal(nrow(dm), 336)
+# 311 cases are left from the 801 originally
+# but 25 more because we don't have to drop Lag1 = NA cases
 
 # 26 NGAs in the reduced set
 NGAs <- c(
@@ -75,25 +159,24 @@ NGAs <- c(
 
 dm$nga <- match(dm$NGA, NGAs)
 
-revised_model <- alist(
-  MG <- dbinom(1, p),
-  logit(p) <- a +
-    a_nga[nga] +
-    b_sc * Mean_c +
-    b_ph * Phylogeny +
-    b_sp * Space,
-  a ~ dnorm(0, 1),
-  a_nga[nga] ~ dnorm(0, a_sigma),
-  a_sigma ~ dexp(1),
-  b_sc ~ dnorm(0, 4),
-  b_ph ~ dnorm(0, 4),
-  b_sp ~ dnorm(0, 4)
-)
-
 m2 <- map2stan(revised_model, data = dm)
 
 save(m2, file = "./temp/m2.rdata")
 
+# now the revised model on the original data with NA's as 0's
+
+dm <- d[, c("NGA", "MG", "Mean_c", "Phylogeny", "Space")]
+
+NGAs <- sort(unique(dm$NGA))
+dm$nga <- match(dm$NGA, NGAs)
+
+m2_alt1 <- map2stan(revised_model, data = dm)
+
+save(m2_alt1, file = "./temp/m2_alt1.rdata")
+
+############
+
 dir_init("./output")
 
-file.copy(c("./temp/m1.rdata", "./temp/m2.rdata"), "./output")
+files <- list.files("./temp", full.names = TRUE)
+file.copy(files, "./output")

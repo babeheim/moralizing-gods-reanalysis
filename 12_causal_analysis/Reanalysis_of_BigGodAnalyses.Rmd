@@ -1,0 +1,2039 @@
+---
+title: "Reanalysis of 'Complex societies precede moralizing gods' causal analysis"
+output:
+  html_document:
+    code_folding: show
+    theme: spacelab
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+editor_options:
+  chunk_output_type: console
+---
+
+
+<style>
+
+table, th, td {
+  border: none;
+  padding-left: 0em;
+  padding-right: 0em;
+  min-width: 120%;
+  
+}
+
+</style>
+
+
+
+
+This document first replicates and later extends the analyses published in the paper "Whitehouse, H., François, P., Savage, P. E., Currie, T. E., Feeney, K. C., Cioni, E., Purcell, R., Ross, R. M., Larson, J., Baines, J., ter Haar, B., Covey, A., Turchin, P. (2019). Complex societies precede moralizing gods throughout world history. Nature."
+
+The goal of this document is to first explain what Whitehouse et al. did, and later show that their approach was incorrect and suggest better solutions.
+
+
+Note that comments in the text starting with #?? are our new comments.
+
+# 1. Original code
+
+## 1.1 Load data
+
+This section loads data on polities, their social complexity (SC), and the presence moralizing gods (MG).
+
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=T}
+
+{
+##? Load libraries
+libs <- c("dplyr", "glmmADMB", "glmmTMB", "nlme", "lme4", "plotrix", "ggplot2", "stargazer", "DHARMa", "bbmle", "knitr", "car", "bootpredictlme4", "reshape", "grid", "yarrr")
+lapply(libs, require, character.only = TRUE)
+
+#library(plotrix)
+#setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
+polities <- read.csv('polities.csv', header=TRUE)
+
+#New scripts for automated analysis of rates of change in social complexity pre/post moralising gods/doctrinal mode/writing
+
+dat <- read.table("PC1_traj_merged.csv", sep=",", header=TRUE) #?? everything is here
+dat$NGA<-as.character(dat$NGA)
+NGAs <- levels(polities$NGA)
+NGAs <- NGAs[NGAs != "Crete"]    #### Remove new NGAs
+NGAs <- NGAs[NGAs != "Galilee"]
+
+##? We have to include these variables for later use in the multi-level models (they will serve as nesting factors) 
+dat$World.Region <- as.factor(dat$World.Region)
+dat$Family <- as.factor(dat$Family)
+}
+
+```
+
+
+## 1.2 Pre-Post MG
+
+Here, Whitehouse et al. first compute the earliest and latest record for each NGA, then the earliest MG date, and finally, take the mean SC at each of these timepoints. Then, they look at the difference in SC between the earliest date and MG appearence, and the latest date and MG appearence, divided by the number of centuries that differed between the earliest/latest record and MG appearence. This computation results in the difference in SC between the first/last record of NGA and the first record of NGA, corrected for the time lags between these events. This is done with 20 NGAs that have a change in MG (i.e., MG was first absent/not detected and later appeared). NGAs that don't have variability in MG presence (MG are either present or not for all known history) are excluded. 
+
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=T}
+#Overall rate (beginning to end of polity)
+out <- matrix(NA, nrow=0, ncol=4)
+for(i in 1:length(NGAs)){
+  dt <- dat[dat$NGA == NGAs[i],]
+  Earliest<-subset(dt,Time==min(Time))	
+  Latest<-subset(dt,Time==max(Time))	
+  MG<-subset(dt,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+  MGAppear<-subset(MG, Time==min(Time))
+  rates<-cbind(MGAppear$NGA,(MGAppear$Mean-Earliest$Mean)/(MGAppear$Time-Earliest$Time),
+               ((Latest$Mean-MGAppear$Mean)/(Latest$Time-MGAppear$Time)),(MGAppear$End-MGAppear$Start))
+  out <- rbind(out,rates)
+}
+colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty")
+#mean(out$MGUncertainty) #Use this while replacing "MoralisingGods" as above to get uncertainty values for time-series
+
+
+write.csv(out, file="FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to read as numeric (there is probably a more elegant way to do this)
+
+```
+
+This code computes the difference between pre-MG difference in SC and post-MG difference in SC
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=T}
+out<-read.table("FullRates.csv", sep=",", header=TRUE)
+
+out$Difference<-out[,2]-out[,3]
+write.csv(out, file="FullRates.csv",  row.names=FALSE)
+
+```
+
+
+## 1.3 Pre-Post MG by century
+
+The analysis in section 1.2 was quite simplistic in that it didn't control for the rate of SC change at each site. To correct for this bias, Whitehouse et al. compare mean SC at the time of the supposed MG appearance with the mean SC 100/200/300...years before/after, DIVIDED by the the time lag. Presumably, the assumption here is to weigh the differences around MG appearance more heavily in the analysis. So, if there is a sudden jump in SC 100 years before of the supposed MG appearance (edit: yes, there is, see plot 4.1.2), this approach is going to heavily skew the results toward this sudden jump.
+
+
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=T}
+
+#?? We have to add World.Region and language Family to this data set, so we can use it later in the models.
+
+#Full time windows (up to 10,000 years before and after moralizing gods)
+NGAs <- levels(out$NGA)
+out <- matrix(NA, nrow=0, ncol=7)
+for(i in 1:length(NGAs)){
+  dt <- dat[dat$NGA == NGAs[i],]
+  MG<-subset(dt,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+  #library(dplyr)
+  #MG<-as.data.frame(MG %>% group_by(PolID) %>% sample_n(size = 1)) #randomly samples so there is only one century per polity
+  MGAppear<-subset(MG, Time==min(Time))
+  for(j in 1: 100){
+    Earliest<-subset(dt, Time==MGAppear$Time-j*100) ##? This is a confusing label, it's not earliest, this is just the number of centuries before MG
+    Latest<-subset(dt, Time==MGAppear$Time+j*100) ##? This is a confusing label, it's not latest, this is just the number of centuries after MG
+    rates<-cbind(MGAppear$NGA,ifelse(class(Earliest$Time)=="NULL","NA",
+                                     (MGAppear$Mean-Earliest$Mean)/(MGAppear$Time-Earliest$Time)),
+                 ifelse(class(Latest$Time)=="NULL","NA",((Latest$Mean-MGAppear$Mean)/(Latest$Time-MGAppear$Time))),
+                 (MGAppear$End-MGAppear$Start),j*100,MGAppear$World.Region,MGAppear$Family)
+    out <- rbind(out,rates)
+  }
+  out <- rbind(out,rates)
+}
+colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow","Region", "Lang")
+
+#mean(out$MGUncertainty) #Use this while replacing "MoralisingGods" as above to get uncertainty values for time-series
+
+write.csv(out, file="FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to read as numeric (there is probably a more elegant way to do this)
+```
+
+
+## 1.4 Testing Pre-Post MG
+
+Here is Whitehouse et al.'s main causa analysis using paired t-test. As we explain below in sections 3. and 4., this is highly problematic (assumptions of independence and normality are severely violated), but let's first repliacte their results.
+
+
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=T}
+out<-read.table("FullRates.csv", sep=",", header=TRUE)
+
+out$Difference<-out[,3]-out[,2]
+
+##? Let's save this variable, we will need it later for plotting the histogram differences
+d0 <- out$Difference*1000 
+
+
+for(i in 2:length(out[,5])){
+  out[i,9]<-out[i,5]-out[i-1,5]
+}
+out <-subset(out, out[,9]!=0) #getting rid of bug when the final row repeats in each NGA
+
+write.csv(out, file="FullRates.csv",  row.names=FALSE)
+
+out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years pre/post moralizing gods (<750) or # out to use full time-window
+
+write.csv(out, file="EqualRates.csv",  row.names=FALSE)
+
+#?? this bar chart doesn't make sense, I will turn it off
+#bar chart paired
+#my.values<-mean(1000*out[,6],na.rm=TRUE)
+#err1<-1.96*std.error(1000*out[,6],na.rm=TRUE)
+#x <- barplot(my.values,names.arg="After - before moralizing gods",ylim = c(-1.3,1),ylab="Rate of increase in social complexity (SC/ky)")
+#arrows(x,my.values-err1 ,x,my.values+err1, code=3, angle=90, length=.1)
+#abline(h=0)
+
+
+```
+
+
+Here are the main results, that is +/- 2000 years Pre-/Post-MG. Note the DoF - 199, coming from only 12 NGAs with multiple timepoints (the time points are dependent!).
+
+
+```{r results='show', message=FALSE, warning=FALSE, echo=T}
+print(t.test(out[,3], out[,2],paired=TRUE))
+
+```
+
+Plot a histogram of the rate of SC change
+
+```{r cache=TRUE, results='hide', message=FALSE, warning=FALSE, echo=FALSE, fig.height=5, fig.width=5}
+tiff("Hist.tiff",width = 6,height = 5.5,units = 'in', res = 300)
+
+#histogram of differences
+hist(1000*out[,8],col="gray",breaks="FD",xlim=c(-15,5),ylim=c(0,80),xlab="Rates of change in social complexity (SC per kyr)", ylab="Frequency")
+abline(v = 0,col="black")
+dev.off()
+```
+
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=F}
+out<-read.table("FullRates.csv", sep=",", header=TRUE)
+
+out$Difference<-out[,3]-out[,2]
+
+for(i in 2:length(out[,5])){
+  out[i,7]<-out[i,5]-out[i-1,5]
+}
+out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in each NGA
+
+write.csv(out, file="FullRates.csv",  row.names=FALSE)
+
+out <-subset(out, out[,5]<750) #Change this to modify time-window restriction from 700 years pre/post moralizing gods (<750) or # out to use full time-window
+
+write.csv(out, file="EqualRates.csv",  row.names=FALSE)
+
+#?? this bar chart doesn't make sense, I will turn it off
+#bar chart paired
+#my.values<-mean(1000*out[,6],na.rm=TRUE)
+#err1<-1.96*std.error(1000*out[,6],na.rm=TRUE)
+#x <- barplot(my.values,names.arg="After - before moralizing gods",ylim = c(-1.3,1),ylab="Rate of increase in social complexity (SC/ky)")
+#arrows(x,my.values-err1 ,x,my.values+err1, code=3, angle=90, length=.1)
+#abline(h=0)
+
+```
+
+Here are results for the span of seven ceturies. Note the drop in DoF.
+
+```{r results='show', message=FALSE, warning=FALSE, echo=T}
+print(t.test(out[,3], out[,2],paired=TRUE))
+
+```
+
+
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=F}
+out<-read.table("FullRates.csv", sep=",", header=TRUE)
+
+out$Difference<-out[,3]-out[,2]
+
+for(i in 2:length(out[,5])){
+  out[i,7]<-out[i,5]-out[i-1,5]
+}
+out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in each NGA
+
+write.csv(out, file="FullRates.csv",  row.names=FALSE)
+
+out <-subset(out, out[,5]<150) #Change this to modify time-window restriction from 700 years pre/post moralizing gods (<750) or # out to use full time-window
+
+write.csv(out, file="EqualRates.csv",  row.names=FALSE)
+
+#?? this bar chart doesn't make sense, I will turn it off
+#bar chart paired
+#my.values<-mean(1000*out[,6],na.rm=TRUE)
+#err1<-1.96*std.error(1000*out[,6],na.rm=TRUE)
+#x <- barplot(my.values,names.arg="After - before moralizing gods",ylim = c(-1.3,1),ylab="Rate of increase in social complexity (SC/ky)")
+#arrows(x,my.values-err1 ,x,my.values+err1, code=3, angle=90, length=.1)
+#abline(h=0)
+
+```
+
+And, finally, for century before and after acquiring MG. Here, we have only 12 NGAs, each with 2 data points to compare. Yes, there are only 11 DoF.
+
+```{r results='show', message=FALSE, warning=FALSE, echo=T}
+print(t.test(out[,3], out[,2],paired=TRUE))
+
+```
+
+## 1.5 Plotting Pre-Post MG
+
+As in the main text, we will work mostly with the +/- 2000 years span as a baseline. First, let's have a look at the variation in the rate of SC change over the 4000-year span of Whitehouse et al.'s data. Here, we are preparing the data set for a plot and proper analysis.
+
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=T}
+out<-read.table("FullRates.csv", sep=",", header=TRUE)
+
+out$Difference<-out[,3]-out[,2]
+
+for(i in 2:length(out[,5])){
+  out[i,8]<-out[i,5]-out[i-1,5]
+}
+out <-subset(out, out[,8]!=0) #getting rid of bug when the final row repeats in each NGA
+
+write.csv(out, file="FullRates.csv",  row.names=FALSE)
+
+out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years pre/post moralizing gods (<750) or # out to use full time-window
+
+
+#?? Create stacked data set
+out.s <- rbind(out,out)
+out.s$Rate <- out.s$PostRate
+out.s$prepost <- 1
+
+out.s$Rate[1:length(out$PreRate)] <- out$PreRate
+out.s$prepost[1:length(out$PreRate)] <- 0
+out.s$prepost <- factor(out.s$prepost)
+
+NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium", "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",  "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
+
+out.s <- out.s[out.s$NGA %in% NGAs,]
+
+```
+
+### 1.5.1 Scatter with regression line
+
+Let's plot the difference between pre-MG and post-MG SC change with confidence intervals
+
+```{r cache=TRUE, results='hide', message=FALSE, warning=FALSE, echo=FALSE, fig.height=5, fig.width=5}
+
+# This is rate of SC change 2000 years before and after MG
+
+coefs <- out.s %>% dplyr::group_by(prepost) %>%
+  dplyr::summarise(mean.DV = mean(Rate, na.rm = TRUE),
+            sd.DV = sd(Rate, na.rm = TRUE),
+            n.DV = n()) %>%
+  dplyr::mutate(se.DV = sd.DV / sqrt(n.DV),
+         lower.ci.DV = mean.DV - qt(1 - (0.05 / 2), n.DV - 1) *
+            se.DV,
+         upper.ci.DV = mean.DV + qt(1 - (0.05 / 2), n.DV - 1) *
+            se.DV)
+
+coefs <- as.data.frame(coefs)
+
+ggplot(data = coefs, aes(x=prepost, y=mean.DV))   +
+  geom_jitter(data = out.s, alpha=0.3, aes(x=prepost, y=Rate, colour = TimeWindow), width =
+                0.1, height = 0.05,size = 2.2) +
+  scale_color_distiller(palette = "RdPu") +
+geom_line(data = coefs,aes(x=c(1,2), y = c(mean.DV[1],mean.DV[2])), size = 0.8) +
+  geom_errorbar(data = coefs, aes(x=prepost,
+                ymin=lower.ci.DV,ymax=upper.ci.DV), width=.3, size = 0.8,
+               position=position_dodge(0.05)) +
+  scale_x_discrete(labels = c("Pre-MG", "Post-MG"),expand =
+                     c(0.1,0.2)) +
+  labs(x="", y="Rate of SC change") +
+  theme_bw() + 
+  theme(
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
+    axis.line = element_line(colour = "black"),
+    legend.position = c(1.2,0.95),
+    legend.justification = c("right", "top"),
+    legend.key.size = unit(0.8, "cm"),
+    legend.text = element_text(size = rel(1.5)),
+    axis.title = element_text(size = rel(1.5)),
+    axis.text.y= element_text(size = rel(1.5)),
+    axis.text.x= element_text(size = rel(1.5)),
+    plot.margin=unit(c(1,2,1,1),"cm")) 
+
+
+#ggsave("SCrate2000.png",width = 6,height = 5.5, dpi = 300)
+
+```
+
+
+The reason why we cannot really see the Pre-/Post-MG difference is beacause the rate of SC change close to the supposed MG appearance is weighte more heavily BUT the clustering within NGAs is not accounted for - therefore, these heavily counted data points are all over the plot.
+
+
+```{r cache=TRUE, results='hide', message=FALSE, warning=FALSE, echo=FALSE, fig.height=20, fig.width=6}
+
+# This is rate of SC change 2000 years before and after MG
+
+for(i in 1:length(NGAs)){
+out.sx <- out.s[out.s$NGA==NGAs[i],]
+
+coefs <- out.sx %>% dplyr::group_by(prepost) %>%
+  dplyr::summarise(mean.DV = mean(Rate, na.rm = TRUE),
+            sd.DV = sd(Rate, na.rm = TRUE),
+            n.DV = n()) %>%
+  dplyr::mutate(se.DV = sd.DV / sqrt(n.DV),
+         lower.ci.DV = mean.DV - qt(1 - (0.05 / 2), n.DV - 1) *
+            se.DV,
+         upper.ci.DV = mean.DV + qt(1 - (0.05 / 2), n.DV - 1) *
+            se.DV)
+
+coefs <- as.data.frame(coefs)
+
+assign(paste0("g",i),
+ggplot(data = coefs, aes(x=prepost, y=mean.DV))   +
+  geom_jitter(data = out.sx, alpha=0.3, aes(x=prepost, y=Rate, colour = TimeWindow), width =
+                0.1, height = 0.05,size = 2.2) +
+  scale_color_distiller(palette = "RdPu") +
+geom_line(data = coefs,aes(x=c(1,2), y = c(mean.DV[1],mean.DV[2])), size = 0.8) +
+  geom_errorbar(data = coefs, aes(x=prepost,
+                ymin=lower.ci.DV,ymax=upper.ci.DV), width=.3, size = 0.8,
+               position=position_dodge(0.05)) +
+  scale_x_discrete(labels = c("Pre-MG", "Post-MG"),expand =
+                     c(0.1,0.2)) +
+  labs(x="", y="") +
+  ggtitle(NGAs[i]) + 
+  theme_bw() + 
+  theme(
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
+    axis.line = element_line(colour = "black"),
+    legend.position = "",
+    legend.justification = c("right", "top"),
+    legend.key.size = unit(0.8, "cm"),
+    legend.text = element_text(size = rel(1.5)),
+    axis.title = element_text(size = rel(1.5)),
+    axis.text.y= element_text(size = rel(1.5)),
+    axis.text.x= element_text(size = rel(1.5)),
+    plot.margin=unit(c(1,2,1,1),"cm"))) 
+}
+
+{grid.newpage()
+pushViewport(viewport(layout = grid.layout(6, 2)))
+vplayout <- function(x, y) viewport(layout.pos.row = x, layout.pos.col = y)
+print(g1, vp = vplayout(1, 1))  # key is to define vplayout
+print(g2, vp = vplayout(1, 2))
+print(g3, vp = vplayout(2, 1))
+print(g4, vp = vplayout(2, 2))
+print(g5, vp = vplayout(3, 1))
+print(g6, vp = vplayout(3, 2))
+print(g7, vp = vplayout(4, 1))
+print(g8, vp = vplayout(4, 2))
+print(g9, vp = vplayout(5, 1))
+print(g10, vp = vplayout(5, 2))
+print(g11, vp = vplayout(6, 1))
+print(g12, vp = vplayout(6, 2))
+}
+
+#ggsave("SCrate2000.png",width = 6,height = 5.5, dpi = 300)
+
+```
+
+Looking at the scatter plots illustrates, how small the Pre-/Post-MG differences are. Let's zoom-in on the difference between means.
+
+
+```{r cache=TRUE, results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+
+ggplot(data = coefs, aes(x=prepost, y=mean.DV))   +
+geom_line(data = coefs,aes(x=c(1,2), y = c(mean.DV[1],mean.DV[2])), size = 0.8) +
+  geom_errorbar(data = coefs, aes(x=prepost,
+                ymin=lower.ci.DV,ymax=upper.ci.DV), width=.3, size = 0.8,
+               position=position_dodge(0.05)) +
+  scale_x_discrete(labels = c("Pre-MG", "Post-MG"),expand =
+                     c(0.1,0.2)) +
+  labs(x="", y="Rate of change") +
+  theme_bw() + 
+  theme(
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
+    axis.line = element_line(colour = "black"),
+    legend.position = "",
+    legend.justification = c("right", "top"),
+    legend.key.size = unit(0.8, "cm"),
+    legend.text = element_text(size = rel(1.5)),
+    axis.title = element_text(size = rel(1.5)),
+    axis.text.y= element_text(size = rel(1.5)),
+    axis.text.x= element_text(size = rel(1.5)),
+    plot.margin=unit(c(1,1,1,1),"cm")) 
+
+
+```
+
+
+Well, as should be expected, the 95% CI are not overlapping, but the Y-axis scale show how small the differences in the rate of SC change are. This is beacause the data are corrected for time-lag by dividing the rate of SC change with the time-lag (it should be expected that the further the SC means are in time, the greater the difference).
+
+### 1.5.2 Density plot
+
+Let's have one more look at a density plot of difference between Pre- and Post-MG.
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+###################################################################
+
+ggplot() + 
+   geom_density(data = out.s, aes(x = Rate, fill = prepost, colour = prepost, linetype=prepost),size = 0.5) +
+ 
+ scale_color_manual(values = alpha(c("lightskyblue4","lightskyblue4"), 1)) + 
+   scale_fill_manual(values = alpha(c("coral2","turquoise3"),0.6)) +
+xlim(c(-0.0007,0.005)) +
+                     
+  labs(x="Rate of SC change", y="Density") +
+  theme_bw() + 
+  theme(
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
+    axis.line = element_line(colour = "black"),
+    legend.position = c(0.95,0.95),
+    legend.justification = c("right", "top"),
+    legend.key.size = unit(0.8, "cm"),
+    legend.text = element_text(size = rel(1.5)),
+    axis.title = element_text(size = rel(1.5)),
+    axis.text.y= element_text(size = rel(1.5)),
+    axis.text.x= element_text(size = rel(1.5)),
+    plot.margin=unit(c(1,1,1,1),"cm")) 
+
+#ggsave("PrePost.tiff",width = 6,height = 5.5, dpi = 300)
+
+################################################################### 
+```
+
+
+# 2. Forward-bias correction
+
+In this section, we will keep up with the inappropriate t-test, but try to correct for forward bias, i.e., the fact that if we take the first known occurence of MG, it is very unlikely that it is actually the oldest occurence. Let's try to shift the first occurence of each MG one and three centuries back.
+
+## 2.1 Shift MG for t-100
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=T}
+
+{
+NGAs <- c("Big Island Hawaii", "Cambodian Basin", "Central Java", "Chuuk Islands", "Deccan",    "Ghanaian Coast", "Iceland", "Kachi Plain", "Kansai", "Kapuasi Basin",  "Konya Plain", "Latium", "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",  "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt","Yemeni Coastal Plain")
+
+
+FB <- 100 ##? this is Forward Bias in years - we will subtract this number from MG appearence times. With increasing correction for FB (200, 300, 400), the positive difference grows...
+
+out <- matrix(NA, nrow=0, ncol=7)
+for(i in 1:length(NGAs)){
+  dt <- dat[dat$NGA == NGAs[i],]
+  MG<-subset(dt,MoralisingGods=="1")
+  ##? This is my addition - we have to create a new subset MGAppear.FB, which will contain Mean SC for the time of MG's first appearance minus forward bias(FB)
+  MGAppear<-subset(MG, Time==min(Time))
+   t <- min(MG$Time)-FB
+MGAppear.FB<-subset(dt, Time==t)
+##?
+  for(j in 1: 100){
+    Earliest<-subset(dt, Time==MGAppear.FB$Time-j*100) 
+    Latest<-subset(dt, Time==MGAppear.FB$Time+j*100)
+    rates<-cbind(MGAppear$NGA,ifelse(class(Earliest$Time)=="NULL","NA",
+                                     (MGAppear.FB$Mean-Earliest$Mean)/(MGAppear.FB$Time-Earliest$Time)),
+                 ifelse(class(Latest$Time)=="NULL","NA",((Latest$Mean-MGAppear.FB$Mean)/(Latest$Time-MGAppear.FB$Time))),
+                 (MGAppear$End-MGAppear$Start),j*100,MGAppear$World.Region,MGAppear$Family)
+    out <- rbind(out,rates)
+  }
+  out <- rbind(out,rates)
+}
+colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow","Region", "Lang")
+
+write.csv(out, file="FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to read as numeric (there is probably a more elegant way to do this)
+
+out<-read.table("FullRates.csv", sep=",", header=TRUE)
+
+out$Difference<-out[,3]-out[,2]
+
+# save the difference into separate variable needed for histogram comparisons; note this variable automatically codes FB size
+assign(paste0("d",FB),out$Difference*1000 )
+
+
+for(i in 2:length(out[,5])){
+  out[i,9]<-out[i,5]-out[i-1,5]
+}
+out <-subset(out, out[,9]!=0) #getting rid of bug when the final row repeats in each NGA
+
+write.csv(out, file="FullRates.csv",  row.names=FALSE)
+
+out<-read.table("FullRates.csv", sep=",", header=TRUE)
+
+out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years pre/post moralizing gods (<750) or 2050 out to use full time-window
+write.csv(out, file="EqualRates.csv",  row.names=FALSE)
+
+
+#?? Create stacked data set for a proper Pre-/Post-MG analysis
+out.s <- rbind(out,out)
+out.s$Rate <- out.s$PostRate
+out.s$prepost <- 1
+
+out.s$Rate[1:length(out$PreRate)] <- out$PreRate
+out.s$prepost[1:length(out$PreRate)] <- 0
+out.s$prepost <- factor(out.s$prepost)
+NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium", "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",  "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
+
+out.s <- out.s[out.s$NGA %in% NGAs,]
+
+
+}
+
+```
+
+Result for +/- 2000 years Pre/Post-MG with MG appearance shifted only 100 years back in time.
+
+```{r results='show', message=FALSE, warning=FALSE, echo=T}
+print(t.test(out[,3], out[,2],paired=TRUE))
+
+```
+
+This result shows that if we decrease each MG time by 100 years, MG positively predict SC! The result of Whitehouse et al. is dependent on the precision of MG appearance of only tens of years (on a scale of 1000s of years). That's just plainly impossible.
+
+Let's plot the histogram with the rate of SC change:
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+###################################################################
+# These histograms replicate original Whitehouse et al.'s histogram, and correct for forward bias. The specific correction depends on the value of FB selected in the previous chunk.
+
+ifelse(FB == 300, d <- d300,d <- d100)
+d <- as.data.frame(d)
+
+
+ggplot() + 
+  geom_histogram(data = d, aes(x = d), fill = "darkgrey", colour = "gray42", binwidth = 0.1, alpha = 0.9) +
+#  geom_histogram(data = d100, aes(x = d100), fill = "#cf3a3a", colour = "#cf3a3a", binwidth = 0.1, alpha = 0.5) +
+#  geom_histogram(data = d300, aes(x = d300), fill = "#18b0e8", colour = "#18b0e8", binwidth = 0.1, alpha = 0.4) +
+  
+ 
+# scale_color_manual(values = alpha(c("gray42","#cf3a3a","#18b0e8"),1)) +
+#   scale_fill_manual(values = alpha(c("darkgrey","#cf3a3a","#18b0e8"),0.5),
+#                     labels = c("MG 0", "MG -100", "MG -300"), name = "") +
+                   xlim(c(-2,2)) +
+  ylim(c(0,100)) +
+geom_vline(xintercept = 0,
+                color = "black", size=1, alpha = 1) +   
+  labs(x="Rate of SC change", y="Frequency") +
+  theme_bw() + 
+  theme(
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
+    axis.line = element_line(colour = "black"),
+    legend.position = c(0.95,0.95),
+    legend.justification = c("right", "top"),
+    legend.key.size = unit(0.8, "cm"),
+    legend.text = element_text(size = rel(1)),
+    axis.title = element_text(size = rel(1.1)),
+    axis.text.y= element_text(size = rel(1.1)),
+    axis.text.x= element_text(size = rel(1.1)),
+    plot.margin=unit(c(1,1,1,1),"cm")) 
+
+
+
+# ggsave("hist300.tiff",width = 4,height = 2.7, dpi = 300)
+
+################################################################### 
+```
+
+
+## 2.2 Density plot
+
+Let's look at the full density plot for both Pre- and Post-MG, so we can better see the difference.
+
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+###################################################################
+ggplot() + 
+  geom_density(data = out.s, aes(x = Rate, fill = prepost, colour = prepost, linetype=prepost),size = 0.5) +
+ 
+ scale_color_manual(values = alpha(c("lightskyblue4","lightskyblue4"), 1)) + 
+   scale_fill_manual(values = alpha(c("coral2","turquoise3"),0.6),
+                     labels = c("Pre-MG", "Post-MG"), name = "") +
+                   xlim(c(-0.0005,0.003)) +
+  
+  labs(x="Rate of SC change", y="Density") +
+  theme_bw() + 
+  theme(
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
+    axis.line = element_line(colour = "black"),
+    legend.position = "",
+    legend.justification = c("right", "top"),
+    legend.key.size = unit(0.8, "cm"),
+    legend.text = element_text(size = rel(1.5)),
+    axis.title = element_text(size = rel(1.5)),
+    axis.text.y= element_text(size = rel(1.5)),
+    axis.text.x= element_text(size = rel(1.5)),
+    plot.margin=unit(c(1,1,1,1),"cm")) 
+
+#ggsave("PrePost_300.tiff",width = 6,height = 5.5, dpi = 300)
+
+################################################################### 
+```
+
+
+## 2.3 Corrected main plot
+
+Here, we report the same plot as Whitehouse et al.'s Fig. 2a, only moving the supposed appearance of MG 100 years back.
+
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+###################################################################
+
+NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium", "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",  "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
+data <- matrix(NA, nrow=0, ncol=5)
+
+for(i in 1:length(NGAs)){
+  dt <- out[out$NGA == NGAs[i],]
+  ot <- dat[dat$NGA == NGAs[i],]
+  MG<-subset(ot,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+  #library(dplyr)
+  #MG<-as.data.frame(MG %>% group_by(PolID) %>% sample_n(size = 1)) #randomly samples so there is only one century per polity
+  MGAppear<-subset(MG, Time==min(Time))
+  assign(paste0("t",i),MGAppear$Time)
+  DM<-subset(ot,DoctrinalMode=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+  DMAppear<-subset(DM, Time==min(Time))
+  WR<-subset(ot,Writing=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+  WRAppear<-subset(WR, Time==min(Time))
+  my.values<-c(NGAs[i],ifelse(class(mean(dt[,3],na.rm=TRUE))=="NULL","NA",
+                mean(dt[,3],na.rm=TRUE)),ifelse(class(mean(dt[,2],na.rm=TRUE))=="NULL","NA",
+                mean(dt[,2],na.rm=TRUE)),ifelse(class(std.error(dt[,3],na.rm=TRUE))=="NULL","NA",
+1.96*std.error(dt[,3],na.rm=TRUE)),
+ifelse(class(std.error(dt[,2],na.rm=TRUE))=="NULL","NA",
+       1.96*std.error(dt[,2],na.rm=TRUE)))
+  data <- rbind(data,my.values)
+}
+colnames(data)<-c("NGA","PostRate","PreRate","PostConfInt","PreConfInt")
+write.csv(data, file="PrePostComparisonFull.csv",  row.names=FALSE)
+data<-read.table("PrePostComparisonFull.csv", sep=",", header=TRUE)
+data<-as.data.frame(data)
+data$Difference<-data[,2]-data[,3]
+data[,2:6]<-data[,2:6]*1000
+write.csv(data, file="PrePostComparisonFull.csv",  row.names=FALSE)
+
+```
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+
+
+#Full values for matching pre-/post-NGAs
+out <-subset(out, out[,6]<1000) #Removing windows without matching pre-/post-MG rates
+write.csv(out, file="FullRates.csv",  row.names=FALSE)
+out <- read.table("FullRates.csv", sep=",", header=TRUE)
+
+
+data <- matrix(NA, nrow=0, ncol=15)
+
+for(i in 1:length(NGAs)){
+  dt <- out[out$NGA == NGAs[i],]
+  ot <- dat[dat$NGA == NGAs[i],]
+  MG<-subset(ot,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+  #library(dplyr)
+  #MG<-as.data.frame(MG %>% group_by(PolID) %>% sample_n(size = 1)) #randomly samples so there is only one century per polity
+  MGAppear<-subset(MG, Time==min(Time))
+  DM<-subset(ot,DoctrinalMode=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+  DMAppear<-subset(DM, Time==min(Time))
+  WR<-subset(ot,Writing=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+  WRAppear<-subset(WR, Time==min(Time))
+  my.values <- c(NGAs[i],
+                 mean(dt[,3]),
+                 mean(dt[,2]),
+                 1.96*std.error(dt[,3]),
+                 1.96*std.error(dt[,2]),
+                 t.test(dt[,3],dt[,2])$p.value,
+                 t.test(dt[,3],dt[,2])$parameter,
+                 length(dt[,2]),
+                 t.test(dt[,3],
+                 dt[,2])$statistic,
+                 DMAppear$Time-MGAppear$Time,
+                 WRAppear$Time-MGAppear$Time,
+                 MGAppear$End-MGAppear$Start,
+                 DMAppear$End-DMAppear$Start,
+                 WRAppear$End-WRAppear$Start,
+                 MGAppear$Time)
+  data <- rbind(data,my.values)
+}
+colnames(data)<-c("NGA","PostRate","PreRate","PostConfInt","PreConfInt","p","df","n","t","PreMGRitual","PreMGWriting","RangeMGAppear","RangeDMAppear","RangeWRAppear","MGAppear")
+write.csv(data, file="PrePostComparison.csv",  row.names=FALSE)
+data<-read.table("PrePostComparison.csv", sep=",", header=TRUE)
+data<-as.data.frame(data)
+data$Difference<-data[,2]-data[,3]
+data[,c(2:5,16)]<-data[,c(2:5,16)]*1000
+write.csv(data, file="PrePostComparison.csv",  row.names=FALSE)
+
+```
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+
+######Normalize time-series centered around moralising god appearance
+FB <- 100 ##? again, this is our forward bias correction
+
+out <- matrix(NA, nrow=0, ncol=0)
+for(i in 1:length(NGAs)){
+  dt <- dat[dat$NGA == NGAs[i],]
+  Earliest<-subset(dt,Time==min(Time))	
+  Latest<-subset(dt,Time==max(Time))	
+  MG<-subset(dt,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+  MGAppear<-subset(MG, Time==min(Time))
+  dt$Time.norm<-dt$Time-(MGAppear$Time-FB)
+  out <- rbind(out,dt)
+}
+out$MGUncertainty<-out$End-out$Start
+write.csv(out, file="TimeNorm.csv",  row.names=FALSE) 
+
+#Merge Normalized times
+dat <- read.table("TimeNorm.csv", sep=",", header=TRUE)
+out<-unique(dat$Time.norm)
+
+#library(dplyr) ##Bugs when I load dplyr and plyr (even when only loading dplyr after plyr)!
+
+for(i in 1:length(NGAs)){
+  dt <- dat[dat$NGA == NGAs[i],]
+  out<-merge(out,dt[,c("Time.norm","Mean")],by.x="x",by.y="Time.norm",all=TRUE)
+  out<-rename(out, c("Mean" = NGAs[i]))
+}
+MeanPCs<-out[,2:(1+length(NGAs))]
+out$Mean <- apply(MeanPCs,1,mean,na.rm=TRUE)
+out$Lower <- out$Mean - 1.96*apply(MeanPCs,1, std.error,na.rm=TRUE)
+out$Upper <- out$Mean + 1.96*apply(MeanPCs,1, std.error,na.rm=TRUE)
+write.csv(out, file="SCNorm.csv",  row.names=FALSE) 
+
+```
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+
+#plot normalized times
+FullImpDat<-read.csv('SCNorm.csv', header=TRUE)
+
+
+#data <- FullImpDat
+y <- out$Mean
+x <- out$x
+l <- out$Lower
+u <- out$Upper
+#earliest<-read.csv('EarliestAppearance.csv', header=TRUE)
+#a<-earliest[,5]
+#b<-earliest[,6]
+#c<-earliest[,2]
+#d<-earliest[,4]
+
+#ylim <- c(min(na.rm=TRUE,y), max(na.rm=TRUE,y)) #This sets y-axis from the minimum to maximum values throughout the whole global dataset
+ylim <- c(0,1) #This sets x-axis to min (0) to max (1) social complexity
+#xlim <- c(min(na.rm=TRUE,x), max(na.rm=TRUE,x)) #Use this instead to set x-axis from earliest to latest time in dataset
+xlim <- c(-2000,2000) #This sets x-axis to 1,000 years before and after the appearance of moralising gods
+pch=19
+cex=.5
+xaxt='s'
+yaxt='s'
+xaxs="i"
+yaxs="i"
+ann=FALSE
+#v1=min(subset(x,a==1))
+#v2=min(subset(x,c==1))
+linecol1<-"red"
+linecol2<-"green"
+linecol3<-"blue"
+linecol4<-"orange"
+lty1<-2
+lty2<-4
+lty3<-3
+lty4<-2
+lwd<-1.5
+type="l"
+h=.6
+
+col1<-rgb(0,0,0,max=255,alpha=50)
+#col2<-rgb(255,0,0,max=255,alpha=125)
+#col3<-rgb(0,255,0,max=255,alpha=125)
+
+tiff("correctedMain.tiff",width = 6,height = 5.5,units = 'in', res = 300)
+
+plot(x, y, ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type,xaxs=xaxs,yaxs=yaxs)
+panel.first = rect(c(mean(data$PreMGRitual)-(1.96*std.error(data$PreMGRitual)), 0), -1e6, c(mean(data$PreMGRitual)+ (1.96*std.error(data$PreMGRitual)), 0+mean(data$RangeMGAppear)), 1e6, col=col1, border=NA)
+#panel.first = rect(c(mean(data$PreMGRitual)-(1.96*std.error(data$PreMGRitual)), mean(data$PreMGWriting)-(1.96*std.error(data$PreMGWriting)), 0), -1e6, c(mean(data$PreMGRitual)+ (1.96*std.error(data$PreMGRitual)), mean(data$PreMGWriting)+(1.96*std.error(data$PreMGWriting)), 0+mean(data$RangeMGAppear)), 1e6, col=c(col1,col2,col3), border=NA)
+#This was earlier version that included writing
+#polygon(c(x, rev(x)) , c(u, rev(l)) , col = 'grey' , border = NA) #out for now because of bugs
+lines(x, y,type="l") 
+lines(x, u,type="l",lty="dotted") 
+lines(x, l,type="l",lty="dotted")
+#abline(h=0.6,lty="dashed")
+
+dev.off()
+```
+
+Moving MG appearance just 100 years back (the lowest time point possible, given the resolution of Whitehous et al. data), puts MGs directly into action!!
+
+
+## 2.4 Corrected plot for all sites
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+####Plot 12 NGA time-series with pre- and post-moralizing god SC data
+#First average normalized to moralizing gods time
+out<-read.csv('SCNorm.csv', header=TRUE)
+data<-read.csv('PrePostComparison.csv', header=TRUE)
+
+####Next plot each NGA individually without normalizing time
+data <- read.table("TimeNorm.csv", sep=",", header=TRUE)
+y <- data$Mean
+x <- data$Time
+l <- data$Lower
+u <- data$Upper
+earliest<-read.csv('PrePostComparison.csv', header=TRUE)
+MG<-earliest[,15]
+DM<-earliest[,10]+MG
+WR<-earliest[,11]+MG
+MGR<-earliest[,12]
+DMR<-earliest[,13]
+WRR<-earliest[,14]
+#ylim <- c(min(na.rm=TRUE,y), max(na.rm=TRUE,y)) #This sets y-axis from the minimum to maximum values throughout the whole global dataset
+ylim <- c(0,1) #This sets x-axis to min (0) to max (1) social complexity
+#xlim <- c(min(na.rm=TRUE,x), max(na.rm=TRUE,x)) #Use this instead to set x-axis from earliest to latest time in dataset
+xlim <- c(-10000,2000) #This sets x-axis to 1,000 years before and after the appearance of moralising gods
+pch=19
+cex=.5
+xaxt='s'  
+yaxt='s' 
+xaxs="i"
+yaxs="i"
+
+ann=FALSE
+#v1=min(subset(x,a==1))
+#v2=min(subset(x,c==1))
+linecol1<-"red"
+linecol2<-"green"
+linecol3<-"blue"
+linecol4<-"orange"
+lty1<-2
+lty2<-4
+lty3<-3
+lty4<-2
+lwd<-1.5
+type="l"
+h=0
+
+col1<-rgb(0,0,255,max=255,alpha=125)
+col2<-rgb(0,255,0,max=255,alpha=125)
+col3<-rgb(255,0,0,max=255,alpha=125)
+
+par(mfrow=c(2,6),mar=c(1.5,1.5,1.5,1.5),oma=c(0,0,0,0),mgp = c(.5, .5, 0),xpd = FALSE)
+
+NGA<-"Upper Egypt"
+plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
+polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) , c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
+lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
+abline(h=h,lty=lty1)
+panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)), -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)), 1e6, col=c(col1,col3), border=NA)
+
+NGA<-"Susiana"
+plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
+polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) , c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
+lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
+abline(h=h,lty=lty1)
+panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)), -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)), 1e6, col=c(col1,col3), border=NA)
+
+NGA<-"Konya Plain"
+plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
+polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) , c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
+lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
+abline(h=h,lty=lty1)
+panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)), -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)), 1e6, col=c(col1,col3), border=NA)
+
+NGA<-"Middle Yellow River Valley"
+plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
+polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) , c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
+lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
+abline(h=h,lty=lty1)
+panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)), -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)), 1e6, col=c(col1,col3), border=NA)
+
+NGA<-"Kachi Plain"
+plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
+polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) , c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
+lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
+abline(h=h,lty=lty1)
+panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)), -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)), 1e6, col=c(col1,col3), border=NA)
+
+NGA<-"Sogdiana"
+plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
+polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) , c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
+lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
+abline(h=h,lty=lty1)
+panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)), -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)), 1e6, col=c(col1,col3), border=NA)
+
+NGA<-"Latium"
+plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
+polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) , c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
+lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
+abline(h=h,lty=lty1)
+panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)), -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)), 1e6, col=c(col1,col3), border=NA)
+
+NGA<-"Deccan"
+plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
+polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) , c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
+lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
+abline(h=h,lty=lty1)
+panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)), -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)), 1e6, col=c(col1,col3), border=NA)
+
+NGA<-"Paris Basin"
+plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
+polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) , c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
+lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
+abline(h=h,lty=lty1)
+panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)), -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)), 1e6, col=c(col1,col3), border=NA)
+
+NGA<-"Orkhon Valley"
+plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
+polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) , c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
+lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
+abline(h=h,lty=lty1)
+panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)), -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)), 1e6, col=c(col1,col3), border=NA)
+
+NGA<-"Kansai"
+plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
+polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) , c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
+lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
+abline(h=h,lty=lty1)
+panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)), -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)), 1e6, col=c(col1,col3), border=NA)
+
+NGA<-"Niger Inland Delta"
+plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
+polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) , c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
+lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
+abline(h=h,lty=lty1)
+panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)), -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)), 1e6, col=c(col1,col3), border=NA)
+
+
+################################################################### 
+```
+
+
+# 3. Hierarchical models
+
+Keeping with Whitehouse et al.'s original data (not corecting for the forward bias) let's try to find a more appropriate model to fit here. As discussed above, t-test is less than optimal for this type of data. First, let's look at the density plot of SC change and break it by Pre and Post.
+
+## 3.1. Load the original data again
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=T}
+dat <- read.table("PC1_traj_merged.csv", sep=",", header=TRUE) #?? everything is here
+dat$NGA<-as.character(dat$NGA)
+NGAs <- levels(polities$NGA)
+NGAs <- NGAs[NGAs != "Crete"]    #### Remove new NGAs
+NGAs <- NGAs[NGAs != "Galilee"]
+
+dat$World.Region <- as.factor(dat$World.Region)
+dat$Family <- as.factor(dat$Family)
+
+#?? I am going to add World.Region and language Family to this data set, so we can use it later in the models as nesting factors.
+
+#Full time windows (up to 10,000 years before and after moralizing gods)
+NGAs <- c("Big Island Hawaii", "Cambodian Basin", "Central Java", "Chuuk Islands", "Deccan",    "Ghanaian Coast", "Iceland", "Kachi Plain", "Kansai", "Kapuasi Basin",  "Konya Plain", "Latium", "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",  "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt","Yemeni Coastal Plain")
+
+out <- matrix(NA, nrow=0, ncol=7)
+for(i in 1:length(NGAs)){
+  dt <- dat[dat$NGA == NGAs[i],]
+  MG<-subset(dt,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+  #library(dplyr)
+  #MG<-as.data.frame(MG %>% group_by(PolID) %>% sample_n(size = 1)) #randomly samples so there is only one century per polity
+  MGAppear<-subset(MG, Time==min(Time))
+  for(j in 1: 100){
+    Earliest<-subset(dt, Time==MGAppear$Time-j*100) 
+    Latest<-subset(dt, Time==MGAppear$Time+j*100)
+    rates <- cbind(MGAppear$NGA,
+                   ifelse(class(Earliest$Time)=="NULL","NA",
+                  (MGAppear$Mean-Earliest$Mean)/(MGAppear$Time-Earliest$Time)),
+                  ifelse(class(Latest$Time)=="NULL","NA",
+                  ((Latest$Mean-MGAppear$Mean)/(Latest$Time-MGAppear$Time))),
+                  (MGAppear$End-MGAppear$Start),j*100,MGAppear$World.Region,MGAppear$Family)
+    out <- rbind(out,rates)
+  }
+  out <- rbind(out,rates)
+}
+colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow","Region", "Lang")
+
+#mean(out$MGUncertainty) #Use this while replacing "MoralisingGods" as above to get uncertainty values for time-series
+
+write.csv(out, file="FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to read as numeric (there is probably a more elegant way to do this)
+```
+
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=T}
+out<-read.table("FullRates.csv", sep=",", header=TRUE)
+
+out$Difference<-out[,3]-out[,2]
+
+for(i in 2:length(out[,5])){
+  out[i,8]<-out[i,5]-out[i-1,5]
+}
+out <-subset(out, out[,8]!=0) #getting rid of bug when the final row repeats in each NGA
+
+write.csv(out, file="FullRates.csv",  row.names=FALSE)
+
+out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years pre/post moralizing gods (<750) or # out to use full time-window
+
+
+#?? Create stacked data set
+out.s <- rbind(out,out)
+out.s$Rate <- out.s$PostRate
+out.s$prepost <- 1
+
+out.s$Rate[1:length(out$PreRate)] <- out$PreRate
+out.s$prepost[1:length(out$PreRate)] <- 0
+out.s$prepost <- factor(out.s$prepost)
+
+out.s$NGA <- as.factor(out.s$NGA)
+out.s$Region <- as.factor(out.s$Region)
+out.s$Lang <- as.factor(out.s$Lang)
+
+```
+
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+###################################################################
+# First, limit NGAs only to the final 12 (although we wouldn't really have to, because multi-levl models could handle some of the missingness)
+NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium", "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",  "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
+
+out.s <- out.s[out.s$NGA %in% NGAs,]
+
+tiff("pirateplot.tiff",width = 8,height = 5.5,units = 'in', res = 300)
+pirateplot(formula = Rate ~ NGA,
+           data = out.s,
+           theme = 0,
+           main = "",
+           pal = "info2", # southpark color palette
+           bean.b.o = 1, # Bean fill
+           bean.f.o = .1, # Bean fill
+           point.o = .9, # Points
+           inf.f.o = .0, # Inference fill
+           inf.b.o = 0, # Inference border
+           avg.line.o = 0.7, # AverMMAT line
+           bar.f.o = .0, # Bar
+           inf.f.col = "white", # Inf fill col
+           inf.b.col = "black", # Inf border col
+           avg.line.col = "black", # avg line col
+           point.pch = 21,
+           point.bg = "white",
+           point.cex = 1,
+           point.lwd = 1,
+           bean.lwd = 2,
+           ylim = c(-0.002,0.003),
+           ylab = "Rate of SC change"
+           )
+abline(0.0002511869,0.00, )
+dev.off()
+
+
+ggplot(out.s, aes(NGA, Rate, color= NGA)) + 
+   geom_bar(stat="identity") +
+ # scale_x_continuous(breaks = c(0,200,400,600,700,800,1000,1200,1400),
+#                     labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
+  labs(y="Rate of SC Change", x="NGA") + 
+  ylim(c(-0.002,0.003)) +
+  theme_bw() + 
+  theme(
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
+    axis.line = element_line(colour = "black"),
+    legend.position = "",
+    legend.justification = c("right", "top"),
+    legend.key.size = unit(0.8, "cm"),
+    legend.text = element_text(size = rel(1)),
+    axis.title = element_text(size = rel(1.5)),
+    axis.text.y= element_text(size = rel(1.5)),
+    axis.text.x= element_text(angle = 45, hjust = 1,size = rel(1.5)),
+    plot.margin=unit(c(1,1,1,1),"cm")) 
+ggsave("pirbars.tiff",width = 8,height = 5.5, dpi = 300)
+
+
+################################################################### 
+```
+
+## 3.2. Linear models of rate of change
+
+Starting with a straightforward linear model, we should first account for the nesting of time-points within NGAs, then the nesting of time-points within world regions, and finally let the pre-/post-MG effect vary by each NGA.
+
+Note that here we work with the stacked data set (out.s) that was created in the previous chunk.
+
+Note2: we also wanted to explore whether nesting within language families will have an effect, but the model gives a singular fit probably because region == language family for the 12 NGAs we have in the analysis. We could have also tried nesting of NGAs within world.regions, but the estimated interaction on varying intercepts would be probably very low and possibly cause convergence issues.
+
+
+```{r results = 'hide', message=FALSE, warning=FALSE, size= 0.5} 
+
+summary(lm1 <- lmer(Rate ~ prepost + (1|NGA),data = out.s))
+
+summary(lm2 <- lmer(Rate ~ prepost + (1|NGA) + (1|Region),data = out.s))
+
+summary(lm3 <- lmer(Rate ~ prepost + (prepost|NGA) + (1|Region),data = out.s))
+
+```
+```{r echo=FALSE, results='asis'}
+stargazer(lm1,lm2,lm3, title="Estimates with 95% CI",  multicolumn = F, df = F, header=FALSE, omit.stat = c("ll","wald","AIC","BIC","adj.rsq","rsq","f","ser"), dep.var.caption  = "",no.space = F,  p.auto = FALSE, star.char = c("x", "*", "**","***"),  star.cutoffs = c(0.1, 0.05, 0.01, 0.001), notes = c("x p<.1; * p<.05; ** p<.01; *** p<.001"), notes.append = F, ci = T, type = "html", digits = 2)
+
+```
+
+
+The Pre-/Post effects reported in Whitehouse et al. held up after accounting for the interdependencies among time-points. The nesting within NGAs and world regions did not explain much of the variability, but in combination with the varying effects of pre-post showed a minor influence.
+
+Please keep in mind that the data are extremely problematic (see sections above) and here we are just trying to find an appropriate model for the data.
+
+Let's check the model fit.
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+simulationOutput = simulateResiduals(lm3)
+plot(simulationOutput)
+testUniformity(simulationOutput = simulationOutput)
+testDispersion(simulationOutput = simulationOutput)
+
+```
+
+
+Normal distribution doesn't look like an appropriate assumption here. This is probably caused by the fact that we are looking already at the rate of SC change rather than modeling SC at each time point with a proper hierarchical model. Let's try to model just SC, not the computed rate of change with factorial MG variable. However, to do that, we have to commit the same fallacy (!!!) as the authors, i.e., treat MG == NA as MG == 0, otherwise there is nothing to model. So, with this gigantic caveat, let's try to fit a proper growth model.
+
+
+```{r echo = F, message=FALSE, warning=FALSE}
+#####################################################################
+## Function extracting coefficients from various models
+
+ xtract.cof <- function(model,number,extension,package,OR = 1){
+    # Model is model's name e.g. Mod and should be specified as "Mod"
+    # Number is the number of models, e.g. 1:3 corresponding to models
+    # named as Mod1, Mod2, Mod3 (e.g. adding variables step-wise)
+    # Extension is further model name appendices e.g. "Mod1.good" and 
+    # should be specified as ".good". If no appendix is given, then
+    # it has to be specified as ""
+    # Package is a package name identifying which extraction method will be
+    # used. Currently available for "glm","glmer",and "glmmadmb"
+    # OR specifies whether coefficients should be exponentiated (odds ratios and CI)
+    # 0 = no transformation, output coefs, CI, and p-vals;
+    # 1 = exponentiate coefs and CI (for logit link)
+    # 2 = outputs non-transformed coefs and CI for log link
+   
+   # The product of this function is a list of objects called "Mods"
+    
+    Mods <<- list()
+    if(package == "glm"){
+      for(i in number){
+        MOD <- eval(parse(text = paste0(model,i,extension)))
+        cf <- MOD$coefficients
+        se <- sqrt(diag(vcov(MOD)))
+        t <- summary(MOD)$coefficients[,3]
+        ps <- summary(MOD)$coefficients[,4]
+        nans <- length(cf[cf=="NA"])
+        if(nans>0){
+          pos <- which(is.na(cf))
+          cf[pos] <- 111
+          se <- append(se,111,after = pos-1)
+          ps <- append(ps,111,after = pos-1)
+        }
+        if(OR == 1){
+          ci <- exp(cbind(OR = cf, LL = cf - 1.96 * se,
+                          UL = cf +  1.96 * se))
+        }else if(OR == 0) {ci <- (cbind(est = cf, LL = cf - 1.96 * se,
+                                        UL = cf +  1.96 * se))
+        }else if(OR == 2){ci <- (cbind(est = cf, LL = se,
+                                       UL = se))
+        }            
+        if(nans > 0){ci[pos,] = NA;ps[pos] = NA}
+        if(OR != 2){
+          Mods[[i]] <<- round(cbind(ci,ps), digits = 3)
+        }else if(OR == 2){
+          Mds <- cbind(ci,ps,t)
+          print(i)
+          Mds[2:nrow(Mds),1] <- Mds[2:nrow(Mds),1] + Mds[1,1]
+          Mds[,1] <- exp(Mds[,1])
+          
+          Mds[2:nrow(Mds),1] <- Mds[2:nrow(Mds),1] - Mds[1,1] 
+          Mds[,2] <- Mds[,1]/Mds[,5]
+          Mds[,3] <- Mds[,1] + 1.96*Mds[,2]
+          Mds[,2] <- Mds[,1] - 1.96*Mds[,2]
+          Mods[[i]] <<- round(Mds, digits = 3)  
+        }
+        
+      }}else if(package == "glmmadmb" | package == "glmer"){
+        for(i in number){
+          MOD <- eval(parse(text = paste0(model,i,extension)))
+          cf <- summary(MOD)$coefficients[,1]
+          se <- sqrt(diag(vcov(MOD)))
+          t <- summary(MOD)$coefficients[,3]
+          ps <- summary(MOD)$coefficients[,4]
+          nans <- length(cf[cf=="NA"])
+          if(nans>0){
+            pos <- which(is.na(cf))
+            cf[pos] <- 111
+            se <- append(se,111,after = pos-1)
+            ps <- append(ps,111,after = pos-1)
+          }
+          if(OR == 1){
+            ci <- exp(cbind(OR = cf, LL = cf - 1.96 * se,
+                            UL = cf +  1.96 * se))
+          }else if(OR == 0) {ci <- (cbind(est = cf, LL = cf - 1.96 * se,
+                                          UL = cf +  1.96 * se))
+          }else if(OR == 2){ci <- (cbind(est = cf, LL = se,
+                                         UL = se))
+          }            
+          if(nans > 0){ci[pos,] = NA;ps[pos] = NA}
+          if(OR != 2){
+            Mods[[i]] <<- round(cbind(ci,ps), digits = 5)
+          }else{
+            Mds <- cbind(ci,ps,t)
+            Mds[2:nrow(Mds),1] <- Mds[2:nrow(Mds),1] + Mds[1,1]
+            Mds[,1] <- exp(Mds[,1])
+            
+            Mds[2:nrow(Mds),1] <- Mds[2:nrow(Mds),1] - Mds[1,1] 
+            Mds[,2] <- Mds[,1]/Mds[,5]
+            Mds[,3] <- Mds[,1] + 1.96*Mds[,2]
+            Mds[,2] <- Mds[,1] - 1.96*Mds[,2]
+            Mods[[i]] <<- round(Mds, digits = 5)  
+          }
+          
+        }
+      }
+    else if(package == "glmmTMB"){
+        for(i in number){
+          MOD <- eval(parse(text = paste0(model,i,extension)))
+          cf <- summary(MOD)$coefficients$cond[,1]
+          se <- sqrt(diag(vcov(MOD)[1]$cond))
+          t <- summary(MOD)$coefficients$cond[,3]
+          ps <- summary(MOD)$coefficients$cond[,4]
+          nans <- length(cf[cf=="NA"])
+          if(nans>0){
+            pos <- which(is.na(cf))
+            cf[pos] <- 111
+            se <- append(se,111,after = pos-1)
+            ps <- append(ps,111,after = pos-1)
+          }
+          if(OR == 1){
+            ci <- exp(cbind(OR = cf, LL = cf - 1.96 * se,
+                            UL = cf +  1.96 * se))
+          }else if(OR == 0) {ci <- (cbind(est = cf, LL = cf - 1.96 * se,
+                                          UL = cf +  1.96 * se))
+          }else if(OR == 2){ci <- (cbind(est = cf, LL = se,
+                                         UL = se))
+          }            
+          if(nans > 0){ci[pos,] = NA;ps[pos] = NA}
+          if(OR != 2){
+            Mods[[i]] <<- round(cbind(ci,ps), digits = 3)
+          }else{
+            Mds <- cbind(ci,ps,t)
+            Mds[2:nrow(Mds),1] <- Mds[2:nrow(Mds),1] + Mds[1,1]
+            Mds[,1] <- exp(Mds[,1])
+            
+            Mds[2:nrow(Mds),1] <- Mds[2:nrow(Mds),1] - Mds[1,1] 
+            Mds[,2] <- Mds[,1]/Mds[,5]
+            Mds[,3] <- Mds[,1] + 1.96*Mds[,2]
+            Mds[,2] <- Mds[,1] - 1.96*Mds[,2]
+            Mods[[i]] <<- round(Mds, digits = 3)  
+          }
+          
+        }
+      }else
+        print("Wrong model specification")
+  }
+
+###################################################################
+```
+
+# 4. Social complexity growth model
+
+First, let's look at the SC distribution.
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+###################################################################
+dat.p <- na.omit(subset(dat, select = c(MoralisingGods, Mean)))
+dat.p$MoralisingGods <- as.factor(dat.p$MoralisingGods)
+ggplot() + 
+  geom_density(data = dat.p, aes(x = Mean, fill = MoralisingGods, colour = MoralisingGods, linetype=MoralisingGods),size = 0.5) +
+ 
+ scale_color_manual(values = alpha(c("lightskyblue4","lightskyblue4"), 1), guide = FALSE) + 
+   scale_fill_manual(breaks = c(0,1),values = alpha(c("coral2","turquoise3"),0.6),
+                     labels = c("Pre-MG", "Post-MG"), name = "") +
+  scale_linetype_manual(values = c("solid","dashed"), guide = FALSE) +
+                     xlim(c(0,1)) +
+
+  labs(x="Social Complexity", y="Density") +
+  theme_bw() + 
+  theme(
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
+    axis.line = element_line(colour = "black"),
+    legend.position = c(0.25,0.95),
+    legend.justification = c("right", "top"),
+    legend.key.size = unit(0.8, "cm"),
+    legend.text = element_text(size = rel(1.5)),
+    axis.title = element_text(size = rel(1.5)),
+    axis.text.y= element_text(size = rel(1.5)),
+    axis.text.x= element_text(size = rel(1.5)),
+    plot.margin=unit(c(1,1,1,1),"cm")) 
+
+
+
+################################################################### 
+```
+
+
+Even after accounting for the Pre-/Post-MG difference, the residuals will most likely not be normally distributed. Given how data were produced, the best option is to use beta regression, which is typically used for percentage data to account for the binding interval [0,1]. SC data are on the same interval.
+
+
+## 4.1 +/- 700 years analysis
+
+### 4.1.1. Prepare data
+
+
+This is an important step. We have to take raw data and perform various transformations to accomodate for all the assumptions Whitehouse et al. made in their t-test analysis. Yes, we have to convert NAs to 0s. We also have to convert MG == 0 after the first MG detection to MG == 1 and a lot of other transformations, see below.
+
+
+```{r results = 'hide', message=FALSE, warning=FALSE, size= 0.5} 
+# first, select the 12 NGAs they work with
+dat.MG <- dat
+NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium", "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",  "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
+dat.MG <- dat.MG[dat$NGA %in% NGAs,]
+
+# agh, yes, do this! :(
+dat.MG$MoralisingGods[is.na(dat.MG$MoralisingGods)] <- 0
+dat.MG$MoralisingGods <- as.factor(dat.MG$MoralisingGods)
+
+
+# Standardize Time for each NGA to start with 0 (no matter whether the dates are BCE or CE)
+
+for(i in 1:length(NGAs)){
+  dt <- dat.MG[dat.MG$NGA == NGAs[i],]
+  mt <- min(dt$Time)
+  if(mt >= 0){
+  dat.MG$Time[dat.MG$NGA == NGAs[i]] <- dat.MG$Time[dat.MG$NGA == NGAs[i]]-mt}
+  else if(mt < 0){ 
+  dat.MG$Time[dat.MG$NGA == NGAs[i]] <- dat.MG$Time[dat.MG$NGA == NGAs[i]]+abs(mt)
+}
+  }
+
+dat.MG$NGA <- as.factor(dat.MG$NGA)
+
+### IMPORTANT! We have to censor the data to the +/- 700 years interval Pre- and Post-MG as in the original t-test analysis. We will also do the same later for the +/-2000 years as in the original paper
+
+# Before doing that, however, we have to fix a mistake at the Deccan NGA - it misses one century (looks like a bug), so we have to recode the other centuries. Note that this problem will have to be fixed for more centuries, if we would like to run the +/- 2000 years analysis.
+
+dat.MG$Time[dat.MG$NGA == "Deccan" & (dat.MG$Time == 3200)] <- 3100
+dat.MG$Time[dat.MG$NGA == "Deccan" & (dat.MG$Time == 3300)] <- 3200
+
+# Ok, we can continue
+censor = 750 # censor the data to +/- 7 centuries
+
+for(i in 1:length(NGAs)){
+  dt <- dat.MG[dat.MG$NGA == NGAs[i],]
+  MG<-subset(dt,MoralisingGods=="1")
+  MGAppear<-subset(MG, Time==min(Time))
+  t <- MGAppear$Time
+  t1 <- t-censor
+  t2 <- t+censor
+  if (min(dat.MG$Time[dat.MG$NGA == NGAs[i]], na.rm = T) < t1){
+  dat.MG$Time[dat.MG$NGA == NGAs[i] & (dat.MG$Time < t1)] <- NA}
+  if (max(dat.MG$Time[dat.MG$NGA == NGAs[i]], na.rm = T) > t2){ 
+  dat.MG$Time[dat.MG$NGA == NGAs[i] & (dat.MG$Time > t2)] <- NA}
+  }
+dat.MG <- dat.MG[!is.na(dat.MG$Time),]
+
+# Make Time series at each NGA to start with 0 and end with 1400 (14 centuries of data = +/- 700 years)
+
+for(i in 1:length(NGAs)){
+  dt <- dat.MG[dat.MG$NGA == NGAs[i],]
+  m <- max(dt$Time, na.rm=T)
+  dat.MG$Time[dat.MG$NGA == NGAs[i]] <- dat.MG$Time[dat.MG$NGA == NGAs[i]] - m
+  dat.MG$Time[dat.MG$NGA == NGAs[i]] <- dat.MG$Time[dat.MG$NGA == NGAs[i]] + 1400}
+
+#OK, now all sites acquire MG at year 700, so our data have 7 centuries before and 7 centuries after MG
+
+# Now, let's assume that MGs were present at all sites after their first detection (assumption of the t-test analysis presented in section 1.4)
+
+dat.MG$MoralisingGods[dat.MG$Time>600] <- 1
+
+
+```
+
+### 4.1.2. Plot Pre/Post-MG
+
+This plot is based on Whitehouse et al. raw data and nicely shows how unrealistic their approach is. Instead of drawing lines (as they did in Fig.2a), we used discrete data (data are sampled by centuries). That is, we didn't connect the dots with artificial lines, just plotted mean data with standard errors for each century. The plot shows that before an NGA adopts MG, something curious happens that causes the NGA to immensely grow in social complexity within 100 years and obtain MG. This probably explains the bimodality we saw in the previous density plot. But keep in mind that these are just raw data, not taking into account the various nesting effects. We will explore those below.
+
+
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+###################################################################
+dat.plot <- dat.MG
+dat.plot$Time[dat.plot$MoralisingGods == 1]
+
+ggplot(dat.plot, aes(Time, Mean, color=MoralisingGods)) + 
+  stat_summary(fun.data=mean_se, geom="pointrange") + 
+  scale_color_manual(values = alpha(c("coral1","aquamarine3"), .8), labels = c("NA", "Present"), name = "Moralizing Gods") + 
+  scale_x_continuous(breaks = c(0,200,400,600,700,800,1000,1200,1400),
+                     labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
+  geom_vline(xintercept = 650,
+                color = "grey", size=10, alpha = 0.5) + 
+  annotate("text", label = "What happens here?", x = 650, y = 0.35, size = 4, colour = "black", angle = 90) +
+  labs(y="Social Complexity", x="Time (years before/after MG)") + 
+  theme_bw() + 
+  theme(
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
+    axis.line = element_line(colour = "black"),
+    legend.position = c(0.35,0.95),
+    legend.justification = c("right", "top"),
+    legend.key.size = unit(0.8, "cm"),
+    legend.text = element_text(size = rel(1)),
+    axis.title = element_text(size = rel(1.5)),
+    axis.text.y= element_text(size = rel(1.5)),
+    axis.text.x= element_text(size = rel(1.5)),
+    plot.margin=unit(c(1,1,1,1),"cm")) 
+
+#ggsave("PrePost_dots.tiff",width = 6,height = 5.5, dpi = 300)
+
+################################################################### 
+```
+
+
+### 4.1.3. Compare beta with linear
+
+As suggested above, the appropriate distributional assumption here should be the beta distribution. To compare the fit of gaussian and beta distributions, we will build a simple growth curve model where time will predict SC, and use AIC to compare guassian and beta assumpitons.
+
+
+```{r results = 'hide', message=FALSE, warning=FALSE, size= 0.5} 
+# First, let's compare gaussian and beta models
+
+summary(lm1 <- glmmadmb(Mean ~ Time + (1|NGA), data = dat.MG, family = 'gaussian'))
+
+summary(glm.b1 <- glmmadmb(Mean ~ Time + (1|NGA), data = dat.MG, family = 'beta'))
+
+```
+
+```{r results = 'show', message=FALSE, warning=FALSE, size= 0.5} 
+a <- AICtab(lm1, glm.b1, sort = F)
+t <- matrix(c(a$dAIC[1],a$dAIC[2],a$df[1],a$df[2]),ncol=2,byrow=F)
+colnames(t) <- c("dAIC","df")
+rownames(t) <- c("lm1","glm.b1")
+kable(t)
+```
+
+The beta model seems to fit the data  better. Let's use the beta regression, then.
+
+
+### 4.1.4. Beta models 
+
+This is the main multi-level growth curve analysis assuming a beta distribution of residuals. We fit three models, analogically to the hierarchical models presented in section 3 (see that section for the rationale of our modeling building procedure). 
+
+Note that it would be possible to also add a quadratic effect of time or to compare the shape of the growth curve (linear vs. quadratic) between conditions. However, this would venture too far beyond the original assumptions of Whitehouse et al.'s paper.
+
+
+```{r results = 'hide', message=FALSE, warning=FALSE, cache=T} 
+summary(glm.b1 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.MG, family = 'Beta'))
+
+summary(glm.b2 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA) + (1|World.Region), data = dat.MG, family = 'Beta'))
+
+summary(glm.b3 <- glmmadmb(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region), data = dat.MG, family = 'Beta'))
+
+xtract.cof("glm.b",c(1:3),"","glmmadmb",0)
+# Define list of coefficients extracted from glmmadmb models: estimates, confidence intervals, and p-values
+E.vector <- list(Mods[[1]][,1],Mods[[2]][,1],Mods[[3]][,1])
+CI.vector <- list(Mods[[1]][,2:3],Mods[[2]][,2:3],Mods[[3]][,2:3])
+p.vector <- list(Mods[[1]][,4],Mods[[2]][,4],Mods[[3]][,4])
+```
+
+
+```{r results = 'show', message=FALSE, warning=FALSE, size= 0.5} 
+a <- AICtab(glm.b3,glm.b2,glm.b1, sort = F)
+t <- matrix(c(a$dAIC[1],a$dAIC[2],a$dAIC[3],a$df[1],a$df[2],a$df[3]),ncol=2,byrow=F)
+colnames(t) <- c("dAIC","df")
+rownames(t) <- c("glm.b3","glm.b2","glm.b1")
+kable(t)
+```
+
+
+The third model fits data best. 
+
+```{r results = 'hide', message=FALSE, warning=FALSE, echo = F} 
+# This just to populate the table with the model and variable names, the results are from beta regression.
+
+summary(lm1 <- lme(Mean ~ Time*MoralisingGods, random = ~1|NGA, data = dat.MG, na.action = na.omit))
+summary(lm2 <- lme(Mean ~ Time*MoralisingGods, random = ~1|NGA, data = dat.MG, na.action = na.omit))
+summary(lm3 <- lme(Mean ~ Time*MoralisingGods, random = ~1|NGA, data = dat.MG, na.action = na.omit))
+
+
+```
+```{r echo=FALSE, results='asis'}
+# stargazer command for creating html table
+stargazer::stargazer(lm1,lm2,lm3, coef=E.vector,ci = TRUE, ci.custom = CI.vector, p = p.vector, title="Estimates with 95/ CI for Social Complexity. Estimates from Beta regression are logit-transformed", dep.var.labels.include = FALSE, multicolumn = F, df = F, header = T, omit.stat = c("ll","wald","AIC","BIC","adj.rsq","rsq","f","ser"), dep.var.caption  = "",no.space = F, p.auto = F, star.char = c("x", "*", "**","***"),  star.cutoffs = c(0.1, 0.05, 0.01, 0.001), notes = c("x p<.1; * p<.05; ** p<.01; *** p<.001"), notes.append = F, type = "html", digits = 5)
+```
+
+Let's explore goodness-of-fit measures.
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+# We have to use the glmmTMB package because glmmadmb is not compatible with DHARMa
+
+summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region), data = dat.MG, family = 'beta'))
+
+simulationOutput = simulateResiduals(glm.b3)
+plot(simulationOutput)
+testUniformity(simulationOutput = simulationOutput)
+testDispersion(simulationOutput = simulationOutput)
+
+```
+
+
+The glm.b3 model appears to be a pretty good fit based on the DHARMa estimation, although we are still missing something and the data seem to be underdispersed (note that DHARMa can't yet handle random effects in GLMM in the residual vs. predicted plot).
+
+### 4.1.5. Predicted values plot
+
+These are predicted growth curves from a linear plot.
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+###################################################################
+
+dat.MG$DV <- dat.MG$Mean
+wx <- na.omit(subset(dat.MG, select = c(DV,Time,MoralisingGods, NGA, World.Region, Family)))
+
+
+summary(RAG1.E <- lmer(DV ~ Time*MoralisingGods + (Time|NGA), data = wx))
+
+
+### MG == 0
+
+newdata2 <- with(wx, data.frame(Time = seq(from = 0,
+                                           to = 700,
+                                           length.out = 20), MoralisingGods ="0"))
+
+p <- predict(RAG1.E, newdata = newdata2, re.form = NA, se.fit = TRUE, nsim = 500)
+est <- p$fit; lwr <- p$ci.fit[1,]; upr <- p$ci.fit[2,]
+newdata3 <- cbind(newdata2, est,lwr,upr)
+
+
+### MG == 1
+
+newdata2 <- with(wx, data.frame(Time = seq(from = 700,
+                                           to = 1400,
+                                           length.out = 20), MoralisingGods ="1"))
+
+p <- predict(RAG1.E, newdata = newdata2, re.form = NA, se.fit = TRUE, nsim = 500)
+est <- p$fit; lwr <- p$ci.fit[1,]; upr <- p$ci.fit[2,]
+newdata31 <- cbind(newdata2, est,lwr,upr)
+
+
+newdata3$variable <- 'LABEL'
+labs <- c('LABEL' = "Predicted Pre/post MG change in social complexity")
+
+  
+ggplot() +
+  geom_ribbon(data = newdata3, aes(x = Time,ymin = lwr, ymax =
+                        upr), fill = "coral1", alpha = 0.15) +
+  geom_ribbon(data = newdata31, aes(x = Time,ymin = lwr, ymax =
+                        upr), fill = "aquamarine3", alpha = 0.15) +
+  geom_line(data = newdata31, aes(x = Time, y = 
+                  est,color = "coral1"), 
+             size = 1.7) +
+  geom_line(data = newdata3, aes(x = Time, y = est,
+                color = "aquamarine3"), size = 1.7) +
+  
+  scale_color_manual(name = "",breaks = c("1","2"),
+                      values = c("coral1", "aquamarine3"),
+                     labels = c("Pre-MG", "Post-MG")) +
+  
+  scale_fill_manual(name = "",breaks = c("",""),
+                      values = c("coral1", "aquamarine3")) +
+    scale_y_continuous(limits=c(0,1)) +
+  scale_x_continuous(breaks = c(0,200,400,600,700,800,1000,1200,1400),
+                     labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
+  facet_wrap(~variable, nrow=1, labeller = as_labeller(labs)) +
+  
+theme_bw() + 
+  ylab("Social complexity") + xlab("Time") +
+ theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(2)),        
+    axis.line = element_line(colour = "black"),
+    legend.position = "",
+    legend.justification = c("right", "top"),
+    legend.key.size = unit(0.8, "cm"),
+    legend.text = element_text(size = rel(2)),
+    axis.title = element_text(size = rel(2)),
+    axis.text.y= element_text(size = rel(2)),
+    axis.text.x= element_text(size = rel(2)),
+    plot.margin=unit(c(1,1,1,1),"cm"),
+    strip.text.x = element_text(size = rel(2))) 
+
+
+
+```
+
+
+
+## 4.2 +/- 2000 years analysis
+
+We are repeating the same model-building procedure as in 4.1, only for the more extensive data set. There are some minor changes in the code to accomodate for the time-frame difference.
+
+### 4.2.1. Prepare data
+
+
+```{r results = 'hide', message=FALSE, warning=FALSE, size= 0.5} 
+# first, select the 12 NGAs they work with
+{dat.MG <- dat
+NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium", "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",  "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
+dat.MG <- dat.MG[dat$NGA %in% NGAs,]
+
+# agh, yes, do this! :(
+dat.MG$MoralisingGods[is.na(dat.MG$MoralisingGods)] <- 0
+dat.MG$MoralisingGods <- as.factor(dat.MG$MoralisingGods)
+
+
+# Standardize Time for each NGA
+
+for(i in 1:length(NGAs)){
+  dt <- dat.MG[dat.MG$NGA == NGAs[i],]
+  mt <- min(dt$Time)
+  if(mt >= 0){
+  dat.MG$Time[dat.MG$NGA == NGAs[i]] <- dat.MG$Time[dat.MG$NGA == NGAs[i]]-mt}
+  else if(mt < 0){ 
+  dat.MG$Time[dat.MG$NGA == NGAs[i]] <- dat.MG$Time[dat.MG$NGA == NGAs[i]]+abs(mt)
+}
+  }
+
+
+
+### IMPORTANT! We have to censor the data to the +/- 700 years interval Pre- and Post-MG as in the original t-test analysis. We can also do for 2000 years as in the original paper
+
+# Before doing that, however, we have to fix a mistake at the Deccan NGA - it misses one century (looks like a bug), so we have to recode the other centuries. Note that this problem will have to be fixed with different numbers, if we would like to run the +/- 2000 years analysis.
+
+dat.MG$Time[dat.MG$NGA == "Deccan" & (dat.MG$Time > 3000)] <- dat.MG$Time[dat.MG$NGA == "Deccan" & (dat.MG$Time > 3000)] - 100
+
+# Ok, we can continue
+censor = 2050
+
+for(i in 1:length(NGAs)){
+  dt <- dat.MG[dat.MG$NGA == NGAs[i],]
+  MG<-subset(dt,MoralisingGods=="1")
+  MGAppear<-subset(MG, Time==min(Time))
+  t <- MGAppear$Time
+  t1 <- t-censor
+  t2 <- t+censor
+  if (min(dat.MG$Time[dat.MG$NGA == NGAs[i]], na.rm = T) < t1){
+  dat.MG$Time[dat.MG$NGA == NGAs[i] & (dat.MG$Time < t1)] <- NA}
+  if (max(dat.MG$Time[dat.MG$NGA == NGAs[i]], na.rm = T) > t2){ 
+  dat.MG$Time[dat.MG$NGA == NGAs[i] & (dat.MG$Time > t2)] <- NA}
+  }
+dat.MG <- dat.MG[!is.na(dat.MG$Time),]
+
+# Make Time series at each NGA to start with 0
+for(i in 1:length(NGAs)){
+  dt <- dat.MG[dat.MG$NGA == NGAs[i],]
+  m <- max(dt$Time, na.rm=T)
+  dat.MG$Time[dat.MG$NGA == NGAs[i]] <- dat.MG$Time[dat.MG$NGA == NGAs[i]] - m
+  dt <- dat.MG[dat.MG$NGA == NGAs[i],]
+  m <- min(dt$Time, na.rm=T)
+  dat.MG$Time[dat.MG$NGA == NGAs[i]] <- dat.MG$Time[dat.MG$NGA == NGAs[i]] + abs(m)}
+# note that the last line adding + 1400 would have to be changed to + 4000 for the +/- 2000 analysis
+
+## We have to impute new rows now, so each NGA would have MG == 1 at Time == 2000
+
+# Deccan
+New <- dat.MG[1,]
+New[,] <- NA 
+dat.1 <- dat.MG[1:39,]
+dat.2 <- dat.MG[40:nrow(dat.MG),]
+dat.MG <- rbind(dat.1, New, dat.2)
+dat.MG[40,1] <- dat.MG[39,1]
+dat.MG[40,4] <- dat.MG[39,4] + 100
+
+# Kansai
+New <- dat.MG[1:11,]
+New[1:11,] <- NA 
+dat.1 <- dat.MG[1:81,]
+dat.2 <- dat.MG[82:nrow(dat.MG),]
+dat.MG <- rbind(dat.1, New, dat.2)
+dat.MG[82:92,1] <- dat.2[1,1]
+
+New <- dat.MG[1:8,]
+New[1:8,] <- NA 
+dat.1 <- dat.MG[1:114,]
+dat.2 <- dat.MG[115:nrow(dat.MG),]
+dat.MG <- rbind(dat.1, New, dat.2)
+dat.MG[115:122,1] <- dat.1[114,1]
+
+dat.MG$Time[dat.MG$NGA=="Kansai"] <- seq(0,4000,100)
+
+
+# Niger Inland Delta
+New <- dat.MG[1:7,]
+New[1:7,] <- NA 
+dat.1 <- dat.MG[1:245,]
+dat.2 <- dat.MG[246:nrow(dat.MG),]
+dat.MG <- rbind(dat.1, New, dat.2)
+dat.MG[246:273,1] <- dat.2[1,1]
+
+
+New <- dat.MG[1:13,]
+New[1:13,] <- NA 
+dat.1 <- dat.MG[1:273,]
+dat.2 <- dat.MG[274:nrow(dat.MG),]
+dat.MG <- rbind(dat.1, New, dat.2)
+dat.MG[274:286,1] <- dat.1[273,1]
+
+dat.MG$Time[dat.MG$NGA=="Niger Inland Delta"] <- seq(0,4000,100)
+
+#Orkhon Valley
+
+New <- dat.MG[1,]
+New[,] <- NA 
+dat.1 <- dat.MG[1:286,]
+dat.2 <- dat.MG[287:nrow(dat.MG),]
+dat.MG <- rbind(dat.1, New, dat.2)
+dat.MG[287,1] <- dat.MG[288,1]
+dat.MG[287,4] <- 0
+
+
+New <- dat.MG[1:6,]
+New[1:6,] <- NA 
+dat.1 <- dat.MG[1:321,]
+dat.2 <- dat.MG[322:nrow(dat.MG),]
+dat.MG <- rbind(dat.1, New, dat.2)
+dat.MG[322:327,1] <- dat.1[320,1]
+
+dat.MG$Time[dat.MG$NGA=="Orkhon Valley"] <- seq(0,4000,100)
+
+# Paris Basin
+New <- dat.MG[1:2,]
+New[1:2,] <- NA 
+dat.1 <- dat.MG[1:365,]
+dat.2 <- dat.MG[366:nrow(dat.MG),]
+dat.MG <- rbind(dat.1, New, dat.2)
+dat.MG[366:367,1] <- dat.1[365,1]
+dat.MG[366,4] <- 3900
+dat.MG[367,4] <- 4000
+
+# Upper Egypt
+New <- dat.MG[1:5,]
+New[1:5,] <- NA 
+dat.1 <- dat.MG[1:449,]
+dat.2 <- dat.MG[450:nrow(dat.MG),]
+dat.MG <- rbind(dat.1, New, dat.2)
+dat.MG[450:454,1] <- dat.2[1,1]
+
+dat.MG$Time[dat.MG$NGA=="Upper Egypt"] <- seq(0,4000,100)
+
+}
+
+
+#OK, now all sites acquire MG at year 2000, so our data have 20 centuries before and 20 centuries after MG, although we miss data for some sites for which there are not so long records. This should be taken care of in our multi-level models, though.
+
+# Now, let's assume that MGs were present at all sites after first detection (assumption of the t-test analysis presented in section 1.4)
+
+dat.MG$MoralisingGods[dat.MG$Time>1900] <- 1
+
+dat.MG$NGA <- as.factor(dat.MG$NGA)
+
+```
+
+### 4.2.2. Plot Pre/Post-MG
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+###################################################################
+dat.plot <- dat.MG
+dat.plot$Time[dat.plot$MoralisingGods == 1]
+
+ggplot(dat.MG, aes(Time, Mean, color=MoralisingGods)) + 
+  stat_summary(fun.data=mean_se, geom="pointrange") + 
+  scale_color_manual(values = alpha(c("coral1","aquamarine3"), .8), labels = c("NA", "Present"), name = "Moralizing Gods") + 
+  scale_x_continuous(breaks = c(0,500,1000,1500,2000,2500,3000,3500,4000),
+                     labels = c("-2000","-1500","-1000","-500","0","500","1000","1500","2000")) +
+  geom_vline(xintercept = 1950,
+                color = "grey", size=3, alpha = 0.5) + 
+  annotate("text", label = "What happens here?", x = 1950, y = 0.35, size = 3, colour = "black", angle = 90) +
+  labs(y="Social Complexity", x="Time (years before/after MG)") + 
+  theme_bw() + 
+  theme(
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
+    axis.line = element_line(colour = "black"),
+    legend.position = c(0.35,0.95),
+    legend.justification = c("right", "top"),
+    legend.key.size = unit(0.8, "cm"),
+    legend.text = element_text(size = rel(1)),
+    axis.title = element_text(size = rel(1.5)),
+    axis.text.y= element_text(size = rel(1.5)),
+    axis.text.x= element_text(size = rel(1.5)),
+    plot.margin=unit(c(1,1,1,1),"cm")) 
+
+#ggsave("PrePost_dots_2000.tiff",width = 6,height = 5.5, dpi = 300)
+
+################################################################### 
+```
+
+
+### 4.2.3. Compare beta with linear
+
+```{r results = 'hide', message=FALSE, warning=FALSE, size= 0.5} 
+
+###!!!!!
+
+# First, let's compare gaussian and beta models
+dat.MGn <- na.omit(subset(dat.MG, select = c(Mean, Time, NGA)))
+
+summary(lm1 <- glmmadmb(Mean ~ Time + (1|NGA), data = dat.MGn, family = 'gaussian'))
+
+summary(glm.b1 <- glmmadmb(Mean ~ Time + (1|NGA), data = dat.MGn, family = 'beta'))
+
+```
+
+```{r results = 'show', message=FALSE, warning=FALSE, size= 0.5} 
+a <- AICtab(lm1, glm.b1, sort = F)
+t <- matrix(c(a$dAIC[1],a$dAIC[2],a$df[1],a$df[2]),ncol=2,byrow=F)
+colnames(t) <- c("dAIC","df")
+rownames(t) <- c("lm1","glm.b1")
+kable(t)
+```
+
+
+### 4.2.4. Beta models 
+
+```{r results = 'hide', message=FALSE, warning=FALSE, cache=T} 
+dat.MG1 <- na.omit(subset(dat.MG, select = c(Mean, Time, MoralisingGods, NGA, World.Region)))
+
+summary(glm.b1 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.MG1, family = 'Beta'))
+
+summary(glm.b2 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA) + (1|World.Region), data = dat.MG1, family = 'Beta'))
+
+summary(glm.b3 <- glmmadmb(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region), data = dat.MG1, family = 'Beta'))
+
+xtract.cof("glm.b",c(1:3),"","glmmadmb",0)
+# Define list of coefficients extracted from glmmadmb models: estimates, confidence intervals, and p-values
+E.vector <- list(Mods[[1]][,1],Mods[[2]][,1],Mods[[3]][,1])
+CI.vector <- list(Mods[[1]][,2:3],Mods[[2]][,2:3],Mods[[3]][,2:3])
+p.vector <- list(Mods[[1]][,4],Mods[[2]][,4],Mods[[3]][,4])
+```
+
+
+```{r results = 'show', message=FALSE, warning=FALSE, size= 0.5} 
+a <- AICtab(glm.b3,glm.b2,glm.b1, sort = F)
+t <- matrix(c(a$dAIC[1],a$dAIC[2],a$dAIC[3],a$df[1],a$df[2],a$df[3]),ncol=2,byrow=F)
+colnames(t) <- c("dAIC","df")
+rownames(t) <- c("glm.b3","glm.b2","glm.b1")
+kable(t)
+```
+
+
+```{r results = 'hide', message=FALSE, warning=FALSE, echo = F} 
+# This just to populate the table with the model and variable names, the results are from beta regression.
+
+summary(lm1 <- lme(Mean ~ Time*MoralisingGods, random = ~1|NGA, data = dat.MG, na.action = na.omit))
+summary(lm2 <- lme(Mean ~ Time*MoralisingGods, random = ~1|NGA, data = dat.MG, na.action = na.omit))
+summary(lm3 <- lme(Mean ~ Time*MoralisingGods, random = ~1|NGA, data = dat.MG, na.action = na.omit))
+
+
+```
+```{r echo=FALSE, results='asis'}
+# stargazer command for creating html table
+stargazer::stargazer(lm1,lm2,lm3, coef=E.vector,ci = TRUE, ci.custom = CI.vector, p = p.vector, title="Estimates with 95/ CI for Social Complexity. Estimates from Beta regression are logit-transformed", dep.var.labels.include = FALSE, multicolumn = F, df = F, header = T, omit.stat = c("ll","wald","AIC","BIC","adj.rsq","rsq","f","ser"), dep.var.caption  = "",no.space = F, p.auto = F, star.char = c("x", "*", "**","***"),  star.cutoffs = c(0.1, 0.05, 0.01, 0.001), notes = c("x p<.1; * p<.05; ** p<.01; *** p<.001"), notes.append = F, type = "html", digits = 5)
+```
+
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+# We have to use the glmmTMB package because glmmadmb is not compatible with DHARMa
+
+summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region), data = dat.MG, family = 'beta'))
+
+simulationOutput = simulateResiduals(glm.b3)
+plot(simulationOutput)
+testUniformity(simulationOutput = simulationOutput)
+testDispersion(simulationOutput = simulationOutput)
+
+```
+
+
+### 4.2.5. Predicted values plot
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+###################################################################
+
+dat.MG$DV <- dat.MG$Mean
+wx <- na.omit(subset(dat.MG, select = c(DV,Time,MoralisingGods, NGA, World.Region, Family)))
+
+
+summary(RAG1.E <- lmer(DV ~ Time*MoralisingGods + (Time|NGA), data = wx))
+
+
+### MG == 0
+
+newdata2 <- with(wx, data.frame(Time = seq(from = 0,
+                                           to = 2000,
+                                           length.out = 20), MoralisingGods ="0"))
+
+p <- predict(RAG1.E, newdata = newdata2, re.form = NA, se.fit = TRUE, nsim = 500)
+est <- p$fit; lwr <- p$ci.fit[1,]; upr <- p$ci.fit[2,]
+newdata3 <- cbind(newdata2, est,lwr,upr)
+
+
+### MG == 1
+
+newdata2 <- with(wx, data.frame(Time = seq(from = 2000,
+                                           to = 4000,
+                                           length.out = 20), MoralisingGods ="1"))
+
+p <- predict(RAG1.E, newdata = newdata2, re.form = NA, se.fit = TRUE, nsim = 500)
+est <- p$fit; lwr <- p$ci.fit[1,]; upr <- p$ci.fit[2,]
+newdata31 <- cbind(newdata2, est,lwr,upr)
+
+
+newdata3$variable <- 'LABEL'
+labs <- c('LABEL' = "Predicted Pre/post MG change in social complexity")
+
+  
+ggplot() +
+  geom_ribbon(data = newdata3, aes(x = Time,ymin = lwr, ymax =
+                        upr), fill = "coral1", alpha = 0.15) +
+  geom_ribbon(data = newdata31, aes(x = Time,ymin = lwr, ymax =
+                        upr), fill = "aquamarine3", alpha = 0.15) +
+  geom_line(data = newdata31, aes(x = Time, y = 
+                  est,color = "coral1"), 
+             size = 1.7) +
+  geom_line(data = newdata3, aes(x = Time, y = est,
+                color = "#aquamarine3"), size = 1.7) +
+  
+  scale_color_manual(name = "",breaks = c("1","2"),
+                      values = c("coral1", "aquamarine3"),
+                     labels = c("Pre-MG", "Post-MG")) +
+  
+  scale_fill_manual(name = "",breaks = c("",""),
+                      values = c("coral1", "aquamarine3")) +
+    scale_y_continuous(limits=c(0,1)) +
+   scale_x_continuous(breaks = c(0,500,1000,1500,2000,2500,3000,3500,4000),
+                     labels = c("-2000","-1500","-1000","-500","0","500","1000","1500","2000")) +
+ facet_wrap(~variable, nrow=1, labeller = as_labeller(labs)) +
+  
+theme_bw() + 
+  ylab("Social complexity") + xlab("Time") +
+ theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(2)),        
+    axis.line = element_line(colour = "black"),
+    legend.position = "",
+    legend.justification = c("right", "top"),
+    legend.key.size = unit(0.8, "cm"),
+    legend.text = element_text(size = rel(2)),
+    axis.title = element_text(size = rel(2)),
+    axis.text.y= element_text(size = rel(2)),
+    axis.text.x= element_text(size = rel(2)),
+    plot.margin=unit(c(1,1,1,1),"cm"),
+    strip.text.x = element_text(size = rel(2))) 
+
+
+```
+
+
+# 5. Summary
+
+The main point of this document was to show how problematic the assumption and statistical approach of Whitehouse et al. are. The most serious problem is the assumption that at each NGA, we could detect MG within decades after their first appearance. This is, of course, impossible and if anything can be concluded from the data that Whitehouse et al. present is the exact opposite of what they claim - i.e., MGs precede social complexity growth!
+
+Regarding Whitehouse et al.'s statistical approach, they did not take into account various nestings presented in their data (violation of the data independece assumption) and the fact that residuals of social complexity (or residuals of the rate of SC change, for that matter) are not normally distributed. We attempted to account for both violations by using generalized linear mixed models, which allowed us to control for the nesting within data, fit individul time effects for each NGA, and account for the non-normality of residuals. We believe that the final models present much more appropriate and trustworthy estimates, although still estimates based on very problematic data.

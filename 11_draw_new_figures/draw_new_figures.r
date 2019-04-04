@@ -5,6 +5,73 @@ source("../project_support.r")
 
 dir_init("./temp")
 
+# make tables 
+
+varnames <- c("Intercept", "Social Complexity", "Lag1", "Lag2", "Phylogeny", "Space", "N", "Deviance")
+
+load("./input/m1.rdata")
+m1_n <- m1@data$N
+m1_dev <- sprintf("%.1f", -2 * logLik(m1))
+post <- extract.samples(m1)
+est <- sprintf("%.2f", coef(m1))
+se <- sprintf("%.2f", sqrt(diag(vcov(m1))))
+estse <- paste0(est, " (", se, ")")
+psigns <- c("-", psign(post$b_sc), psign(post$b_l1), psign(post$b_l2), psign(post$b_ph), psign(post$b_sp))
+x <- data.frame(m1_est = c(estse, m1_n, m1_dev), m1_psigns = c(psigns, "", ""))
+
+load("./input/m1_alt1.rdata")
+m1_alt1_n <- m1_alt1@data$N
+m1_alt1_dev <- sprintf("%.1f", -2 * logLik(m1_alt1))
+post <- extract.samples(m1_alt1)
+est <- sprintf("%.2f", coef(m1_alt1))
+se <- sprintf("%.2f", sqrt(diag(vcov(m1_alt1))))
+estse <- paste0(est, " (", se, ")")
+psigns <- c("-", psign(post$b_sc), psign(post$b_l1), psign(post$b_l2), psign(post$b_ph), psign(post$b_sp))
+x$alt1_est <- c(estse, m1_alt1_n, m1_alt1_dev)
+x$alt1_psigns <- c(psigns, "", "")
+
+load("./input/m1_alt2.rdata")
+m1_alt2_n <- m1_alt2@data$N
+m1_alt2_dev <- sprintf("%.1f", -2 * logLik(m1_alt2))
+post <- extract.samples(m1_alt2)
+est <- sprintf("%.2f", coef(m1_alt2))
+se <- sprintf("%.2f", sqrt(diag(vcov(m1_alt2))))
+estse <- paste0(est, " (", se, ")")
+psigns <- c("-", psign(post$b_sc), psign(post$b_l1), psign(post$b_l2), psign(post$b_ph), psign(post$b_sp))
+x$alt2_est <- c(estse, m1_alt2_n, m1_alt2_dev)
+x$alt2_psigns <- c(psigns, "", "")
+
+# add formatting
+
+cell_cols <- rep(c("Est. (SE)", "P(sign)"), 3)
+colnames(x) <- cell_cols
+rownames(x) <- varnames
+
+writeLines(texttab(x, hlines = c(1, 7)), "./temp/model1_variations.txt")
+
+load("./input/m2.rdata")
+
+varnames <- c("Intercept", "Social Complexity", "Phylogeny", "Space", "NGA Varying Effect", "N", "Deviance")
+vars <- c("a", "b_sc", "b_ph", "b_sp", "a_sigma")
+
+m2_n <- m2@data$N
+m2_dev <- sprintf("%.1f", -2 * logLik(m2))
+
+post <- extract.samples(m2)
+est <- sprintf("%.2f", coef(m2)[vars])
+se <- sprintf("%.2f", sqrt(diag(vcov(m2))[vars]))
+estse <- paste0(est, " (", se, ")")
+psigns <- c("-", psign(post$b_sc), psign(post$b_ph), psign(post$b_sp), "-")
+
+x <- data.frame(m1_est = c(estse, m2_n, m2_dev), m1_psigns = c(psigns, "", ""))
+
+colnames(x) <- c("Est. (SE)", "P(sign)")
+rownames(x) <- varnames
+
+writeLines(texttab(x, hlines = c(1, 6)), "./temp/model2.txt")
+
+
+
 # now plot
 
 load("./input/m1.rdata")

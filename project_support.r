@@ -56,3 +56,26 @@ density_offset <- function(y, scale = 1) {
   y_offset <- rnorm(length(y), 0, sd = scale * sqrt(y_dens))
   return(y_offset)
 }
+
+texttab <- function(dataframe, hlines = NA){
+  inmat <- as.matrix(dataframe)
+  inmat <- rbind(colnames(inmat), inmat)
+  if(!is.null(rownames(inmat))) inmat <- cbind(rownames(inmat), inmat)
+  output <- character(nrow(inmat))
+  for(i in 1:nrow(inmat)){
+    add.amps <- paste(inmat[i,], collapse=" & ")
+    output[i] <- paste(add.amps, "\\\\", sep=" ")
+  }
+  if(all(!is.na(hlines))){
+    for(i in 1:length(hlines)) output <- append(output, "\\hline", hlines[i]+(i-1))
+  }
+  return(output)
+}
+
+psign <- function(samples){
+  if(mean(samples)>0) output <- round(mean(samples < 0), 3)
+  if(mean(samples)<0) output <- round(mean(samples > 0), 3)
+  output <- sprintf("%.2f", output)
+  output[output=="0.00"] <- "$<$0.01"
+  return(output)
+}

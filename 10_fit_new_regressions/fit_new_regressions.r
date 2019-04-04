@@ -13,38 +13,9 @@ d <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
 # add centering
 d$Mean_c <- d$Mean - 0.5
 
-# define models for analysis
+m1_bin <- stan_model(file = "./stan/original.stan")
+m2_bin <- stan_model(file = "./stan/revised.stan")
 
-original_model <- alist(
-  MG <- dbinom(1, p),
-  logit(p) <- a +
-    b_sc * Mean_c +
-    b_l1 * Lag1 + 
-    b_l2 * Lag2 +
-    b_ph * Phylogeny +
-    b_sp * Space,
-  a ~ dnorm(0, 7),
-  b_sc ~ dnorm(0, 7),
-  b_l1 ~ dnorm(0, 7),
-  b_l2 ~ dnorm(0, 7),
-  b_ph ~ dnorm(0, 7),
-  b_sp ~ dnorm(0, 7)
-)
-
-revised_model <- alist(
-  MG <- dbinom(1, p),
-  logit(p) <- a +
-    a_nga[nga] +
-    b_sc * Mean_c +
-    b_ph * Phylogeny +
-    b_sp * Space,
-  a ~ dnorm(0, 1),
-  a_nga[nga] ~ dnorm(0, a_sigma),
-  a_sigma ~ dexp(1),
-  b_sc ~ dnorm(0, 4),
-  b_ph ~ dnorm(0, 4),
-  b_sp ~ dnorm(0, 4)
-)
 
 # rerun the original analysis with NA's as 0's
 
@@ -56,7 +27,10 @@ dm <- dm[-drop, ]
 # 801 in the original analysis
 expect_equal(nrow(dm), 801)
 
-m1 <- map2stan(original_model, data = dm)
+dm <- as.list(dm)
+dm$N <- length(dm$MG)
+
+m1 <- sampling(m1_bin, data = dm)
 
 save(m1, file = "./temp/m1.rdata")
 
@@ -64,7 +38,10 @@ save(m1, file = "./temp/m1.rdata")
 
 # original model but re-assign NAs according to another missingness rule:
 
-dm <- d[, c("NGA", "MG", "Mean_c", "Lag1", "Lag2", "Phylogeny", "Space")]
+dm <- d[, c("NGA", "MG", "Mean_c", "Lag1", "Lag2", "Phylogeny", "Space", "MG_missing")]
+
+drop <- which(is.na(dm$Lag1) | is.na(dm$Lag2))
+if (length(drop) > 0) dm <- dm[-drop, ]
 
 imputation_prob <- 311 / 323 # occurance of 1's in known data
 
@@ -88,16 +65,19 @@ for (i in 1:length(NGAs)) {
   }
 }
 
-drop <- which(is.na(dm$Lag1) | is.na(dm$Lag2))
-if (length(drop) > 0) dm <- dm[-drop, ]
+dm <- as.list(dm)
+dm$N <- length(dm$MG)
 
-m1_alt1 <- map2stan(original_model, data = dm)
+m1_alt1 <- sampling(m1_bin, data = dm)
 
 save(m1_alt1, file = "./temp/m1_alt1.rdata")
 
 # original model but re-assign NAs according to another missingness rule:
 
-dm <- d[, c("NGA", "MG", "Mean_c", "Lag1", "Lag2", "Phylogeny", "Space")]
+dm <- d[, c("NGA", "MG", "Mean_c", "Lag1", "Lag2", "Phylogeny", "Space", "MG_missing")]
+
+drop <- which(is.na(dm$Lag1) | is.na(dm$Lag2))
+if (length(drop) > 0) dm <- dm[-drop, ]
 
 imputation_prob <- 0.5 # principle of indifference
 
@@ -121,10 +101,10 @@ for (i in 1:length(NGAs)) {
   }
 }
 
-drop <- which(is.na(dm$Lag1) | is.na(dm$Lag2))
-if (length(drop) > 0) dm <- dm[-drop, ]
+dm <- as.list(dm)
+dm$N <- length(dm$MG)
 
-m1_alt2 <- map2stan(original_model, data = dm)
+m1_alt2 <- sampling(m1_bin, data = dm)
 
 save(m1_alt2, file = "./temp/m1_alt2.rdata")
 
@@ -159,7 +139,11 @@ NGAs <- c(
 
 dm$nga <- match(dm$NGA, NGAs)
 
-m2 <- map2stan(revised_model, data = dm)
+dm <- as.list(dm)
+dm$N <- length(dm$MG)
+dm$N_nga <- length(unique(dm$nga))
+
+m2 <- sampling(m2_bin, data = dm)
 
 save(m2, file = "./temp/m2.rdata")
 
@@ -170,7 +154,11 @@ dm <- d[, c("NGA", "MG", "Mean_c", "Phylogeny", "Space")]
 NGAs <- sort(unique(dm$NGA))
 dm$nga <- match(dm$NGA, NGAs)
 
-m2_alt1 <- map2stan(revised_model, data = dm)
+dm <- as.list(dm)
+dm$N <- length(dm$MG)
+dm$N_nga <- length(unique(dm$nga))
+
+m2_alt1 <- sampling(m2_bin, data = dm)
 
 save(m2_alt1, file = "./temp/m2_alt1.rdata")
 

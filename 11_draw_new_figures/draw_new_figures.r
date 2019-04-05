@@ -8,37 +8,38 @@ dir_init("./temp")
 # make tables 
 
 varnames <- c("Intercept", "Social Complexity", "Lag1", "Lag2", "Phylogeny", "Space", "N", "Deviance")
+parnames <- c("a", "b_sc", "b_l1", "b_l2", "b_ph", "b_sp")
 
 load("./input/m1.rdata")
-m1_n <- m1@data$N
-m1_dev <- sprintf("%.1f", -2 * logLik(m1))
 post <- extract.samples(m1)
-est <- sprintf("%.2f", coef(m1))
-se <- sprintf("%.2f", sqrt(diag(vcov(m1))))
+n <- ncol(post$p)
+dev <- sprintf("%.1f", -2 * mean(post$lp__))
+est <- sprintf("%.2f",  unlist(lapply(post, mean))[parnames])
+se <- sprintf("%.2f", sqrt(unlist(lapply(post, var))[parnames]))
 estse <- paste0(est, " (", se, ")")
 psigns <- c("-", psign(post$b_sc), psign(post$b_l1), psign(post$b_l2), psign(post$b_ph), psign(post$b_sp))
-x <- data.frame(m1_est = c(estse, m1_n, m1_dev), m1_psigns = c(psigns, "", ""))
+x <- data.frame(m1_est = c(estse, n, dev), m1_psigns = c(psigns, "", ""))
 
 load("./input/m1_alt1.rdata")
-m1_alt1_n <- m1_alt1@data$N
-m1_alt1_dev <- sprintf("%.1f", -2 * logLik(m1_alt1))
 post <- extract.samples(m1_alt1)
-est <- sprintf("%.2f", coef(m1_alt1))
-se <- sprintf("%.2f", sqrt(diag(vcov(m1_alt1))))
+n <- ncol(post$p)
+dev <- sprintf("%.1f", -2 * mean(post$lp__))
+est <- sprintf("%.2f",  unlist(lapply(post, mean))[parnames])
+se <- sprintf("%.2f", sqrt(unlist(lapply(post, var))[parnames]))
 estse <- paste0(est, " (", se, ")")
 psigns <- c("-", psign(post$b_sc), psign(post$b_l1), psign(post$b_l2), psign(post$b_ph), psign(post$b_sp))
-x$alt1_est <- c(estse, m1_alt1_n, m1_alt1_dev)
+x$alt1_est <- c(estse, n, dev)
 x$alt1_psigns <- c(psigns, "", "")
 
 load("./input/m1_alt2.rdata")
-m1_alt2_n <- m1_alt2@data$N
-m1_alt2_dev <- sprintf("%.1f", -2 * logLik(m1_alt2))
 post <- extract.samples(m1_alt2)
-est <- sprintf("%.2f", coef(m1_alt2))
-se <- sprintf("%.2f", sqrt(diag(vcov(m1_alt2))))
+n <- ncol(post$p)
+dev <- sprintf("%.1f", -2 * mean(post$lp__))
+est <- sprintf("%.2f",  unlist(lapply(post, mean))[parnames])
+se <- sprintf("%.2f", sqrt(unlist(lapply(post, var))[parnames]))
 estse <- paste0(est, " (", se, ")")
 psigns <- c("-", psign(post$b_sc), psign(post$b_l1), psign(post$b_l2), psign(post$b_ph), psign(post$b_sp))
-x$alt2_est <- c(estse, m1_alt2_n, m1_alt2_dev)
+x$alt2_est <- c(estse, n, dev)
 x$alt2_psigns <- c(psigns, "", "")
 
 # add formatting
@@ -49,21 +50,20 @@ rownames(x) <- varnames
 
 writeLines(texttab(x, hlines = c(1, 7)), "./temp/model1_variations.txt")
 
-load("./input/m2.rdata")
+# now table for m2
 
 varnames <- c("Intercept", "Social Complexity", "Phylogeny", "Space", "NGA Varying Effect", "N", "Deviance")
-vars <- c("a", "b_sc", "b_ph", "b_sp", "a_sigma")
+parnames <- c("a", "b_sc", "b_ph", "b_sp", "a_sigma")
 
-m2_n <- m2@data$N
-m2_dev <- sprintf("%.1f", -2 * logLik(m2))
-
+load("./input/m2.rdata")
 post <- extract.samples(m2)
-est <- sprintf("%.2f", coef(m2)[vars])
-se <- sprintf("%.2f", sqrt(diag(vcov(m2))[vars]))
+n <- ncol(post$p)
+dev <- sprintf("%.1f", -2 * mean(post$lp__))
+est <- sprintf("%.2f",  unlist(lapply(post, mean))[parnames])
+se <- sprintf("%.2f", sqrt(unlist(lapply(post, var))[parnames]))
 estse <- paste0(est, " (", se, ")")
 psigns <- c("-", psign(post$b_sc), psign(post$b_ph), psign(post$b_sp), "-")
-
-x <- data.frame(m1_est = c(estse, m2_n, m2_dev), m1_psigns = c(psigns, "", ""))
+x <- data.frame(m1_est = c(estse, n, dev), m1_psigns = c(psigns, "", ""))
 
 colnames(x) <- c("Est. (SE)", "P(sign)")
 rownames(x) <- varnames

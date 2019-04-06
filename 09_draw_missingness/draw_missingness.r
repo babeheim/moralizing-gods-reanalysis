@@ -11,9 +11,9 @@ d <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
 d$MG_known <- 1 - d$MG_missing
 
 d$MG_code <- case_when(
-  d$MG_known == 1 & d$MG == 1 ~ 3,
-  d$MG_known == 1 & d$MG == 0 ~ 2,
-  d$MG_known == 0 ~ 1
+  d$MG_known == 1 & d$MG == 0 ~ 1,
+  d$MG_known == 1 & d$MG == 1 ~ 2,
+  d$MG_known == 0 ~ 3
 )
 
 # a barbell plot
@@ -27,22 +27,22 @@ plot(1, 1, type = "n", xlim = c(0.5, 3.5), ylim = c(0, 1),
 abline(h = seq(0, 1, 0.2), col = "gray")
 
 axis(1, at = c(1, 2, 3), col = NA, col.ticks = NA,
-  labels = c("\nunknown\nn=490", "\nabsent\nn=12", "\npresent\nn=311"))
+  labels = c("\nabsent\nn=12", "\npresent\nn=311", "\nunknown\nn=490"))
 
 d$MG_col <- ifelse(d$MG == 1, "firebrick", "dodgerblue")
 
 boxplot(Mean ~ MG_code, data = d, add = TRUE, ann = FALSE,
   frame.plot = FALSE, axes = FALSE, outline = FALSE, col = "white")
 
-tar <- which(d$MG_known == 0)
-points(1 + density_offset(d$Mean[tar], scale = 0.15), d$Mean[tar], pch = 16,
-  col = col.alpha("gray", 0.5))
 tar <- which(d$MG_known == 1 & d$MG == 0)
-points(2 + density_offset(d$Mean[tar], scale = 0.09), d$Mean[tar], pch = 16,
+points(1 + density_offset(d$Mean[tar], scale = 0.09), d$Mean[tar], pch = 16,
   col = col_alpha(d$MG_col[tar], 0.8))
 tar <- which(d$MG_known == 1 & d$MG == 1)
-points(3 + density_offset(d$Mean[tar], scale = 0.15), d$Mean[tar], pch = 16,
+points(2 + density_offset(d$Mean[tar], scale = 0.15), d$Mean[tar], pch = 16,
   col = col_alpha(d$MG_col[tar], 0.8))
+tar <- which(d$MG_known == 0)
+points(3 + density_offset(d$Mean[tar], scale = 0.15), d$Mean[tar], pch = 16,
+  col = col.alpha("gray", 0.5))
 
 dev.off()
 

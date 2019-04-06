@@ -16,11 +16,19 @@ dat$NGA<-as.character(dat$NGA)
 
 TimeNorm <- matrix(NA, nrow=0, ncol=0)
 for(i in 1:length(NGAs)){
+  # split data by NGA
   dt <- dat[dat$NGA == NGAs[i],]
+  # extract earliest time point in NGA
   Earliest<-subset(dt,Time==min(Time))  
+  # extract latest time point in NGA
   Latest<-subset(dt,Time==max(Time))  
-  MG<-subset(dt,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+  # extract all data with present analysis variable
+  # for the main analysis this is Moralising Gods, but for confirmatory/ additional analysis
+  # Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
+  MG<-subset(dt,MoralisingGods=="1") 
+  # extract the first time point the analysis variable appears at
   MGAppear<-subset(MG, Time==min(Time))
+  # Noramalise by difference between century and century analysis variable first appeared
   dt$Time.norm<-dt$Time-MGAppear$Time
   TimeNorm <- rbind(TimeNorm,dt)
 }
@@ -179,13 +187,19 @@ TimeNorm <- read.table("./temp/TimeNorm.csv", sep=",", header=TRUE)
 SCNorm<-unique(TimeNorm$Time.norm)
 
 for(i in 1:length(NGAs)){
+  # split data by NGA
   dt <- TimeNorm[TimeNorm$NGA == NGAs[i],]
+  # join time.norm with mean
   SCNorm<-merge(SCNorm,dt[,c("Time.norm","Mean")],by.x="x",by.y="Time.norm",all=TRUE)
   SCNorm<-plyr::rename(SCNorm, c("Mean" = NGAs[i]))
 }
+# extract mean PCs
 MeanPCs<-SCNorm[,2:(1+length(NGAs))]
+# calculate mean
 SCNorm$Mean <- apply(MeanPCs,1,mean,na.rm=TRUE)
+# calculate lower sd
 SCNorm$Lower <- SCNorm$Mean - 1.96*apply(MeanPCs,1, std.error,na.rm=TRUE)
+# calculate upper sd
 SCNorm$Upper <- SCNorm$Mean + 1.96*apply(MeanPCs,1, std.error,na.rm=TRUE)
 write.csv(SCNorm, file="./temp/SCNorm.csv",  row.names=FALSE) 
 

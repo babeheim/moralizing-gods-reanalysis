@@ -11,9 +11,11 @@ SCdat <- matrix(nrow = 0, ncol = 0)
 dat <- read.table('./input/exportdat.csv', sep=",", header=TRUE, quote = "", colClasses = "character")
 dat <- dat[dat$Section==Section1 | dat$Section==Section2 | dat$Section==Section3,] # Section is set in !MI.R
 
+# create new variables combining Subsection and Variable
 Vars[,1] <- paste(Vars[,2],Vars[,1]) #Creating unique variable/section combinations
 dat[,5] <- paste(dat[,4],dat[,5]) #Creating unique variable/section combinations
 
+# subset Seshat dataset to include only variables from the Vars dataset
 for(i in 1:length(Vars[,1])){
    var <- Vars[i,1]
    dt <- dat[dat$Variable==var,]
@@ -22,11 +24,13 @@ for(i in 1:length(Vars[,1])){
 dat <- SCdat
 SCdat <- matrix(nrow = 0, ncol = 0)
 
+# subset Seshat dataset to include only polities in the polities dataset
 for(i in 1:nrow(polities)){
    dt <- dat[dat$Polity==polities$PolID[i],]
    SCdat <- rbind(SCdat,dt)
 }
 
+# extract only relevant columns
 SCdat <- SCdat[,c(1,2,5,6,7,8,9,10,11,12)]
 row.names(SCdat) <- NULL
 
@@ -58,14 +62,19 @@ for(i in 1:nrow(SCdat)){
       if(SCdat[i,j] == "suspected unknown"){SCdat[i,j] <- "unknown"}      
       if(SCdat[i,j] == "unknown"){SCdat[i,j] <- NA}     
    }}
+# remove missing values from Value.From
 SCdat <- SCdat[is.na(SCdat[,4])==FALSE,]
 dat <- SCdat
+# extract errors caused by other non numeric coding of Value.From
 for(i in 1:nrow(SCdat)){
    dat[i,4] <- as.numeric(SCdat[i,4])
 }
+# extract these rows into seperate data frame and filter
 errors <- SCdat[is.na(dat[,4]),]
 
 SCdat <- SCdat[is.na(dat[,4])==FALSE,]
+# check Value.to for any values that cannot be converted to numeric
+# there are none
 dat <- SCdat[SCdat[,5]!="",]
 datNA <- dat
 for(i in 1:nrow(dat)){
@@ -73,7 +82,8 @@ for(i in 1:nrow(dat)){
 }
 errors <- rbind(errors,dat[is.na(datNA[,5]),])
 
-# Change BCE to negative years and remove CE. 
+# Change BCE to negative years and remove CE.
+# Start date
 for(i in 1:nrow(SCdat)){
    if(substr(SCdat[i,6], (nchar(SCdat[i,6]) - 2) , nchar(SCdat[i,6]) ) =="BCE" )
    {a <- -as.numeric(substr(SCdat[i,6], 1, (nchar(SCdat[i,6]) - 3)))
@@ -82,6 +92,7 @@ for(i in 1:nrow(SCdat)){
    {a <- -as.numeric(substr(SCdat[i,7], 1, (nchar(SCdat[i,7]) - 3)))
     SCdat[i,7] <- a}
 }
+# End date
 for(i in 1:nrow(SCdat)){
    if(substr(SCdat[i,6], (nchar(SCdat[i,6]) - 1) , nchar(SCdat[i,6]) ) =="CE" )
    {a <- as.numeric(substr(SCdat[i,6], 1, (nchar(SCdat[i,6]) - 2)))
@@ -91,12 +102,16 @@ for(i in 1:nrow(SCdat)){
     SCdat[i,7] <- a}
 }
 
+# here Date.From is checked for any values that cannot be converted to numeric
+# which there are none
 dat <- SCdat[SCdat[,6]!="",]
 for(i in 1:nrow(dat)){
    dat[i,6] <- as.numeric(dat[i,6])
 }
 errors <- rbind(errors,dat[is.na(dat[,6]),])
 
+# here Date.To is checked for any values that cannot be converted to numeric
+# which there are none
 dat <- SCdat[SCdat[,7]!="",]
 for(i in 1:nrow(dat)){
    dat[i,7] <- as.numeric(dat[i,7])
@@ -105,6 +120,7 @@ errors <- rbind(errors,dat[is.na(dat[,7]),])
 
 dir_init("./output")
 
+# write csv of errors and filtered date
 write.csv(errors, file="./output/errors.csv",  row.names=FALSE)
 write.csv(SCdat, file="./output/SCdat.csv",  row.names=FALSE)
 

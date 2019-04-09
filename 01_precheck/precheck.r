@@ -12,8 +12,8 @@ dat <- read.table('./input/exportdat.csv', sep=",", header=TRUE, quote = "", col
 dat <- dat[dat$Section==Section1 | dat$Section==Section2 | dat$Section==Section3,] # Section is set in !MI.R
 
 # create new variables combining Subsection and Variable
-Vars[,1] <- paste(Vars[,2],Vars[,1]) #Creating unique variable/section combinations
-dat[,5] <- paste(dat[,4],dat[,5]) #Creating unique variable/section combinations
+Vars[,1] <- paste(Vars[,2],Vars[,1]) # Creating unique variable/section combinations
+dat[,5] <- paste(dat[,4],dat[,5]) # Creating unique variable/section combinations
 
 # subset Seshat dataset to include only variables from the Vars dataset
 for(i in 1:length(Vars[,1])){

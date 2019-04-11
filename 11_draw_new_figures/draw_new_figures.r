@@ -238,7 +238,7 @@ png("./temp/m2_missingness_predictions.png", res = 300, height = 5, width = 5, u
 
 plot(counter$Mean_c, counter$m2_pr_mg_mean, ylim = c(0, 1), type = "l",
   ylab = "pr(moralizing gods)", xlab = "social complexity",
-  main = "predicted probability of moral gods", xaxt = "n")
+  main = "", xaxt = "n")
 polygon(c(counter$Mean_c, rev(counter$Mean_c)), c(counter$m2_pr_mg_ub, rev(counter$m2_pr_mg_lb)),
   border = NA, col = col.alpha("dodgerblue", 0.2))
 
@@ -356,7 +356,7 @@ par(mfrow = c(1, 2))
 
 plot(counter$Mean_c, counter$m2_pr_mg_mean, ylim = c(0, 1), type = "l",
   ylab = "pr(moralizing gods)", xlab = "social complexity",
-  main = "predicted probability of moral gods", xaxt = "n")
+  main = "", xaxt = "n")
 polygon(c(counter$Mean_c, rev(counter$Mean_c)), c(counter$m2_pr_mg_ub, rev(counter$m2_pr_mg_lb)),
   border = NA, col = col.alpha("dodgerblue", 0.2))
 

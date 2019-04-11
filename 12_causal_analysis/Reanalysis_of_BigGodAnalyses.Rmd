@@ -1,5 +1,5 @@
 ---
-title: "Reanalysis of 'Complex societies precede moralizing gods' causal analysis"
+title: "Check of 'Complex societies precede moralizing gods' causal analysis"
 output:
   html_document:
     code_folding: show
@@ -28,7 +28,7 @@ table, th, td {
 
 
 
-This document first replicates and later extends the analyses published in the paper "Whitehouse, H., François, P., Savage, P. E., Currie, T. E., Feeney, K. C., Cioni, E., Purcell, R., Ross, R. M., Larson, J., Baines, J., ter Haar, B., Covey, A., Turchin, P. (2019). Complex societies precede moralizing gods throughout world history. Nature."
+This document first replicates (section 1) and later extends (sections 2-4) the analyses published in the paper "Whitehouse, H., François, P., Savage, P. E., Currie, T. E., Feeney, K. C., Cioni, E., Purcell, R., Ross, R. M., Larson, J., Baines, J., ter Haar, B., Covey, A., Turchin, P. (2019). Complex societies precede moralizing gods throughout world history. Nature."
 
 The goal of this document is to first explain what Whitehouse et al. did, and later show that their approach was incorrect and suggest better solutions.
 
@@ -46,7 +46,7 @@ This section loads data on polities, their social complexity (SC), and the prese
 
 {
 ##? Load libraries
-libs <- c("dplyr", "glmmADMB", "glmmTMB", "nlme", "lme4", "plotrix", "ggplot2", "stargazer", "DHARMa", "bbmle", "knitr", "car", "bootpredictlme4", "reshape", "grid", "yarrr")
+libs <- c("dplyr", "glmmTMB", "glmmADMB", "nlme", "lme4", "plotrix", "ggplot2", "stargazer", "DHARMa", "bbmle", "knitr", "car", "bootpredictlme4", "reshape", "grid", "yarrr")
 lapply(libs, require, character.only = TRUE)
 
 #library(plotrix)
@@ -193,12 +193,12 @@ print(t.test(out[,3], out[,2],paired=TRUE))
 Plot a histogram of the rate of SC change
 
 ```{r cache=TRUE, results='hide', message=FALSE, warning=FALSE, echo=FALSE, fig.height=5, fig.width=5}
-tiff("Hist.tiff",width = 6,height = 5.5,units = 'in', res = 300)
+#tiff("Hist.tiff",width = 6,height = 5.5,units = 'in', res = 300)
 
 #histogram of differences
 hist(1000*out[,8],col="gray",breaks="FD",xlim=c(-15,5),ylim=c(0,80),xlab="Rates of change in social complexity (SC per kyr)", ylab="Frequency")
 abline(v = 0,col="black")
-dev.off()
+#dev.off()
 ```
 
 
@@ -311,7 +311,7 @@ Let's plot the difference between pre-MG and post-MG SC change with confidence i
 
 ```{r cache=TRUE, results='hide', message=FALSE, warning=FALSE, echo=FALSE, fig.height=5, fig.width=5}
 
-# This is rate of SC change 2000 years before and after MG
+##? This is rate of SC change 2000 years before and after MG
 
 coefs <- out.s %>% dplyr::group_by(prepost) %>%
   dplyr::summarise(mean.DV = mean(Rate, na.rm = TRUE),
@@ -326,15 +326,14 @@ coefs <- out.s %>% dplyr::group_by(prepost) %>%
 coefs <- as.data.frame(coefs)
 
 ggplot(data = coefs, aes(x=prepost, y=mean.DV))   +
-  geom_jitter(data = out.s, alpha=0.3, aes(x=prepost, y=Rate, colour = TimeWindow), width =
-                0.1, height = 0.05,size = 2.2) +
+  geom_jitter(data = out.s, alpha=0.3, aes(x=prepost, y=Rate, colour = TimeWindow),
+              width = 0.1, height = 0.05,size = 2.2) +
   scale_color_distiller(palette = "RdPu") +
-geom_line(data = coefs,aes(x=c(1,2), y = c(mean.DV[1],mean.DV[2])), size = 0.8) +
+  geom_line(data = coefs,aes(x=c(1,2), y = c(mean.DV[1],mean.DV[2])), size = 0.8) +
   geom_errorbar(data = coefs, aes(x=prepost,
                 ymin=lower.ci.DV,ymax=upper.ci.DV), width=.3, size = 0.8,
                position=position_dodge(0.05)) +
-  scale_x_discrete(labels = c("Pre-MG", "Post-MG"),expand =
-                     c(0.1,0.2)) +
+  scale_x_discrete(labels = c("Pre-MG", "Post-MG"),expand = c(0.1,0.2)) +
   labs(x="", y="Rate of SC change") +
   theme_bw() + 
   theme(
@@ -363,7 +362,7 @@ The reason why we cannot really see the Pre-/Post-MG difference is beacause the 
 
 ```{r cache=TRUE, results='hide', message=FALSE, warning=FALSE, echo=FALSE, fig.height=20, fig.width=6}
 
-# This is rate of SC change 2000 years before and after MG
+##? This is rate of SC change 2000 years before and after MG
 
 for(i in 1:length(NGAs)){
 out.sx <- out.s[out.s$NGA==NGAs[i],]
@@ -385,7 +384,7 @@ ggplot(data = coefs, aes(x=prepost, y=mean.DV))   +
   geom_jitter(data = out.sx, alpha=0.3, aes(x=prepost, y=Rate, colour = TimeWindow), width =
                 0.1, height = 0.05,size = 2.2) +
   scale_color_distiller(palette = "RdPu") +
-geom_line(data = coefs,aes(x=c(1,2), y = c(mean.DV[1],mean.DV[2])), size = 0.8) +
+  geom_line(data = coefs,aes(x=c(1,2), y = c(mean.DV[1],mean.DV[2])), size = 0.8) +
   geom_errorbar(data = coefs, aes(x=prepost,
                 ymin=lower.ci.DV,ymax=upper.ci.DV), width=.3, size = 0.8,
                position=position_dodge(0.05)) +
@@ -474,11 +473,11 @@ Let's have one more look at a density plot of difference between Pre- and Post-M
 ###################################################################
 
 ggplot() + 
-   geom_density(data = out.s, aes(x = Rate, fill = prepost, colour = prepost, linetype=prepost),size = 0.5) +
- 
- scale_color_manual(values = alpha(c("lightskyblue4","lightskyblue4"), 1)) + 
-   scale_fill_manual(values = alpha(c("coral2","turquoise3"),0.6)) +
-xlim(c(-0.0007,0.005)) +
+   geom_density(data = out.s, aes(x = Rate, fill = prepost, colour = prepost,
+                                  linetype=prepost),size = 0.5) +
+  scale_color_manual(values = alpha(c("lightskyblue4","lightskyblue4"), 1)) + 
+  scale_fill_manual(values = alpha(c("coral2","turquoise3"),0.6)) +
+  xlim(c(-0.0007,0.005)) +
                      
   labs(x="Rate of SC change", y="Density") +
   theme_bw() + 
@@ -505,14 +504,14 @@ xlim(c(-0.0007,0.005)) +
 
 # 2. Forward-bias correction
 
-In this section, we will keep up with the inappropriate t-test, but try to correct for forward bias, i.e., the fact that if we take the first known occurence of MG, it is very unlikely that it is actually the oldest occurence. Let's try to shift the first occurence of each MG one and three centuries back.
+In this section, we start with our own analysis. We will keep up with the inappropriate t-test, but try to correct for forward bias, i.e., the fact that if we take the first known occurence of MG, it is very unlikely that it is actually the oldest occurence. Let's try to shift the first occurence of each MG one and three centuries back.
 
 ## 2.1 Shift MG for t-100
 
 ```{r results='hide', message=FALSE, warning=FALSE, echo=T}
 
 {
-NGAs <- c("Big Island Hawaii", "Cambodian Basin", "Central Java", "Chuuk Islands", "Deccan",    "Ghanaian Coast", "Iceland", "Kachi Plain", "Kansai", "Kapuasi Basin",  "Konya Plain", "Latium", "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",  "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt","Yemeni Coastal Plain")
+NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium", "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",  "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
 
 
 FB <- 100 ##? this is Forward Bias in years - we will subtract this number from MG appearence times. With increasing correction for FB (200, 300, 400), the positive difference grows...
@@ -523,19 +522,23 @@ for(i in 1:length(NGAs)){
   MG<-subset(dt,MoralisingGods=="1")
   ##? This is my addition - we have to create a new subset MGAppear.FB, which will contain Mean SC for the time of MG's first appearance minus forward bias(FB)
   MGAppear<-subset(MG, Time==min(Time))
-   t <- min(MG$Time)-FB
-MGAppear.FB<-subset(dt, Time==t)
+  t <- min(MG$Time)-FB
+  MGAppear.FB<-subset(dt, Time==t)
 ##?
   for(j in 1: 100){
     Earliest<-subset(dt, Time==MGAppear.FB$Time-j*100) 
     Latest<-subset(dt, Time==MGAppear.FB$Time+j*100)
-    rates<-cbind(MGAppear$NGA,ifelse(class(Earliest$Time)=="NULL","NA",
-                                     (MGAppear.FB$Mean-Earliest$Mean)/(MGAppear.FB$Time-Earliest$Time)),
-                 ifelse(class(Latest$Time)=="NULL","NA",((Latest$Mean-MGAppear.FB$Mean)/(Latest$Time-MGAppear.FB$Time))),
-                 (MGAppear$End-MGAppear$Start),j*100,MGAppear$World.Region,MGAppear$Family)
+    rates<-cbind(MGAppear$NGA,
+                 ifelse(class(Earliest$Time)=="NULL","NA",
+                        (MGAppear.FB$Mean-Earliest$Mean)/(MGAppear.FB$Time-Earliest$Time)),
+                 ifelse(class(Latest$Time)=="NULL","NA",
+                        ((Latest$Mean-MGAppear.FB$Mean)/(Latest$Time-MGAppear.FB$Time))),
+                 (MGAppear.FB$End-MGAppear.FB$Start),
+                 j*100,MGAppear$World.Region,
+                 MGAppear$Family)
     out <- rbind(out,rates)
   }
-  out <- rbind(out,rates)
+  out <- rbind(out,rates) ##? This line is responsible for the "bug" described a few lines below
 }
 colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow","Region", "Lang")
 
@@ -545,13 +548,12 @@ out<-read.table("FullRates.csv", sep=",", header=TRUE)
 
 out$Difference<-out[,3]-out[,2]
 
-# save the difference into separate variable needed for histogram comparisons; note this variable automatically codes FB size
+##? save the difference into separate variable needed for histogram comparisons; note this variable automatically codes FB size
 assign(paste0("d",FB),out$Difference*1000 )
 
 
 for(i in 2:length(out[,5])){
-  out[i,9]<-out[i,5]-out[i-1,5]
-}
+  out[i,9]<-out[i,5]-out[i-1,5]}
 out <-subset(out, out[,9]!=0) #getting rid of bug when the final row repeats in each NGA
 
 write.csv(out, file="FullRates.csv",  row.names=FALSE)
@@ -592,25 +594,18 @@ Let's plot the histogram with the rate of SC change:
 
 ```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
 ###################################################################
-# These histograms replicate original Whitehouse et al.'s histogram, and correct for forward bias. The specific correction depends on the value of FB selected in the previous chunk.
+##? These histograms replicate original Whitehouse et al.'s histogram, and correct for forward bias. The specific correction depends on the value of FB selected in the previous chunk.
 
 ifelse(FB == 300, d <- d300,d <- d100)
 d <- as.data.frame(d)
 
 
 ggplot() + 
-  geom_histogram(data = d, aes(x = d), fill = "darkgrey", colour = "gray42", binwidth = 0.1, alpha = 0.9) +
-#  geom_histogram(data = d100, aes(x = d100), fill = "#cf3a3a", colour = "#cf3a3a", binwidth = 0.1, alpha = 0.5) +
-#  geom_histogram(data = d300, aes(x = d300), fill = "#18b0e8", colour = "#18b0e8", binwidth = 0.1, alpha = 0.4) +
-  
- 
-# scale_color_manual(values = alpha(c("gray42","#cf3a3a","#18b0e8"),1)) +
-#   scale_fill_manual(values = alpha(c("darkgrey","#cf3a3a","#18b0e8"),0.5),
-#                     labels = c("MG 0", "MG -100", "MG -300"), name = "") +
-                   xlim(c(-2,2)) +
+  geom_histogram(data = d, aes(x = d), fill = "darkgrey", colour = "gray42", binwidth = 0.1,
+                 alpha = 0.9) + 
+  xlim(c(-2,2)) +
   ylim(c(0,100)) +
-geom_vline(xintercept = 0,
-                color = "black", size=1, alpha = 1) +   
+  geom_vline(xintercept = 0, color = "black", size=1, alpha = 1) +   
   labs(x="Rate of SC change", y="Frequency") +
   theme_bw() + 
   theme(
@@ -644,13 +639,12 @@ Let's look at the full density plot for both Pre- and Post-MG, so we can better 
 ```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
 ###################################################################
 ggplot() + 
-  geom_density(data = out.s, aes(x = Rate, fill = prepost, colour = prepost, linetype=prepost),size = 0.5) +
- 
- scale_color_manual(values = alpha(c("lightskyblue4","lightskyblue4"), 1)) + 
-   scale_fill_manual(values = alpha(c("coral2","turquoise3"),0.6),
+  geom_density(data = out.s, aes(x = Rate, fill = prepost, colour = prepost,
+                                 linetype=prepost),size = 0.5) +
+  scale_color_manual(values = alpha(c("lightskyblue4","lightskyblue4"), 1)) + 
+  scale_fill_manual(values = alpha(c("coral2","turquoise3"),0.6),
                      labels = c("Pre-MG", "Post-MG"), name = "") +
-                   xlim(c(-0.0005,0.003)) +
-  
+  xlim(c(-0.0005,0.003)) +
   labs(x="Rate of SC change", y="Density") +
   theme_bw() + 
   theme(
@@ -688,6 +682,11 @@ data <- matrix(NA, nrow=0, ncol=5)
 for(i in 1:length(NGAs)){
   dt <- out[out$NGA == NGAs[i],]
   ot <- dat[dat$NGA == NGAs[i],]
+  
+  # correct for FB
+  firstMG.row <- match(1, ot$MoralisingGods)
+  ot$MoralisingGods[firstMG.row-(FB/100)] <- 1
+  
   MG<-subset(ot,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
   #library(dplyr)
   #MG<-as.data.frame(MG %>% group_by(PolID) %>% sample_n(size = 1)) #randomly samples so there is only one century per polity
@@ -700,11 +699,12 @@ for(i in 1:length(NGAs)){
   my.values<-c(NGAs[i],ifelse(class(mean(dt[,3],na.rm=TRUE))=="NULL","NA",
                 mean(dt[,3],na.rm=TRUE)),ifelse(class(mean(dt[,2],na.rm=TRUE))=="NULL","NA",
                 mean(dt[,2],na.rm=TRUE)),ifelse(class(std.error(dt[,3],na.rm=TRUE))=="NULL","NA",
-1.96*std.error(dt[,3],na.rm=TRUE)),
-ifelse(class(std.error(dt[,2],na.rm=TRUE))=="NULL","NA",
-       1.96*std.error(dt[,2],na.rm=TRUE)))
+                1.96*std.error(dt[,3],na.rm=TRUE)),
+                ifelse(class(std.error(dt[,2],na.rm=TRUE))=="NULL","NA",
+                1.96*std.error(dt[,2],na.rm=TRUE)))
   data <- rbind(data,my.values)
 }
+
 colnames(data)<-c("NGA","PostRate","PreRate","PostConfInt","PreConfInt")
 write.csv(data, file="PrePostComparisonFull.csv",  row.names=FALSE)
 data<-read.table("PrePostComparisonFull.csv", sep=",", header=TRUE)
@@ -717,7 +717,6 @@ write.csv(data, file="PrePostComparisonFull.csv",  row.names=FALSE)
 
 ```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
 
-
 #Full values for matching pre-/post-NGAs
 out <-subset(out, out[,6]<1000) #Removing windows without matching pre-/post-MG rates
 write.csv(out, file="FullRates.csv",  row.names=FALSE)
@@ -729,6 +728,11 @@ data <- matrix(NA, nrow=0, ncol=15)
 for(i in 1:length(NGAs)){
   dt <- out[out$NGA == NGAs[i],]
   ot <- dat[dat$NGA == NGAs[i],]
+  
+  # correct for FB
+  firstMG.row <- match(1, ot$MoralisingGods)
+  ot$MoralisingGods[firstMG.row-(FB/100)] <- 1
+  
   MG<-subset(ot,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
   #library(dplyr)
   #MG<-as.data.frame(MG %>% group_by(PolID) %>% sample_n(size = 1)) #randomly samples so there is only one century per polity
@@ -755,6 +759,7 @@ for(i in 1:length(NGAs)){
                  MGAppear$Time)
   data <- rbind(data,my.values)
 }
+
 colnames(data)<-c("NGA","PostRate","PreRate","PostConfInt","PreConfInt","p","df","n","t","PreMGRitual","PreMGWriting","RangeMGAppear","RangeDMAppear","RangeWRAppear","MGAppear")
 write.csv(data, file="PrePostComparison.csv",  row.names=FALSE)
 data<-read.table("PrePostComparison.csv", sep=",", header=TRUE)
@@ -768,18 +773,24 @@ write.csv(data, file="PrePostComparison.csv",  row.names=FALSE)
 ```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
 
 ######Normalize time-series centered around moralising god appearance
-FB <- 100 ##? again, this is our forward bias correction
 
 out <- matrix(NA, nrow=0, ncol=0)
 for(i in 1:length(NGAs)){
   dt <- dat[dat$NGA == NGAs[i],]
   Earliest<-subset(dt,Time==min(Time))	
   Latest<-subset(dt,Time==max(Time))	
+  
+  # correct for FB
+  firstMG.row <- match(1, dt$MoralisingGods)
+  dt$MoralisingGods[firstMG.row-(FB/100)] <- 1
+  
+  
   MG<-subset(dt,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" or "Writing" to do these analyses
   MGAppear<-subset(MG, Time==min(Time))
-  dt$Time.norm<-dt$Time-(MGAppear$Time-FB)
+  dt$Time.norm<-dt$Time-(MGAppear$Time)
   out <- rbind(out,dt)
 }
+
 out$MGUncertainty<-out$End-out$Start
 write.csv(out, file="TimeNorm.csv",  row.names=FALSE) 
 
@@ -794,6 +805,7 @@ for(i in 1:length(NGAs)){
   out<-merge(out,dt[,c("Time.norm","Mean")],by.x="x",by.y="Time.norm",all=TRUE)
   out<-rename(out, c("Mean" = NGAs[i]))
 }
+
 MeanPCs<-out[,2:(1+length(NGAs))]
 out$Mean <- apply(MeanPCs,1,mean,na.rm=TRUE)
 out$Lower <- out$Mean - 1.96*apply(MeanPCs,1, std.error,na.rm=TRUE)
@@ -803,7 +815,7 @@ write.csv(out, file="SCNorm.csv",  row.names=FALSE)
 ```
 
 ```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
-
+{
 #plot normalized times
 FullImpDat<-read.csv('SCNorm.csv', header=TRUE)
 
@@ -847,11 +859,16 @@ h=.6
 col1<-rgb(0,0,0,max=255,alpha=50)
 #col2<-rgb(255,0,0,max=255,alpha=125)
 #col3<-rgb(0,255,0,max=255,alpha=125)
-
-tiff("correctedMain.tiff",width = 6,height = 5.5,units = 'in', res = 300)
+}
+#tiff("correctedMain.tiff",width = 6,height = 5.5,units = 'in', res = 300)
 
 plot(x, y, ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type,xaxs=xaxs,yaxs=yaxs)
-panel.first = rect(c(mean(data$PreMGRitual)-(1.96*std.error(data$PreMGRitual)), 0), -1e6, c(mean(data$PreMGRitual)+ (1.96*std.error(data$PreMGRitual)), 0+mean(data$RangeMGAppear)), 1e6, col=col1, border=NA)
+panel.first = rect(
+  c(mean(data$PreMGRitual)-(1.96*std.error(data$PreMGRitual)), 0-mean(data$RangeMGAppear)/2), -1e6,
+  c(mean(data$PreMGRitual)+ (1.96*std.error(data$PreMGRitual)),
+    0+mean(data$RangeMGAppear)/2), 1e6,
+  col=col1, border=NA)
+
 #panel.first = rect(c(mean(data$PreMGRitual)-(1.96*std.error(data$PreMGRitual)), mean(data$PreMGWriting)-(1.96*std.error(data$PreMGWriting)), 0), -1e6, c(mean(data$PreMGRitual)+ (1.96*std.error(data$PreMGRitual)), mean(data$PreMGWriting)+(1.96*std.error(data$PreMGWriting)), 0+mean(data$RangeMGAppear)), 1e6, col=c(col1,col2,col3), border=NA)
 #This was earlier version that included writing
 #polygon(c(x, rev(x)) , c(u, rev(l)) , col = 'grey' , border = NA) #out for now because of bugs
@@ -860,7 +877,7 @@ lines(x, u,type="l",lty="dotted")
 lines(x, l,type="l",lty="dotted")
 #abline(h=0.6,lty="dashed")
 
-dev.off()
+#dev.off()
 ```
 
 Moving MG appearance just 100 years back (the lowest time point possible, given the resolution of Whitehous et al. data), puts MGs directly into action!!
@@ -868,7 +885,7 @@ Moving MG appearance just 100 years back (the lowest time point possible, given 
 
 ## 2.4 Corrected plot for all sites
 
-```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE, fig.height=5, fig.width=12}
 ####Plot 12 NGA time-series with pre- and post-moralizing god SC data
 #First average normalized to moralizing gods time
 out<-read.csv('SCNorm.csv', header=TRUE)
@@ -1088,14 +1105,14 @@ out.s$Lang <- as.factor(out.s$Lang)
 ```
 
 
-```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE, fig.height=6, fig.width=12}
 ###################################################################
-# First, limit NGAs only to the final 12 (although we wouldn't really have to, because multi-levl models could handle some of the missingness)
+##? First, limit NGAs only to the final 12 (although we wouldn't really have to, because multi-levl models could handle some of the missingness)
 NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium", "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",  "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
 
 out.s <- out.s[out.s$NGA %in% NGAs,]
 
-tiff("pirateplot.tiff",width = 8,height = 5.5,units = 'in', res = 300)
+#tiff("pirateplot.tiff",width = 8,height = 5.5,units = 'in', res = 300)
 pirateplot(formula = Rate ~ NGA,
            data = out.s,
            theme = 0,
@@ -1120,31 +1137,31 @@ pirateplot(formula = Rate ~ NGA,
            ylab = "Rate of SC change"
            )
 abline(0.0002511869,0.00, )
-dev.off()
+#dev.off()
 
-
-ggplot(out.s, aes(NGA, Rate, color= NGA)) + 
-   geom_bar(stat="identity") +
+##? Older bar plot
+#ggplot(out.s, aes(NGA, Rate, color= NGA)) + 
+#   geom_bar(stat="identity") +
  # scale_x_continuous(breaks = c(0,200,400,600,700,800,1000,1200,1400),
 #                     labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
-  labs(y="Rate of SC Change", x="NGA") + 
-  ylim(c(-0.002,0.003)) +
-  theme_bw() + 
-  theme(
-    panel.border = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
-    axis.line = element_line(colour = "black"),
-    legend.position = "",
-    legend.justification = c("right", "top"),
-    legend.key.size = unit(0.8, "cm"),
-    legend.text = element_text(size = rel(1)),
-    axis.title = element_text(size = rel(1.5)),
-    axis.text.y= element_text(size = rel(1.5)),
-    axis.text.x= element_text(angle = 45, hjust = 1,size = rel(1.5)),
-    plot.margin=unit(c(1,1,1,1),"cm")) 
-ggsave("pirbars.tiff",width = 8,height = 5.5, dpi = 300)
+#  labs(y="Rate of SC Change", x="NGA") + 
+#  ylim(c(-0.002,0.003)) +
+#  theme_bw() + 
+#  theme(
+#    panel.border = element_blank(),
+#    panel.grid.major = element_blank(),
+#    panel.grid.minor = element_blank(),
+#    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
+#    axis.line = element_line(colour = "black"),
+#    legend.position = "",
+#    legend.justification = c("right", "top"),
+#    legend.key.size = unit(0.8, "cm"),
+#    legend.text = element_text(size = rel(1)),
+#    axis.title = element_text(size = rel(1.5)),
+#    axis.text.y= element_text(size = rel(1.5)),
+#    axis.text.x= element_text(angle = 45, hjust = 1,size = rel(1.5)),
+#    plot.margin=unit(c(1,1,1,1),"cm")) 
+#ggsave("pirbars.tiff",width = 8,height = 5.5, dpi = 300)
 
 
 ################################################################### 
@@ -1204,7 +1221,7 @@ Normal distribution doesn't look like an appropriate assumption here. This is pr
     # should be specified as ".good". If no appendix is given, then
     # it has to be specified as ""
     # Package is a package name identifying which extraction method will be
-    # used. Currently available for "glm","glmer",and "glmmadmb"
+    # used. Currently available for "glm","glmer",and "glmmTMB"
     # OR specifies whether coefficients should be exponentiated (odds ratios and CI)
     # 0 = no transformation, output coefs, CI, and p-vals;
     # 1 = exponentiate coefs and CI (for logit link)
@@ -1343,15 +1360,15 @@ First, let's look at the SC distribution.
 ###################################################################
 dat.p <- na.omit(subset(dat, select = c(MoralisingGods, Mean)))
 dat.p$MoralisingGods <- as.factor(dat.p$MoralisingGods)
+
 ggplot() + 
-  geom_density(data = dat.p, aes(x = Mean, fill = MoralisingGods, colour = MoralisingGods, linetype=MoralisingGods),size = 0.5) +
- 
- scale_color_manual(values = alpha(c("lightskyblue4","lightskyblue4"), 1), guide = FALSE) + 
-   scale_fill_manual(breaks = c(0,1),values = alpha(c("coral2","turquoise3"),0.6),
+  geom_density(data = dat.p, aes(x = Mean, fill = MoralisingGods, colour = MoralisingGods,
+                                 linetype=MoralisingGods),size = 0.5) +
+  scale_color_manual(values = alpha(c("lightskyblue4","lightskyblue4"), 1), guide = FALSE) + 
+  scale_fill_manual(breaks = c(0,1),values = alpha(c("coral2","turquoise3"),0.6),
                      labels = c("Pre-MG", "Post-MG"), name = "") +
   scale_linetype_manual(values = c("solid","dashed"), guide = FALSE) +
-                     xlim(c(0,1)) +
-
+  xlim(c(0,1)) +
   labs(x="Social Complexity", y="Density") +
   theme_bw() + 
   theme(
@@ -1369,8 +1386,6 @@ ggplot() +
     axis.text.x= element_text(size = rel(1.5)),
     plot.margin=unit(c(1,1,1,1),"cm")) 
 
-
-
 ################################################################### 
 ```
 
@@ -1387,17 +1402,17 @@ This is an important step. We have to take raw data and perform various transfor
 
 
 ```{r results = 'hide', message=FALSE, warning=FALSE, size= 0.5} 
-# first, select the 12 NGAs they work with
+##? first, select the 12 NGAs they work with
 dat.MG <- dat
 NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium", "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",  "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
 dat.MG <- dat.MG[dat$NGA %in% NGAs,]
 
-# agh, yes, do this! :(
+##? agh, yes, do this! :(
 dat.MG$MoralisingGods[is.na(dat.MG$MoralisingGods)] <- 0
 dat.MG$MoralisingGods <- as.factor(dat.MG$MoralisingGods)
 
 
-# Standardize Time for each NGA to start with 0 (no matter whether the dates are BCE or CE)
+##? Standardize Time for each NGA to start with 0 (no matter whether the dates are BCE or CE)
 
 for(i in 1:length(NGAs)){
   dt <- dat.MG[dat.MG$NGA == NGAs[i],]
@@ -1411,6 +1426,7 @@ for(i in 1:length(NGAs)){
 
 dat.MG$NGA <- as.factor(dat.MG$NGA)
 
+##?
 ### IMPORTANT! We have to censor the data to the +/- 700 years interval Pre- and Post-MG as in the original t-test analysis. We will also do the same later for the +/-2000 years as in the original paper
 
 # Before doing that, however, we have to fix a mistake at the Deccan NGA - it misses one century (looks like a bug), so we have to recode the other centuries. Note that this problem will have to be fixed for more centuries, if we would like to run the +/- 2000 years analysis.
@@ -1418,8 +1434,8 @@ dat.MG$NGA <- as.factor(dat.MG$NGA)
 dat.MG$Time[dat.MG$NGA == "Deccan" & (dat.MG$Time == 3200)] <- 3100
 dat.MG$Time[dat.MG$NGA == "Deccan" & (dat.MG$Time == 3300)] <- 3200
 
-# Ok, we can continue
-censor = 750 # censor the data to +/- 7 centuries
+##? Ok, we can continue
+censor = 750 ##? censor the data to +/- 7 centuries
 
 for(i in 1:length(NGAs)){
   dt <- dat.MG[dat.MG$NGA == NGAs[i],]
@@ -1435,7 +1451,7 @@ for(i in 1:length(NGAs)){
   }
 dat.MG <- dat.MG[!is.na(dat.MG$Time),]
 
-# Make Time series at each NGA to start with 0 and end with 1400 (14 centuries of data = +/- 700 years)
+##? Make Time series at each NGA to start with 0 and end with 1400 (14 centuries of data = +/- 700 years)
 
 for(i in 1:length(NGAs)){
   dt <- dat.MG[dat.MG$NGA == NGAs[i],]
@@ -1443,9 +1459,9 @@ for(i in 1:length(NGAs)){
   dat.MG$Time[dat.MG$NGA == NGAs[i]] <- dat.MG$Time[dat.MG$NGA == NGAs[i]] - m
   dat.MG$Time[dat.MG$NGA == NGAs[i]] <- dat.MG$Time[dat.MG$NGA == NGAs[i]] + 1400}
 
-#OK, now all sites acquire MG at year 700, so our data have 7 centuries before and 7 centuries after MG
+##? OK, now all sites acquire MG at year 700, so our data have 7 centuries before and 7 centuries after MG
 
-# Now, let's assume that MGs were present at all sites after their first detection (assumption of the t-test analysis presented in section 1.4)
+##? Now, let's assume that MGs were present at all sites after their first detection (assumption of the t-test analysis presented in section 1.4)
 
 dat.MG$MoralisingGods[dat.MG$Time>600] <- 1
 
@@ -1500,11 +1516,11 @@ As suggested above, the appropriate distributional assumption here should be the
 
 
 ```{r results = 'hide', message=FALSE, warning=FALSE, size= 0.5} 
-# First, let's compare gaussian and beta models
+##? First, let's compare gaussian and beta models
 
-summary(lm1 <- glmmadmb(Mean ~ Time + (1|NGA), data = dat.MG, family = 'gaussian'))
+summary(lm1 <- glmmTMB(Mean ~ Time + (1|NGA), data = dat.MG, family = 'gaussian'))
 
-summary(glm.b1 <- glmmadmb(Mean ~ Time + (1|NGA), data = dat.MG, family = 'beta'))
+summary(glm.b1 <- glmmTMB(Mean ~ Time + (1|NGA), data = dat.MG, family = 'beta'))
 
 ```
 
@@ -1527,14 +1543,14 @@ Note that it would be possible to also add a quadratic effect of time or to comp
 
 
 ```{r results = 'hide', message=FALSE, warning=FALSE, cache=T} 
-summary(glm.b1 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.MG, family = 'Beta'))
+summary(glm.b1 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.MG, family = 'beta'))
 
-summary(glm.b2 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA) + (1|World.Region), data = dat.MG, family = 'Beta'))
+summary(glm.b2 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA) + (1|World.Region), data = dat.MG, family = 'beta'))
 
-summary(glm.b3 <- glmmadmb(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region), data = dat.MG, family = 'Beta'))
+summary(glm.b3 <- glmmadmb(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region), data = dat.MG, family = 'beta'))
 
 xtract.cof("glm.b",c(1:3),"","glmmadmb",0)
-# Define list of coefficients extracted from glmmadmb models: estimates, confidence intervals, and p-values
+##? Define list of coefficients extracted from glmmTMB models: estimates, confidence intervals, and p-values
 E.vector <- list(Mods[[1]][,1],Mods[[2]][,1],Mods[[3]][,1])
 CI.vector <- list(Mods[[1]][,2:3],Mods[[2]][,2:3],Mods[[3]][,2:3])
 p.vector <- list(Mods[[1]][,4],Mods[[2]][,4],Mods[[3]][,4])
@@ -1553,7 +1569,7 @@ kable(t)
 The third model fits data best. 
 
 ```{r results = 'hide', message=FALSE, warning=FALSE, echo = F} 
-# This just to populate the table with the model and variable names, the results are from beta regression.
+##? This just to populate the table with the model and variable names, the results are from beta regression.
 
 summary(lm1 <- lme(Mean ~ Time*MoralisingGods, random = ~1|NGA, data = dat.MG, na.action = na.omit))
 summary(lm2 <- lme(Mean ~ Time*MoralisingGods, random = ~1|NGA, data = dat.MG, na.action = na.omit))
@@ -1562,14 +1578,14 @@ summary(lm3 <- lme(Mean ~ Time*MoralisingGods, random = ~1|NGA, data = dat.MG, n
 
 ```
 ```{r echo=FALSE, results='asis'}
-# stargazer command for creating html table
-stargazer::stargazer(lm1,lm2,lm3, coef=E.vector,ci = TRUE, ci.custom = CI.vector, p = p.vector, title="Estimates with 95/ CI for Social Complexity. Estimates from Beta regression are logit-transformed", dep.var.labels.include = FALSE, multicolumn = F, df = F, header = T, omit.stat = c("ll","wald","AIC","BIC","adj.rsq","rsq","f","ser"), dep.var.caption  = "",no.space = F, p.auto = F, star.char = c("x", "*", "**","***"),  star.cutoffs = c(0.1, 0.05, 0.01, 0.001), notes = c("x p<.1; * p<.05; ** p<.01; *** p<.001"), notes.append = F, type = "html", digits = 5)
+##? stargazer command for creating html table
+stargazer::stargazer(lm1,lm2,lm3, coef=E.vector,ci = TRUE, ci.custom = CI.vector, p = p.vector, title="Estimates with 95/ CI for Social Complexity. Estimates from beta regression are logit-transformed", dep.var.labels.include = FALSE, multicolumn = F, df = F, header = T, omit.stat = c("ll","wald","AIC","BIC","adj.rsq","rsq","f","ser"), dep.var.caption  = "",no.space = F, p.auto = F, star.char = c("x", "*", "**","***"),  star.cutoffs = c(0.1, 0.05, 0.01, 0.001), notes = c("x p<.1; * p<.05; ** p<.01; *** p<.001"), notes.append = F, type = "html", digits = 5)
 ```
 
 Let's explore goodness-of-fit measures.
 
 ```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
-# We have to use the glmmTMB package because glmmadmb is not compatible with DHARMa
+##? We have to use the glmmTMB package because glmmTMB is not compatible with DHARMa
 
 summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region), data = dat.MG, family = 'beta'))
 
@@ -1676,7 +1692,7 @@ We are repeating the same model-building procedure as in 4.1, only for the more 
 
 
 ```{r results = 'hide', message=FALSE, warning=FALSE, size= 0.5} 
-# first, select the 12 NGAs they work with
+##? first, select the 12 NGAs they work with
 {dat.MG <- dat
 NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium", "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",  "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
 dat.MG <- dat.MG[dat$NGA %in% NGAs,]
@@ -1686,7 +1702,7 @@ dat.MG$MoralisingGods[is.na(dat.MG$MoralisingGods)] <- 0
 dat.MG$MoralisingGods <- as.factor(dat.MG$MoralisingGods)
 
 
-# Standardize Time for each NGA
+##? Standardize Time for each NGA
 
 for(i in 1:length(NGAs)){
   dt <- dat.MG[dat.MG$NGA == NGAs[i],]
@@ -1699,14 +1715,14 @@ for(i in 1:length(NGAs)){
   }
 
 
-
+##?
 ### IMPORTANT! We have to censor the data to the +/- 700 years interval Pre- and Post-MG as in the original t-test analysis. We can also do for 2000 years as in the original paper
 
 # Before doing that, however, we have to fix a mistake at the Deccan NGA - it misses one century (looks like a bug), so we have to recode the other centuries. Note that this problem will have to be fixed with different numbers, if we would like to run the +/- 2000 years analysis.
 
 dat.MG$Time[dat.MG$NGA == "Deccan" & (dat.MG$Time > 3000)] <- dat.MG$Time[dat.MG$NGA == "Deccan" & (dat.MG$Time > 3000)] - 100
 
-# Ok, we can continue
+##? Ok, we can continue
 censor = 2050
 
 for(i in 1:length(NGAs)){
@@ -1723,7 +1739,7 @@ for(i in 1:length(NGAs)){
   }
 dat.MG <- dat.MG[!is.na(dat.MG$Time),]
 
-# Make Time series at each NGA to start with 0
+##? Make Time series at each NGA to start with 0
 for(i in 1:length(NGAs)){
   dt <- dat.MG[dat.MG$NGA == NGAs[i],]
   m <- max(dt$Time, na.rm=T)
@@ -1731,9 +1747,9 @@ for(i in 1:length(NGAs)){
   dt <- dat.MG[dat.MG$NGA == NGAs[i],]
   m <- min(dt$Time, na.rm=T)
   dat.MG$Time[dat.MG$NGA == NGAs[i]] <- dat.MG$Time[dat.MG$NGA == NGAs[i]] + abs(m)}
-# note that the last line adding + 1400 would have to be changed to + 4000 for the +/- 2000 analysis
+##? note that the last line adding + 1400 would have to be changed to + 4000 for the +/- 2000 analysis
 
-## We have to impute new rows now, so each NGA would have MG == 1 at Time == 2000
+##? We have to impute new rows now, so each NGA would have MG == 1 at Time == 2000
 
 # Deccan
 New <- dat.MG[1,]
@@ -1823,9 +1839,9 @@ dat.MG$Time[dat.MG$NGA=="Upper Egypt"] <- seq(0,4000,100)
 }
 
 
-#OK, now all sites acquire MG at year 2000, so our data have 20 centuries before and 20 centuries after MG, although we miss data for some sites for which there are not so long records. This should be taken care of in our multi-level models, though.
+##?OK, now all sites acquire MG at year 2000, so our data have 20 centuries before and 20 centuries after MG, although we miss data for some sites for which there are not so long records. This should be taken care of in our multi-level models, though.
 
-# Now, let's assume that MGs were present at all sites after first detection (assumption of the t-test analysis presented in section 1.4)
+##? Now, let's assume that MGs were present at all sites after first detection (assumption of the t-test analysis presented in section 1.4)
 
 dat.MG$MoralisingGods[dat.MG$Time>1900] <- 1
 
@@ -1874,15 +1890,12 @@ ggplot(dat.MG, aes(Time, Mean, color=MoralisingGods)) +
 ### 4.2.3. Compare beta with linear
 
 ```{r results = 'hide', message=FALSE, warning=FALSE, size= 0.5} 
-
-###!!!!!
-
-# First, let's compare gaussian and beta models
+##? First, let's compare gaussian and beta models
 dat.MGn <- na.omit(subset(dat.MG, select = c(Mean, Time, NGA)))
 
-summary(lm1 <- glmmadmb(Mean ~ Time + (1|NGA), data = dat.MGn, family = 'gaussian'))
+summary(lm1 <- glmmTMB(Mean ~ Time + (1|NGA), data = dat.MGn, family = 'gaussian'))
 
-summary(glm.b1 <- glmmadmb(Mean ~ Time + (1|NGA), data = dat.MGn, family = 'beta'))
+summary(glm.b1 <- glmmTMB(Mean ~ Time + (1|NGA), data = dat.MGn, family = 'beta'))
 
 ```
 
@@ -1900,14 +1913,14 @@ kable(t)
 ```{r results = 'hide', message=FALSE, warning=FALSE, cache=T} 
 dat.MG1 <- na.omit(subset(dat.MG, select = c(Mean, Time, MoralisingGods, NGA, World.Region)))
 
-summary(glm.b1 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.MG1, family = 'Beta'))
+summary(glm.b1 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.MG1, family = 'beta'))
 
-summary(glm.b2 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA) + (1|World.Region), data = dat.MG1, family = 'Beta'))
+summary(glm.b2 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA) + (1|World.Region), data = dat.MG1, family = 'beta'))
 
-summary(glm.b3 <- glmmadmb(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region), data = dat.MG1, family = 'Beta'))
+summary(glm.b3 <- glmmadmb(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region), data = dat.MG1, family = 'beta'))
 
 xtract.cof("glm.b",c(1:3),"","glmmadmb",0)
-# Define list of coefficients extracted from glmmadmb models: estimates, confidence intervals, and p-values
+##? Define list of coefficients extracted from glmmTMB models: estimates, confidence intervals, and p-values
 E.vector <- list(Mods[[1]][,1],Mods[[2]][,1],Mods[[3]][,1])
 CI.vector <- list(Mods[[1]][,2:3],Mods[[2]][,2:3],Mods[[3]][,2:3])
 p.vector <- list(Mods[[1]][,4],Mods[[2]][,4],Mods[[3]][,4])
@@ -1924,7 +1937,7 @@ kable(t)
 
 
 ```{r results = 'hide', message=FALSE, warning=FALSE, echo = F} 
-# This just to populate the table with the model and variable names, the results are from beta regression.
+##? This just to populate the table with the model and variable names, the results are from beta regression.
 
 summary(lm1 <- lme(Mean ~ Time*MoralisingGods, random = ~1|NGA, data = dat.MG, na.action = na.omit))
 summary(lm2 <- lme(Mean ~ Time*MoralisingGods, random = ~1|NGA, data = dat.MG, na.action = na.omit))
@@ -1933,13 +1946,13 @@ summary(lm3 <- lme(Mean ~ Time*MoralisingGods, random = ~1|NGA, data = dat.MG, n
 
 ```
 ```{r echo=FALSE, results='asis'}
-# stargazer command for creating html table
-stargazer::stargazer(lm1,lm2,lm3, coef=E.vector,ci = TRUE, ci.custom = CI.vector, p = p.vector, title="Estimates with 95/ CI for Social Complexity. Estimates from Beta regression are logit-transformed", dep.var.labels.include = FALSE, multicolumn = F, df = F, header = T, omit.stat = c("ll","wald","AIC","BIC","adj.rsq","rsq","f","ser"), dep.var.caption  = "",no.space = F, p.auto = F, star.char = c("x", "*", "**","***"),  star.cutoffs = c(0.1, 0.05, 0.01, 0.001), notes = c("x p<.1; * p<.05; ** p<.01; *** p<.001"), notes.append = F, type = "html", digits = 5)
+##? stargazer command for creating html table
+stargazer::stargazer(lm1,lm2,lm3, coef=E.vector,ci = TRUE, ci.custom = CI.vector, p = p.vector, title="Estimates with 95/ CI for Social Complexity. Estimates from beta regression are logit-transformed", dep.var.labels.include = FALSE, multicolumn = F, df = F, header = T, omit.stat = c("ll","wald","AIC","BIC","adj.rsq","rsq","f","ser"), dep.var.caption  = "",no.space = F, p.auto = F, star.char = c("x", "*", "**","***"),  star.cutoffs = c(0.1, 0.05, 0.01, 0.001), notes = c("x p<.1; * p<.05; ** p<.01; *** p<.001"), notes.append = F, type = "html", digits = 5)
 ```
 
 
 ```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
-# We have to use the glmmTMB package because glmmadmb is not compatible with DHARMa
+##? We have to use the glmmTMB package because glmmTMB is not compatible with DHARMa
 
 summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region), data = dat.MG, family = 'beta'))
 

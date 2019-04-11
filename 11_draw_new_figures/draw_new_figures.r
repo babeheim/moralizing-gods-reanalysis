@@ -21,7 +21,8 @@ m2_post <- extract.samples(m2)
 
 # make m1 tables
 
-varnames <- c("Intercept", "Social Complexity", "Lag1", "Lag2", "Phylogeny", "Space", "N", "Deviance")
+varnames <- c("Intercept", "Social Complexity", "Lag1", "Lag2",
+  "Phylogeny", "Space", "N", "Deviance")
 parnames <- c("a", "b_sc", "b_l1", "b_l2", "b_ph", "b_sp")
 
 n <- ncol(m1_post$p)
@@ -29,7 +30,8 @@ dev <- sprintf("%.1f", -2 * mean(m1_post$lp__))
 est <- sprintf("%.2f",  unlist(lapply(m1_post, mean))[parnames])
 se <- sprintf("%.2f", sqrt(unlist(lapply(m1_post, var))[parnames]))
 estse <- paste0(est, " (", se, ")")
-psigns <- c("-", psign(m1_post$b_sc), psign(m1_post$b_l1), psign(m1_post$b_l2), psign(m1_post$b_ph), psign(m1_post$b_sp))
+psigns <- c("-", psign(m1_post$b_sc), psign(m1_post$b_l1),
+  psign(m1_post$b_l2), psign(m1_post$b_ph), psign(m1_post$b_sp))
 x <- data.frame(m1_est = c(estse, n, dev), m1_psigns = c(psigns, "", ""))
 
 n <- ncol(m1_alt1_post$p)
@@ -37,7 +39,8 @@ dev <- sprintf("%.1f", -2 * mean(m1_alt1_post$lp__))
 est <- sprintf("%.2f",  unlist(lapply(m1_alt1_post, mean))[parnames])
 se <- sprintf("%.2f", sqrt(unlist(lapply(m1_alt1_post, var))[parnames]))
 estse <- paste0(est, " (", se, ")")
-psigns <- c("-", psign(m1_alt1_post$b_sc), psign(m1_alt1_post$b_l1), psign(m1_alt1_post$b_l2), psign(m1_alt1_post$b_ph), psign(m1_alt1_post$b_sp))
+psigns <- c("-", psign(m1_alt1_post$b_sc), psign(m1_alt1_post$b_l1),
+  psign(m1_alt1_post$b_l2), psign(m1_alt1_post$b_ph), psign(m1_alt1_post$b_sp))
 x$alt1_est <- c(estse, n, dev)
 x$alt1_psigns <- c(psigns, "", "")
 
@@ -46,7 +49,8 @@ dev <- sprintf("%.1f", -2 * mean(m1_alt2_post$lp__))
 est <- sprintf("%.2f",  unlist(lapply(m1_alt2_post, mean))[parnames])
 se <- sprintf("%.2f", sqrt(unlist(lapply(m1_alt2_post, var))[parnames]))
 estse <- paste0(est, " (", se, ")")
-psigns <- c("-", psign(m1_alt2_post$b_sc), psign(m1_alt2_post$b_l1), psign(m1_alt2_post$b_l2), psign(m1_alt2_post$b_ph), psign(m1_alt2_post$b_sp))
+psigns <- c("-", psign(m1_alt2_post$b_sc), psign(m1_alt2_post$b_l1),
+  psign(m1_alt2_post$b_l2), psign(m1_alt2_post$b_ph), psign(m1_alt2_post$b_sp))
 x$alt2_est <- c(estse, n, dev)
 x$alt2_psigns <- c(psigns, "", "")
 
@@ -58,7 +62,8 @@ writeLines(texttab(x, hlines = c(1, 7)), "./temp/model1_variations.txt")
 
 # now table for m2
 
-varnames <- c("Intercept", "Social Complexity", "Phylogeny", "Space", "NGA Varying Effect", "N", "Deviance")
+varnames <- c("Intercept", "Social Complexity", "Phylogeny",
+  "Space", "NGA Varying Effect", "N", "Deviance")
 parnames <- c("a", "b_sc", "b_ph", "b_sp", "a_sigma")
 
 n <- ncol(m2_post$p)
@@ -66,7 +71,8 @@ dev <- sprintf("%.1f", -2 * mean(m2_post$lp__))
 est <- sprintf("%.2f",  unlist(lapply(m2_post, mean))[parnames])
 se <- sprintf("%.2f", sqrt(unlist(lapply(m2_post, var))[parnames]))
 estse <- paste0(est, " (", se, ")")
-psigns <- c("-", psign(m2_post$b_sc), psign(m2_post$b_ph), psign(m2_post$b_sp), "-")
+psigns <- c("-", psign(m2_post$b_sc), psign(m2_post$b_ph),
+  psign(m2_post$b_sp), "-")
 x <- data.frame(m1_est = c(estse, n, dev), m1_psigns = c(psigns, "", ""))
 
 colnames(x) <- c("Est. (SE)", "P(sign)")
@@ -133,7 +139,7 @@ d$m1_hit50 <- NA
 d$m1_hit90 <- NA
 
 for (i in 1:nrow(d)) {
-  if(!is.na(d$Lag1[i]) & !is.na(d$Lag2[i])) {
+  if (!is.na(d$Lag1[i]) & !is.na(d$Lag2[i])) {
     pr_mg <- logistic(
       m1_post$a +
       m1_post$b_l1 * d$Lag1[i] +
@@ -151,12 +157,14 @@ for (i in 1:nrow(d)) {
   }
 }
 
-png("./temp/m1_predictions_missingness.png", res = 300, height = 5, width = 5, units = "in")
+png("./temp/m1_predictions_missingness.png", res = 300,
+  height = 5, width = 5, units = "in")
 
 plot(counter$Mean_c, counter$m1_pr_mg_mean, ylim = c(0, 1), type = "l",
   ylab = "pr(moralizing gods)", xlab = "social complexity",
   main = "retrodicted probability of MG appearance", xaxt = "n")
-polygon(c(counter$Mean_c, rev(counter$Mean_c)), c(counter$m1_pr_mg_ub, rev(counter$m1_pr_mg_lb)),
+polygon(c(counter$Mean_c, rev(counter$Mean_c)),
+  c(counter$m1_pr_mg_ub, rev(counter$m1_pr_mg_lb)),
   border = NA, col = col_alpha("black", 0.2))
 
 axis(1, at = seq(0, 1, by = 0.2) - 0.5,
@@ -193,19 +201,19 @@ for (i in 1:nrow(counter)) {
 
 # these are the NGAs used in the m2 varying effects terms
 NGAs_m2 <- c(
-  "Big Island Hawaii",         "Cambodian Basin",          
-  "Central Java",              "Chuuk Islands",            
-  "Cuzco",                     "Deccan",                   
-  "Garo Hills",                "Ghanaian Coast",           
-  "Iceland",                   "Kachi Plain",              
-  "Kansai",                    "Kapuasi Basin",            
-  "Konya Plain",               "Latium",                   
-  "Lena River Valley",         "Lowland Andes",            
-  "Middle Yellow River Valley","Niger Inland Delta",       
-  "North Colombia",            "Orkhon Valley",            
-  "Oro PNG",                   "Paris Basin",              
-  "Sogdiana",                  "Susiana",                  
-  "Upper Egypt",               "Yemeni Coastal Plain"    
+  "Big Island Hawaii",         "Cambodian Basin",
+  "Central Java",              "Chuuk Islands",
+  "Cuzco",                     "Deccan",
+  "Garo Hills",                "Ghanaian Coast",
+  "Iceland",                   "Kachi Plain",
+  "Kansai",                    "Kapuasi Basin",
+  "Konya Plain",               "Latium",
+  "Lena River Valley",         "Lowland Andes",
+  "Middle Yellow River Valley", "Niger Inland Delta",
+  "North Colombia",            "Orkhon Valley",
+  "Oro PNG",                   "Paris Basin",
+  "Sogdiana",                  "Susiana",
+  "Upper Egypt",               "Yemeni Coastal Plain"
 )
 
 d$m2_pr_mg_mean <- NA
@@ -216,7 +224,7 @@ d$m2_hit50 <- NA
 d$m2_hit90 <- NA
 
 for (i in 1:nrow(d)) {
-  if(d$NGA[i] %in% NGAs_m2) {
+  if (d$NGA[i] %in% NGAs_m2) {
     nga <- match(d$NGA[i], NGAs_m2)
     nga_offset <- m2_post$a_nga[, nga]
   } else {
@@ -240,23 +248,28 @@ for (i in 1:nrow(d)) {
 
 # now show the predictions for all missing values
 
-png("./temp/m2_missingness_predictions.png", res = 300, height = 5, width = 5, units = "in")
+png("./temp/m2_missingness_predictions.png", res = 300,
+  height = 5, width = 5, units = "in")
 
 plot(counter$Mean_c, counter$m2_pr_mg_mean, ylim = c(0, 1), type = "l",
   ylab = "pr(moralizing gods)", xlab = "social complexity",
   main = "", xaxt = "n")
-polygon(c(counter$Mean_c, rev(counter$Mean_c)), c(counter$m2_pr_mg_ub, rev(counter$m2_pr_mg_lb)),
+polygon(c(counter$Mean_c, rev(counter$Mean_c)),
+  c(counter$m2_pr_mg_ub, rev(counter$m2_pr_mg_lb)),
   border = NA, col = col.alpha("dodgerblue", 0.2))
 
 axis(1, at = seq(0, 1, by = 0.2) - 0.5, labels = seq(0, 1, by = 0.2))
 
 tar <- which(d$MG_missing == 1)
 
-points(d$Mean_c[tar], d$m2_pr_mg_mean[tar], pch = 16, col = col_alpha(d$nga_col[tar], 0.8), cex = 0.6)
+points(d$Mean_c[tar], d$m2_pr_mg_mean[tar], pch = 16,
+  col = col_alpha(d$nga_col[tar], 0.8), cex = 0.6)
 
-points(d$Mean_c[tar], d$m1_pr_mg_mean[tar], pch = 16, col = col_alpha("gray", 0.8), cex = 0.6)
+points(d$Mean_c[tar], d$m1_pr_mg_mean[tar], pch = 16,
+  col = col_alpha("gray", 0.8), cex = 0.6)
 
-points(counter$Mean_c, counter$m1_pr_mg_mean, col = gray(0.45), type = "l", lty = 2)
+points(counter$Mean_c, counter$m1_pr_mg_mean,
+  col = gray(0.45), type = "l", lty = 2)
 text(0.4, 0.5, "original model", col = gray(0.45), srt = 63)
 
 dev.off()
@@ -266,7 +279,7 @@ dev.off()
 
 NGAs_short <- c("Upper Egypt", "Susiana", "Konya Plain",
   "Middle Yellow River Valley", "Kachi Plain", "Sogdiana",
-  "Latium", "Deccan", "Paris Basin", "Orkhon Valley", 
+  "Latium", "Deccan", "Paris Basin", "Orkhon Valley",
   "Kansai", "Niger Inland Delta")
 
 # calculate "time of first appearance" and subtract off
@@ -287,32 +300,44 @@ nga_dat$m1_year_appear_90 <- NA
 nga_dat$m2_year_appear_50 <- NA
 nga_dat$m2_year_appear_90 <- NA
 
-for(i in 1:nrow(nga_dat)) {
+for (i in 1:nrow(nga_dat)) {
   dn <- d[which(d$NGA == nga_dat$NGA[i] & d$time_to_first_obs < 0), ]
-  if (any(dn$m1_hit50 == 1, na.rm = TRUE)) nga_dat$m1_year_appear_50[i] <- min(dn$time_to_first_obs[which(dn$m1_hit50 == 1)])
-  if (any(dn$m1_hit90 == 1, na.rm = TRUE)) nga_dat$m1_year_appear_90[i] <- min(dn$time_to_first_obs[which(dn$m1_hit90 == 1)])
-  if (any(dn$m2_hit50 == 1)) nga_dat$m2_year_appear_50[i] <- min(dn$time_to_first_obs[dn$m2_hit50 == 1])
-  if (any(dn$m2_hit90 == 1)) nga_dat$m2_year_appear_90[i] <- min(dn$time_to_first_obs[dn$m2_hit90 == 1])
+  if (any(dn$m1_hit50 == 1, na.rm = TRUE)) {
+    hit_rows <- which(dn$m1_hit50 == 1)
+    nga_dat$m1_year_appear_50[i] <- min(dn$time_to_first_obs[hit_rows])
+  }
+  if (any(dn$m1_hit90 == 1, na.rm = TRUE)) {
+    hit_rows <- which(dn$m1_hit90 == 1)
+    nga_dat$m1_year_appear_90[i] <- min(dn$time_to_first_obs[hit_rows])
+  }
+  if (any(dn$m2_hit50 == 1)) {
+    nga_dat$m2_year_appear_50[i] <- min(dn$time_to_first_obs[dn$m2_hit50 == 1])
+  }
+  if (any(dn$m2_hit90 == 1)) {
+    nga_dat$m2_year_appear_90[i] <- min(dn$time_to_first_obs[dn$m2_hit90 == 1])
+  }
 }
 
 # visualize each NGA seperately of the 12
 
-png("./temp/revised_EDfig1_m1.png", res = 300, height = 8, width = 10, units = "in")
+png("./temp/revised_EDfig1_m1.png", res = 300,
+  height = 8, width = 10, units = "in")
 
 par(mfrow = c(3, 4))
 
-for(i in 1:nrow(nga_dat)) {
-  dm <- d[which(d$NGA == nga_dat$NGA[i]),]
+for (i in 1:nrow(nga_dat)) {
+  dm <- d[which(d$NGA == nga_dat$NGA[i]), ]
   plot(dm$time_to_first_obs, dm$m1_pr_mg_mean, ylim = c(0, 1),
     xlim = c(-4000, 100), type = "l",
-    xlab ="years before first apperance", 
+    xlab = "years before first apperance",
     ylab = "pr(moralizing gods present)",
     main = nga_dat$NGA[i])
 
   abline(v = nga_dat$m1_year_appear_50[i], lwd = 2)
 
   tar <- which(!is.na(dm$m1_pr_mg_lb))
-  polygon(c(dm$time_to_first_obs[tar], rev(dm$time_to_first_obs[tar])), c(dm$m1_pr_mg_lb[tar], rev(dm$m1_pr_mg_ub[tar])),
+  polygon(c(dm$time_to_first_obs[tar], rev(dm$time_to_first_obs[tar])),
+    c(dm$m1_pr_mg_lb[tar], rev(dm$m1_pr_mg_ub[tar])),
     border = NA, col = col.alpha("firebrick", 0.2))
   abline(h = 0.5, col = "red")
   abline(v = 0, lty = 2)
@@ -320,21 +345,23 @@ for(i in 1:nrow(nga_dat)) {
 
 dev.off()
 
-png("./temp/revised_EDfig1_m2.png", res = 300, height = 8, width = 10, units = "in")
+png("./temp/revised_EDfig1_m2.png", res = 300,
+  height = 8, width = 10, units = "in")
 
 par(mfrow = c(3, 4))
 
-for(i in 1:nrow(nga_dat)) {
-  dm <- d[which(d$NGA == nga_dat$NGA[i]),]
+for (i in 1:nrow(nga_dat)) {
+  dm <- d[which(d$NGA == nga_dat$NGA[i]), ]
   plot(dm$time_to_first_obs, dm$m2_pr_mg_mean, ylim = c(0, 1),
     xlim = c(-4000, 100), type = "l",
-    xlab ="years before first apperance", 
+    xlab = "years before first apperance",
     ylab = "pr(moralizing gods present)",
     main = nga_dat$NGA[i])
 
   abline(v = nga_dat$m2_year_appear_50[i], lwd = 2)
 
-  polygon(c(dm$time_to_first_obs, rev(dm$time_to_first_obs)), c(dm$m2_pr_mg_lb, rev(dm$m2_pr_mg_ub)),
+  polygon(c(dm$time_to_first_obs, rev(dm$time_to_first_obs)),
+    c(dm$m2_pr_mg_lb, rev(dm$m2_pr_mg_ub)),
     border = NA, col = col.alpha("firebrick", 0.2))
   abline(h = 0.5, col = "red")
 }
@@ -343,30 +370,30 @@ dev.off()
 
 # aggregate first appearance estimates for revised fig2 from paper
 
-SCNorm <- read.csv('./input/SCNorm.csv', stringsAsFactors = FALSE)
-data <- read.csv('./input/PrePostComparison.csv', stringsAsFactors = FALSE)
+SCNorm <- read.csv("./input/SCNorm.csv", stringsAsFactors = FALSE)
+data <- read.csv("./input/PrePostComparison.csv", stringsAsFactors = FALSE)
 
 year_appear_50_mean <- mean(nga_dat$m2_year_appear_50, na.rm = TRUE)
-year_appear_50_se <- sd(nga_dat$m2_year_appear_50, na.rm = TRUE) / 
+year_appear_50_se <- sd(nga_dat$m2_year_appear_50, na.rm = TRUE) /
   sqrt(sum(!is.na(nga_dat$m2_year_appear_50)))
 
 png("./temp/revised_fig2.png", res = 300, height = 5, width = 5, units = "in")
 
 col1 <- rgb(0, 0, 0, max = 255, alpha = 50)
 
-plot(SCNorm$x, SCNorm$Mean, type = "n", ylim = c(0, 1), xlim = c(-2000, 2000), ann = FALSE,
-  xaxs = "i", yaxs = "i")
+plot(SCNorm$x, SCNorm$Mean, type = "n", ylim = c(0, 1),
+  xlim = c(-2000, 2000), ann = FALSE, xaxs = "i", yaxs = "i")
 
 # 'MG observed' period
 rect(0, 0, 0 + mean(data$RangeMGAppear), 1,
   border = NA, col = col1)
 
-lines(SCNorm$x, SCNorm$Mean, type="l") 
-lines(SCNorm$x, SCNorm$Upper, type="l",lty="dotted") 
-lines(SCNorm$x, SCNorm$Lower, type="l",lty="dotted")
+lines(SCNorm$x, SCNorm$Mean, type = "l")
+lines(SCNorm$x, SCNorm$Upper, type = "l", lty = "dotted")
+lines(SCNorm$x, SCNorm$Lower, type = "l", lty = "dotted")
 
 polygon(
-  c(year_appear_50_mean + c(-1.96, 1.96) * year_appear_50_se, 
+  c(year_appear_50_mean + c(-1.96, 1.96) * year_appear_50_se,
   year_appear_50_mean + c(1.96, -1.96) * year_appear_50_se),
   c(0, 0, 1, 1),
   border = NA,
@@ -383,44 +410,49 @@ dev.off()
 
 # combine m2 prediction figure with estimated first appearance figure
 
-png("./temp/m2_predictions_fig2_combined.png", res = 300, height = 5, width = 10, units = "in")
+png("./temp/m2_predictions_fig2_combined.png", res = 300,
+  height = 5, width = 10, units = "in")
 
 par(mfrow = c(1, 2))
 
 plot(counter$Mean_c, counter$m2_pr_mg_mean, ylim = c(0, 1), type = "l",
   ylab = "pr(moralizing gods)", xlab = "social complexity",
   main = "", xaxt = "n")
-polygon(c(counter$Mean_c, rev(counter$Mean_c)), c(counter$m2_pr_mg_ub, rev(counter$m2_pr_mg_lb)),
+polygon(c(counter$Mean_c, rev(counter$Mean_c)),
+  c(counter$m2_pr_mg_ub, rev(counter$m2_pr_mg_lb)),
   border = NA, col = col.alpha("dodgerblue", 0.2))
 
 axis(1, at = seq(0, 1, by = 0.2) - 0.5, labels = seq(0, 1, by = 0.2))
 
 tar <- which(d$MG_missing == 1)
 
-points(d$Mean_c[tar], d$m2_pr_mg_mean[tar], pch = 16, col = col_alpha(d$nga_col[tar], 0.8), cex = 0.6)
+points(d$Mean_c[tar], d$m2_pr_mg_mean[tar], pch = 16,
+  col = col_alpha(d$nga_col[tar], 0.8), cex = 0.6)
 
-points(d$Mean_c[tar], d$m1_pr_mg_mean[tar], pch = 16, col = col_alpha("gray", 0.8), cex = 0.6)
+points(d$Mean_c[tar], d$m1_pr_mg_mean[tar], pch = 16,
+  col = col_alpha("gray", 0.8), cex = 0.6)
 
-points(counter$Mean_c, counter$m1_pr_mg_mean, col = gray(0.45), type = "l", lty = 2)
+points(counter$Mean_c, counter$m1_pr_mg_mean,
+  col = gray(0.45), type = "l", lty = 2)
 text(0.4, 0.5, "original model", col = gray(0.45), srt = 63)
 
 text(-0.48, 0.93, "A", cex = 2)
 
 col1 <- rgb(0, 0, 0, max = 255, alpha = 50)
 
-plot(SCNorm$x, SCNorm$Mean, type = "n", ylim = c(0, 1), xlim = c(-2000, 2000), ann = FALSE,
-  xaxs = "i", yaxs = "i")
+plot(SCNorm$x, SCNorm$Mean, type = "n", ylim = c(0, 1),
+  xlim = c(-2000, 2000), ann = FALSE, xaxs = "i", yaxs = "i")
 
 # 'MG observed' period
 rect(0, 0, 0 + mean(data$RangeMGAppear), 1,
   border = NA, col = col1)
 
-lines(SCNorm$x, SCNorm$Mean, type="l") 
-lines(SCNorm$x, SCNorm$Upper, type="l",lty="dotted") 
-lines(SCNorm$x, SCNorm$Lower, type="l",lty="dotted")
+lines(SCNorm$x, SCNorm$Mean, type = "l")
+lines(SCNorm$x, SCNorm$Upper, type = "l", lty = "dotted")
+lines(SCNorm$x, SCNorm$Lower, type = "l", lty = "dotted")
 
 polygon(
-  c(year_appear_50_mean + c(-1.96, 1.96) * year_appear_50_se, 
+  c(year_appear_50_mean + c(-1.96, 1.96) * year_appear_50_se,
   year_appear_50_mean + c(1.96, -1.96) * year_appear_50_se),
   c(0, 0, 1, 1),
   border = NA,

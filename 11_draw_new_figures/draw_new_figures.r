@@ -123,10 +123,14 @@ for (i in 1:nrow(counter)) {
 
 # summarize m1's posterior predictions for each case
 
+density_threshold <- 0.8
+
 d$m1_pr_mg_mean <- NA
 d$m1_pr_mg_sd <- NA
 d$m1_pr_mg_lb <- NA
 d$m1_pr_mg_ub <- NA
+d$m1_hit50 <- NA
+d$m1_hit90 <- NA
 
 for (i in 1:nrow(d)) {
   if(!is.na(d$Lag1[i]) & !is.na(d$Lag2[i])) {
@@ -142,6 +146,8 @@ for (i in 1:nrow(d)) {
     d$m1_pr_mg_sd[i] <- sd(pr_mg)
     d$m1_pr_mg_lb[i] <- HPDI(pr_mg)[1]
     d$m1_pr_mg_ub[i] <- HPDI(pr_mg)[2]
+    d$m1_hit50[i] <- mean(pr_mg > 0.5) > density_threshold
+    d$m1_hit90[i] <- mean(pr_mg > 0.9) > density_threshold
   }
 }
 
@@ -206,8 +212,8 @@ d$m2_pr_mg_mean <- NA
 d$m2_pr_mg_sd <- NA
 d$m2_pr_mg_lb <- NA
 d$m2_pr_mg_ub <- NA
-d$hit_50 <- NA
-d$hit_90 <- NA
+d$m2_hit50 <- NA
+d$m2_hit90 <- NA
 
 for (i in 1:nrow(d)) {
   if(d$NGA[i] %in% NGAs_m2) {
@@ -276,18 +282,45 @@ for (i in 1:length(NGAs_short)) {
 # define the evidence threshold for "first appearance" analysis
 
 nga_dat <- data.frame(NGA = NGAs_short)
-nga_dat$year_appear_50 <- NA
-nga_dat$year_appear_90 <- NA
+nga_dat$m1_year_appear_50 <- NA
+nga_dat$m1_year_appear_90 <- NA
+nga_dat$m2_year_appear_50 <- NA
+nga_dat$m2_year_appear_90 <- NA
 
 for(i in 1:nrow(nga_dat)) {
   dn <- d[which(d$NGA == nga_dat$NGA[i] & d$time_to_first_obs < 0), ]
-  if (any(dn$m2_hit50 == 1)) nga_dat$year_appear_50[i] <- min(dn$time_to_first_obs[dn$m2_hit50 == 1])
-  if (any(dn$m2_hit90 == 1)) nga_dat$year_appear_90[i] <- min(dn$time_to_first_obs[dn$m2_hit90 == 1])
+  if (any(dn$m1_hit50 == 1, na.rm = TRUE)) nga_dat$m1_year_appear_50[i] <- min(dn$time_to_first_obs[which(dn$m1_hit50 == 1)])
+  if (any(dn$m1_hit90 == 1, na.rm = TRUE)) nga_dat$m1_year_appear_90[i] <- min(dn$time_to_first_obs[which(dn$m1_hit90 == 1)])
+  if (any(dn$m2_hit50 == 1)) nga_dat$m2_year_appear_50[i] <- min(dn$time_to_first_obs[dn$m2_hit50 == 1])
+  if (any(dn$m2_hit90 == 1)) nga_dat$m2_year_appear_90[i] <- min(dn$time_to_first_obs[dn$m2_hit90 == 1])
 }
 
 # visualize each NGA seperately of the 12
 
-png("./temp/revised_EDfit1.png", res = 300, height = 8, width = 10, units = "in")
+png("./temp/revised_EDfig1_m1.png", res = 300, height = 8, width = 10, units = "in")
+
+par(mfrow = c(3, 4))
+
+for(i in 1:nrow(nga_dat)) {
+  dm <- d[which(d$NGA == nga_dat$NGA[i]),]
+  plot(dm$time_to_first_obs, dm$m1_pr_mg_mean, ylim = c(0, 1),
+    xlim = c(-4000, 100), type = "l",
+    xlab ="years before first apperance", 
+    ylab = "pr(moralizing gods present)",
+    main = nga_dat$NGA[i])
+
+  abline(v = nga_dat$m1_year_appear_50[i], lwd = 2)
+
+  tar <- which(!is.na(dm$m1_pr_mg_lb))
+  polygon(c(dm$time_to_first_obs[tar], rev(dm$time_to_first_obs[tar])), c(dm$m1_pr_mg_lb[tar], rev(dm$m1_pr_mg_ub[tar])),
+    border = NA, col = col.alpha("firebrick", 0.2))
+  abline(h = 0.5, col = "red")
+  abline(v = 0, lty = 2)
+}
+
+dev.off()
+
+png("./temp/revised_EDfig1_m2.png", res = 300, height = 8, width = 10, units = "in")
 
 par(mfrow = c(3, 4))
 
@@ -299,7 +332,7 @@ for(i in 1:nrow(nga_dat)) {
     ylab = "pr(moralizing gods present)",
     main = nga_dat$NGA[i])
 
-  abline(v = nga_dat$year_appear_50[i], lwd = 2)
+  abline(v = nga_dat$m2_year_appear_50[i], lwd = 2)
 
   polygon(c(dm$time_to_first_obs, rev(dm$time_to_first_obs)), c(dm$m2_pr_mg_lb, rev(dm$m2_pr_mg_ub)),
     border = NA, col = col.alpha("firebrick", 0.2))
@@ -313,9 +346,9 @@ dev.off()
 SCNorm <- read.csv('./input/SCNorm.csv', stringsAsFactors = FALSE)
 data <- read.csv('./input/PrePostComparison.csv', stringsAsFactors = FALSE)
 
-year_appear_50_mean <- mean(nga_dat$year_appear_50, na.rm = TRUE)
-year_appear_50_se <- sd(nga_dat$year_appear_50, na.rm = TRUE) / 
-  sqrt(sum(!is.na(nga_dat$year_appear_50)))
+year_appear_50_mean <- mean(nga_dat$m2_year_appear_50, na.rm = TRUE)
+year_appear_50_se <- sd(nga_dat$m2_year_appear_50, na.rm = TRUE) / 
+  sqrt(sum(!is.na(nga_dat$m2_year_appear_50)))
 
 png("./temp/revised_fig2.png", res = 300, height = 5, width = 5, units = "in")
 

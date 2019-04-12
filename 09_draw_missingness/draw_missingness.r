@@ -18,6 +18,22 @@ d$MG_code <- case_when(
 
 # a barbell plot
 
+dm <- d[, c("MG", "Mean", "Lag1", "Lag2", "MG_known")]
+
+# drop cases to create publication dataset
+drop <- which(is.na(dm$Lag1) | is.na(dm$Lag2))
+dm <- dm[-drop, ]
+
+n_known_present <- sum(dm$MG == 1)
+n_known_absent <- sum(dm$MG == 0 & dm$MG_known == 1)
+n_unknown <- sum(dm$MG_known == 0)
+
+# 801 in the original analysis
+expect_equal(nrow(dm), 801)
+expect_equal(n_known_present, 299)
+expect_equal(n_known_absent, 12)
+expect_equal(n_unknown, 490)
+
 png("./temp/barbell.png", res = 300, units = "in", height = 5, width = 6)
 
 plot(1, 1, type = "n", xlim = c(0.5, 3.5), ylim = c(0, 1),
@@ -27,7 +43,8 @@ plot(1, 1, type = "n", xlim = c(0.5, 3.5), ylim = c(0, 1),
 abline(h = seq(0, 1, 0.2), col = "gray")
 
 axis(1, at = c(1, 2, 3), col = NA, col.ticks = NA,
-  labels = c("\nabsent\nn=12", "\npresent\nn=311", "\nunknown\nn=490"))
+  labels = c(paste0("\nabsent\nn=", n_known_absent),
+  paste0("\npresent\nn=", n_known_present), paste0("\nunknown\nn=", n_unknown)))
 
 d$MG_col <- ifelse(d$MG == 1, "firebrick", "dodgerblue")
 

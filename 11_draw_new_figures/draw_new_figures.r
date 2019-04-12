@@ -5,6 +5,65 @@ source("../project_support.r")
 
 dir_init("./temp")
 
+# make table 1
+
+d <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
+
+d$MG_og <- as.character(d$MG)
+d$MG_og[d$MG_missing == 1] <- "NA"
+d$na_col <- ifelse(d$MG_missing == 1, gray(0.3), "black")
+d$na_writing_col <- case_when(
+  d$Writing == 1 & d$MG_og %in% c("1", "NA") ~ "#d6e6a5",
+  d$Writing == 1 & d$MG_og == "0" ~ "#FFA8A0",
+  d$Writing == 0 ~ "white"
+)
+
+# calculate "time of first appearance" and subtract off
+
+NGAs_short <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain",
+  "Latium", "Middle Yellow River Valley", "Niger Inland Delta", 
+  "Orkhon Valley", "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
+
+d$time_to_first_obs <- NA
+
+for (i in 1:length(NGAs_short)) {
+  nga_rows <- which(d$NGA == NGAs_short[i])
+  nga_first_mg_row <- nga_rows[min(which(d$MG[nga_rows] == 1))]
+  d$time_to_first_obs[nga_rows] <- d$Time[nga_rows] - d$Time[nga_first_mg_row]
+}
+
+png("./temp/figure1.png", res = 300, units = "in", height = 5.5, width = 11)
+
+par(mar = c(5.1, 12, 4.1, 2.1))
+
+plot(1, 1, type = "n", frame.plot = FALSE,
+  xlim = c(-1050, 100), ylim = c(1, 12.5), axes = FALSE, ann = FALSE)
+axis(2, at = 12:1, labels = NGAs_short, las = 1)
+
+years <- seq(-1000, 100, by = 100)
+
+for (i in 1:length(NGAs_short)) {
+
+  my_rows <- which(d$NGA == NGAs_short[i] &
+    d$time_to_first_obs <= 100 & d$time_to_first_obs >= -1000)
+
+  for (j in 1:length(years)) {
+    rect(years[j] - 50, (13 - i) - 0.5, years[j] + 50, (13 - i) + 0.5,
+      col = d$na_writing_col[my_rows[j]], border = NA)
+  }
+
+  text(d$time_to_first_obs[my_rows], 13 - i, labels = d$MG_og[my_rows],
+    col = d$na_col[my_rows])
+
+}
+
+abline(h = 1:13 - 0.5, col = "gray")
+
+axis(3, years)
+mtext(text = "years until first appearance of moralizing god", line = 2.3)
+
+dev.off()
+
 # load models and extract their posterior samples
 
 load("./input/m1.rdata")
@@ -83,8 +142,6 @@ writeLines(texttab(x, hlines = c(1, 6)), "./temp/model2.txt")
 
 
 # now plot
-
-d <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
 
 # add centering
 d$Mean_c <- d$Mean - 0.5
@@ -459,16 +516,6 @@ NGAs_short <- c("Upper Egypt", "Susiana", "Konya Plain",
   "Latium", "Deccan", "Paris Basin", "Orkhon Valley",
   "Kansai", "Niger Inland Delta")
 
-# calculate "time of first appearance" and subtract off
-
-d$time_to_first_obs <- NA
-
-for (i in 1:length(NGAs_short)) {
-  nga_rows <- which(d$NGA == NGAs_short[i])
-  nga_first_mg_row <- nga_rows[min(which(d$MG[nga_rows] == 1))]
-  d$time_to_first_obs[nga_rows] <- d$Time[nga_rows] - d$Time[nga_first_mg_row]
-}
-
 # define the evidence threshold for "first appearance" analysis
 
 nga_dat <- data.frame(NGA = NGAs_short)
@@ -530,12 +577,12 @@ par(mfrow = c(3, 4))
 for (i in 1:nrow(nga_dat)) {
   dm <- d[which(d$NGA == nga_dat$NGA[i]), ]
   plot(dm$time_to_first_obs, dm$m2_pr_mg_mean, ylim = c(0, 1),
-    xlim = c(-4000, 100), type = "l",
+    xlim = c(-4000, 100), type = "l", lwd = 2,
     xlab = "years before first apperance",
     ylab = "pr(moralizing gods present)",
     main = nga_dat$NGA[i])
 
-  abline(v = nga_dat$m2_year_appear_50[i], lwd = 2)
+  abline(v = nga_dat$m2_year_appear_50[i], lwd = 1, lty = 2)
 
   polygon(c(dm$time_to_first_obs, rev(dm$time_to_first_obs)),
     c(dm$m2_pr_mg_lb, rev(dm$m2_pr_mg_ub)),

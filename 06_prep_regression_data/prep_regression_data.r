@@ -40,6 +40,8 @@ expect_equal(sum(is.na(data$GeneralMoralisticPunishment)), 545)
 
 data$MG <- data$MoralisingGods
 data$MG_missing <- as.numeric(is.na(data$MG))
+data$MHG_missing <- as.numeric(is.na(data$MHG))
+data$BSP_missing <- as.numeric(is.na(data$BSP))
 data[is.na(data)] <- 0 
 # This treats NA values as 0. Should checek later to see how much this affects results
 
@@ -61,7 +63,7 @@ for(i in 3:nrow(dat)){
 }
 RegrDat <- dat
 
-expect_equal(dim(RegrDat), c(864, 52 + 1)) # i added MG_missing
+expect_equal(dim(RegrDat), c(864, 52 + 3)) # i added MG_missing, MHG_missing, BSP_missing
 expect_equal(sum(is.na(RegrDat$Lag1)), c(32))
 expect_equal(sum(is.na(RegrDat$Lag2)), c(63))
 

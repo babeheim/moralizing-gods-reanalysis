@@ -1,7 +1,7 @@
 library(maps)
 library(plotrix)
+library(plyr) # this has to be first, also manually call plyr::rename to avoid problems
 library(dplyr)
-library(plyr) # manually call plyr::rename to avoid problems
 
 library(testthat)
 library(viridis)

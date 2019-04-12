@@ -108,6 +108,8 @@ Space <- mean(d$Space[d$MG_missing == 1])
 counter <- expand.grid(Mean_c, Lag1, Lag2, Phylogeny, Space)
 colnames(counter) <- c("Mean_c", "Lag1", "Lag2", "Phylogeny", "Space")
 
+# first do m1
+
 counter$m1_pr_mg_mean <- NA
 counter$m1_pr_mg_sd <- NA
 counter$m1_pr_mg_lb <- NA
@@ -177,6 +179,181 @@ points(d$Mean_c, d$m1_pr_mg_mean, pch = 16, col = d$na_col, cex = 0.6)
 
 dev.off()
 
+# now create a three-panel plot including each alternative
+
+png("./temp/alternative_missingness.png", res = 300,
+  height = 3, width = 8, units = "in")
+
+par(mfrow = c(1, 3))
+
+plot(counter$Mean_c, counter$m1_pr_mg_mean, ylim = c(0, 1), type = "l",
+  ylab = "pr(moralizing gods)", xlab = "social complexity",
+  main = "original model: all 'NA' to '0'", xaxt = "n")
+polygon(c(counter$Mean_c, rev(counter$Mean_c)),
+  c(counter$m1_pr_mg_ub, rev(counter$m1_pr_mg_lb)),
+  border = NA, col = col_alpha("black", 0.2))
+
+axis(1, at = seq(0, 1, by = 0.2) - 0.5,
+  labels = seq(0, 1, by = 0.2))
+
+for (i in 1:nrow(d)) lines(c(d$Mean_c[i], d$Mean_c[i]),
+  c(d$m1_pr_mg_lb[i], d$m1_pr_mg_ub[i]), col = col_alpha(d$na_col[i], 0.05))
+
+points(d$Mean_c, d$m1_pr_mg_mean, pch = 16, col = d$na_col, cex = 0.6)
+
+points(-0.45, 0.9, col = "firebrick", pch = 20)
+text(-0.45, 0.9, "originally NA", col = "firebrick", pos = 4)
+
+points(-0.45, 0.8, col = "dodgerblue", pch = 20)
+text(-0.45, 0.8, "known outcome", col = "dodgerblue", pos = 4)
+
+
+# now do this for m1_alt1
+
+counter$m1_alt1_pr_mg_mean <- NA
+counter$m1_alt1_pr_mg_sd <- NA
+counter$m1_alt1_pr_mg_lb <- NA
+counter$m1_alt1_pr_mg_ub <- NA
+
+for (i in 1:nrow(counter)) {
+  logit_p <- m1_alt1_post$a +
+    m1_alt1_post$b_l1 * counter$Lag1[i] +
+    m1_alt1_post$b_l2 * counter$Lag2[i] +
+    m1_alt1_post$b_sc * counter$Mean_c[i] +
+    m1_alt1_post$b_sp * counter$Space[i] +
+    m1_alt1_post$b_ph * counter$Phylogeny[i]
+  pr_mg <- logistic(logit_p)
+  counter$m1_alt1_pr_mg_mean[i] <- mean(pr_mg)
+  counter$m1_alt1_pr_mg_sd[i] <- sd(pr_mg)
+  counter$m1_alt1_pr_mg_lb[i] <- HPDI(pr_mg)[1]
+  counter$m1_alt1_pr_mg_ub[i] <- HPDI(pr_mg)[2]
+}
+
+# summarize m1_alt1's posterior predictions for each case
+
+density_threshold <- 0.8
+
+d$m1_alt1_pr_mg_mean <- NA
+d$m1_alt1_pr_mg_sd <- NA
+d$m1_alt1_pr_mg_lb <- NA
+d$m1_alt1_pr_mg_ub <- NA
+d$m1_alt1_hit50 <- NA
+d$m1_alt1_hit90 <- NA
+
+for (i in 1:nrow(d)) {
+  if (!is.na(d$Lag1[i]) & !is.na(d$Lag2[i])) {
+    pr_mg <- logistic(
+      m1_alt1_post$a +
+      m1_alt1_post$b_l1 * d$Lag1[i] +
+      m1_alt1_post$b_l2 * d$Lag2[i] +
+      m1_alt1_post$b_sc * d$Mean_c[i] +
+      m1_alt1_post$b_sp * d$Space[i] +
+      m1_alt1_post$b_ph * d$Phylogeny[i]
+    )
+    d$m1_alt1_pr_mg_mean[i] <- mean(pr_mg)
+    d$m1_alt1_pr_mg_sd[i] <- sd(pr_mg)
+    d$m1_alt1_pr_mg_lb[i] <- HPDI(pr_mg)[1]
+    d$m1_alt1_pr_mg_ub[i] <- HPDI(pr_mg)[2]
+    d$m1_alt1_hit50[i] <- mean(pr_mg > 0.5) > density_threshold
+    d$m1_alt1_hit90[i] <- mean(pr_mg > 0.9) > density_threshold
+  }
+}
+
+plot(counter$Mean_c, counter$m1_alt1_pr_mg_mean, ylim = c(0, 1), type = "l",
+  ylab = "pr(moralizing gods)", xlab = "social complexity",
+  main = "alternative 1: 96% 'NA' to '1'", xaxt = "n")
+polygon(c(counter$Mean_c, rev(counter$Mean_c)),
+  c(counter$m1_alt1_pr_mg_ub, rev(counter$m1_alt1_pr_mg_lb)),
+  border = NA, col = col_alpha("black", 0.2))
+
+axis(1, at = seq(0, 1, by = 0.2) - 0.5,
+  labels = seq(0, 1, by = 0.2))
+
+for (i in 1:nrow(d)) lines(c(d$Mean_c[i], d$Mean_c[i]),
+  c(d$m1_alt1_pr_mg_lb[i], d$m1_alt1_pr_mg_ub[i]), col = col_alpha(d$na_col[i], 0.05))
+
+points(d$Mean_c, d$m1_alt1_pr_mg_mean, pch = 16, col = d$na_col, cex = 0.6)
+
+points(0, 0.3, col = "firebrick", pch = 20)
+text(0, 0.3, "originally NA", col = "firebrick", pos = 4)
+
+points(0, 0.2, col = "dodgerblue", pch = 20)
+text(0, 0.2, "known outcome", col = "dodgerblue", pos = 4)
+
+# and for m1_alt2
+
+counter$m1_alt2_pr_mg_mean <- NA
+counter$m1_alt2_pr_mg_sd <- NA
+counter$m1_alt2_pr_mg_lb <- NA
+counter$m1_alt2_pr_mg_ub <- NA
+
+for (i in 1:nrow(counter)) {
+  logit_p <- m1_alt2_post$a +
+    m1_alt2_post$b_l1 * counter$Lag1[i] +
+    m1_alt2_post$b_l2 * counter$Lag2[i] +
+    m1_alt2_post$b_sc * counter$Mean_c[i] +
+    m1_alt2_post$b_sp * counter$Space[i] +
+    m1_alt2_post$b_ph * counter$Phylogeny[i]
+  pr_mg <- logistic(logit_p)
+  counter$m1_alt2_pr_mg_mean[i] <- mean(pr_mg)
+  counter$m1_alt2_pr_mg_sd[i] <- sd(pr_mg)
+  counter$m1_alt2_pr_mg_lb[i] <- HPDI(pr_mg)[1]
+  counter$m1_alt2_pr_mg_ub[i] <- HPDI(pr_mg)[2]
+}
+
+# summarize m1_alt2's posterior predictions for each case
+
+density_threshold <- 0.8
+
+d$m1_alt2_pr_mg_mean <- NA
+d$m1_alt2_pr_mg_sd <- NA
+d$m1_alt2_pr_mg_lb <- NA
+d$m1_alt2_pr_mg_ub <- NA
+d$m1_alt2_hit50 <- NA
+d$m1_alt2_hit90 <- NA
+
+for (i in 1:nrow(d)) {
+  if (!is.na(d$Lag1[i]) & !is.na(d$Lag2[i])) {
+    pr_mg <- logistic(
+      m1_alt2_post$a +
+      m1_alt2_post$b_l1 * d$Lag1[i] +
+      m1_alt2_post$b_l2 * d$Lag2[i] +
+      m1_alt2_post$b_sc * d$Mean_c[i] +
+      m1_alt2_post$b_sp * d$Space[i] +
+      m1_alt2_post$b_ph * d$Phylogeny[i]
+    )
+    d$m1_alt2_pr_mg_mean[i] <- mean(pr_mg)
+    d$m1_alt2_pr_mg_sd[i] <- sd(pr_mg)
+    d$m1_alt2_pr_mg_lb[i] <- HPDI(pr_mg)[1]
+    d$m1_alt2_pr_mg_ub[i] <- HPDI(pr_mg)[2]
+    d$m1_alt2_hit50[i] <- mean(pr_mg > 0.5) > density_threshold
+    d$m1_alt2_hit90[i] <- mean(pr_mg > 0.9) > density_threshold
+  }
+}
+
+plot(counter$Mean_c, counter$m1_alt2_pr_mg_mean, ylim = c(0, 1), type = "l",
+  ylab = "pr(moralizing gods)", xlab = "social complexity",
+  main = "alternative 2: 50% NA each to 0/1", xaxt = "n")
+polygon(c(counter$Mean_c, rev(counter$Mean_c)),
+  c(counter$m1_alt2_pr_mg_ub, rev(counter$m1_alt2_pr_mg_lb)),
+  border = NA, col = col_alpha("black", 0.2))
+
+axis(1, at = seq(0, 1, by = 0.2) - 0.5,
+  labels = seq(0, 1, by = 0.2))
+
+for (i in 1:nrow(d)) lines(c(d$Mean_c[i], d$Mean_c[i]),
+  c(d$m1_alt2_pr_mg_lb[i], d$m1_alt2_pr_mg_ub[i]), col = col_alpha(d$na_col[i], 0.05))
+
+points(d$Mean_c, d$m1_alt2_pr_mg_mean, pch = 16, col = d$na_col, cex = 0.6)
+
+points(0, 0.3, col = "firebrick", pch = 20)
+text(0, 0.3, "originally NA", col = "firebrick", pos = 4)
+
+points(0, 0.2, col = "dodgerblue", pch = 20)
+text(0, 0.2, "known outcome", col = "dodgerblue", pos = 4)
+
+dev.off()
+
 
 # plot predictions from m2, which could not see the MG that are NA
 
@@ -201,19 +378,19 @@ for (i in 1:nrow(counter)) {
 
 # these are the NGAs used in the m2 varying effects terms
 NGAs_m2 <- c(
-  "Big Island Hawaii",         "Cambodian Basin",
-  "Central Java",              "Chuuk Islands",
-  "Cuzco",                     "Deccan",
-  "Garo Hills",                "Ghanaian Coast",
-  "Iceland",                   "Kachi Plain",
-  "Kansai",                    "Kapuasi Basin",
-  "Konya Plain",               "Latium",
-  "Lena River Valley",         "Lowland Andes",
+  "Big Island Hawaii",          "Cambodian Basin",
+  "Central Java",               "Chuuk Islands",
+  "Cuzco",                      "Deccan",
+  "Garo Hills",                 "Ghanaian Coast",
+  "Iceland",                    "Kachi Plain",
+  "Kansai",                     "Kapuasi Basin",
+  "Konya Plain",                "Latium",
+  "Lena River Valley",          "Lowland Andes",
   "Middle Yellow River Valley", "Niger Inland Delta",
-  "North Colombia",            "Orkhon Valley",
-  "Oro PNG",                   "Paris Basin",
-  "Sogdiana",                  "Susiana",
-  "Upper Egypt",               "Yemeni Coastal Plain"
+  "North Colombia",             "Orkhon Valley",
+  "Oro PNG",                    "Paris Basin",
+  "Sogdiana",                   "Susiana",
+  "Upper Egypt",                "Yemeni Coastal Plain"
 )
 
 d$m2_pr_mg_mean <- NA
@@ -402,8 +579,8 @@ polygon(
 
 abline(v = year_appear_50_mean, col = "firebrick")
 
-text(-1000, 0.7, "predicted MG\nemergence", srt = 90)
-text(60, 0.3, "MG first recorded", srt = 90)
+text(year_appear_50_mean, 0.7, "predicted MG\nemergence", srt = 90)
+text(80, 0.3, "MG first recorded", srt = 90)
 
 dev.off()
 
@@ -441,7 +618,8 @@ text(-0.48, 0.93, "A", cex = 2)
 col1 <- rgb(0, 0, 0, max = 255, alpha = 50)
 
 plot(SCNorm$x, SCNorm$Mean, type = "n", ylim = c(0, 1),
-  xlim = c(-2000, 2000), ann = FALSE, xaxs = "i", yaxs = "i")
+  xlim = c(-2000, 2000), xaxs = "i", yaxs = "i",
+  xlab = "years from first MG observation", ylab = "social complexity")
 
 # 'MG observed' period
 rect(0, 0, 0 + mean(data$RangeMGAppear), 1,
@@ -461,8 +639,8 @@ polygon(
 
 abline(v = year_appear_50_mean, col = "firebrick")
 
-text(-1000, 0.7, "predicted MG\nemergence", srt = 90)
-text(60, 0.3, "MG first recorded", srt = 90)
+text(year_appear_50_mean, 0.7, "predicted MG\nemergence", srt = 90)
+text(80, 0.3, "MG first recorded", srt = 90)
 
 text(-1800, 0.9, "B", cex = 2)
 

@@ -131,8 +131,8 @@ for (i in 1:length(NGAs)) {
   if(length(my_rows) == 1) points(d$Time[my_rows], d$PolPop[my_rows],
     pch = 20, cex = 0.2, col = nga_col[i])
 
-  axis(1, tck = 0.02, at = seq(min(d$Time[my_rows]), max(d$Time[my_rows]), by = 100),
-    labels = FALSE)
+  axis(1, tck = 0.02, at = seq(min(d$Time[my_rows]),
+    max(d$Time[my_rows]), by = 100), labels = FALSE)
 
   my_points <- which(d$NGA == NGAs[i] & d$MG == 1)
   points(d$Time[my_points], d$PolPop[my_points],
@@ -150,7 +150,8 @@ keep <- rep(NA, length(NGAs))
 
 for (i in 1:length(NGAs)) {
   my_rows <- which(d$NGA == NGAs[i])
-  keep[i] <- any(d$MG[my_rows] == 1) & any(is.na(d$MG[my_rows] | d$MG[my_rows] == 0))
+  keep[i] <- any(d$MG[my_rows] == 1) &
+    any(is.na(d$MG[my_rows] | d$MG[my_rows] == 0))
 }
 
 NGA_keep <- NGAs[which(keep)]
@@ -163,7 +164,6 @@ par(mfrow = c(5, 3))
 
 plot(c(0, 10), c(0, 10), type = "n", frame.plot = FALSE, axes = FALSE,
  xlab = "", ylab = "", main = "Legend")
-# ann = all axis labels and titles
 
 symbol_line <- 0.5
 symbol_anchor <- 8
@@ -177,8 +177,8 @@ points(symbol_line, symbol_anchor - 2, pch = 21, cex = 1, bg = "white")
 text(symbol_line + 0.5, symbol_anchor - 2, "moralizing gods absent", pos = 4)
 
 lines(symbol_line + c(-0.3, 0.3), c(symbol_anchor, symbol_anchor) - 4)
-text(symbol_line + 0.5, symbol_anchor - 4, "no data on moralizing gods", pos = 4)
-# points(symbol_line, symbol_anchor - 4, col = col.alpha("gray", 0.8), pch = 1)
+text(symbol_line + 0.5, symbol_anchor - 4,
+  "no data on moralizing gods", pos = 4)
 
 for (i in 1:length(NGA_keep)) {
 
@@ -193,12 +193,9 @@ for (i in 1:length(NGA_keep)) {
   if(length(my_rows) == 1) points(d$Time[my_rows], d$PolPop[my_rows],
     pch = 20, cex = 0.2, col = nga_col[i])
 
-  axis(1, tck = 0.02, at = seq(min(d$Time[my_rows]), max(d$Time[my_rows]), by = 100),
-    labels = FALSE)
+  axis(1, tck = 0.02, at = seq(min(d$Time[my_rows]),
+    max(d$Time[my_rows]), by = 100), labels = FALSE)
 
-  # my_points <- which(d$NGA == NGA_keep[i] & is.na(d$MG))
-  # points(d$Time[my_points], d$PolPop[my_points],
-  #   col = col.alpha("gray", 0.8), pch = 1)
   my_points <- which(d$NGA == NGA_keep[i] & d$MG == 1)
   points(d$Time[my_points], d$PolPop[my_points],
     bg = d$mg_col[my_points], col = d$mg_outline[my_points], pch = 21)
@@ -212,7 +209,8 @@ dev.off()
 
 # subset to a representative 5 for discussion
 
-NGA_keep <- c("North Colombia", "Big Island Hawaii", "Valley of Oaxaca", "Orkhon Valley", "Latium")
+NGA_keep <- c("North Colombia", "Big Island Hawaii",
+  "Valley of Oaxaca", "Orkhon Valley", "Latium")
 
 png("./temp/Five.png", res = 300, units = "in", height = 4.8, width = 8)
 
@@ -220,7 +218,6 @@ par(mfrow = c(2, 3))
 
 plot(c(0, 10), c(0, 10), type = "n", frame.plot = FALSE, axes = FALSE,
  xlab = "", ylab = "", main = "Legend")
-# ann = all axis labels and titles
 
 symbol_line <- 0.5
 symbol_anchor <- 8
@@ -234,7 +231,8 @@ points(symbol_line, symbol_anchor - 2, pch = 21, cex = 1, bg = "white")
 text(symbol_line + 0.5, symbol_anchor - 2, "moralizing gods absent", pos = 4)
 
 lines(symbol_line + c(-0.3, 0.3), c(symbol_anchor, symbol_anchor) - 4)
-text(symbol_line + 0.5, symbol_anchor - 4, "no data on moralizing gods", pos = 4)
+text(symbol_line + 0.5, symbol_anchor - 4,
+  "no data on moralizing gods", pos = 4)
 points(symbol_line, symbol_anchor - 4, col = col.alpha("gray", 0.8), pch = 1)
 
 for (i in 1:length(NGA_keep)) {
@@ -247,15 +245,12 @@ for (i in 1:length(NGA_keep)) {
 
   points(d$Time[my_rows], d$PolPop[my_rows],
     col = nga_col[i], type = "l")
-  if(length(my_rows) == 1) points(d$Time[my_rows], d$PolPop[my_rows],
+  if (length(my_rows) == 1) points(d$Time[my_rows], d$PolPop[my_rows],
     pch = 20, cex = 0.2, col = nga_col[i])
 
-  axis(1, tck = 0.02, at = seq(min(d$Time[my_rows]), max(d$Time[my_rows]), by = 100),
-    labels = FALSE)
+  axis(1, tck = 0.02, at = seq(min(d$Time[my_rows]),
+    max(d$Time[my_rows]), by = 100), labels = FALSE)
 
-  # my_points <- which(d$NGA == NGA_keep[i] & is.na(d$MG))
-  # points(d$Time[my_points], d$PolPop[my_points],
-  #   col = col.alpha("gray", 0.8), pch = 1)
   my_points <- which(d$NGA == NGA_keep[i] & d$MG == 1)
   points(d$Time[my_points], d$PolPop[my_points],
     bg = d$mg_col[my_points], col = d$mg_outline[my_points], pch = 21)

@@ -38,14 +38,16 @@ save(m1, file = "./temp/m1.rdata")
 
 # original model but re-assign NAs according to another missingness rule:
 
-dm <- d[, c("NGA", "MG", "Mean_c", "Lag1", "Lag2", "Phylogeny", "Space", "MG_missing")]
+dm <- d[, c("NGA", "MG", "Mean_c", "Lag1", "Lag2",
+  "Phylogeny", "Space", "MG_missing")]
 
 drop <- which(is.na(dm$Lag1) | is.na(dm$Lag2))
 if (length(drop) > 0) dm <- dm[-drop, ]
 
 imputation_prob <- 311 / 323 # occurance of 1's in known data
 
-dm$MG[dm$MG_missing == 1] <- rbinom(sum(dm$MG_missing == 1), 1, prob = imputation_prob)
+dm$MG[dm$MG_missing == 1] <- rbinom(sum(dm$MG_missing == 1),
+  1, prob = imputation_prob)
 
 # recalculate lag terms accordingly
 
@@ -74,14 +76,16 @@ save(m1_alt1, file = "./temp/m1_alt1.rdata")
 
 # original model but re-assign NAs according to another missingness rule:
 
-dm <- d[, c("NGA", "MG", "Mean_c", "Lag1", "Lag2", "Phylogeny", "Space", "MG_missing")]
+dm <- d[, c("NGA", "MG", "Mean_c", "Lag1", "Lag2",
+  "Phylogeny", "Space", "MG_missing")]
 
 drop <- which(is.na(dm$Lag1) | is.na(dm$Lag2))
 if (length(drop) > 0) dm <- dm[-drop, ]
 
 imputation_prob <- 0.5 # principle of indifference
 
-dm$MG[dm$MG_missing == 1] <- rbinom(sum(dm$MG_missing == 1), 1, prob = imputation_prob)
+dm$MG[dm$MG_missing == 1] <- rbinom(sum(dm$MG_missing == 1), 1,
+  prob = imputation_prob)
 
 # recalculate lag terms accordingly
 
@@ -122,19 +126,19 @@ expect_equal(nrow(dm), 336)
 
 # 26 NGAs in the reduced set
 NGAs <- c(
-  "Big Island Hawaii",         "Cambodian Basin",          
-  "Central Java",              "Chuuk Islands",            
-  "Cuzco",                     "Deccan",                   
-  "Garo Hills",                "Ghanaian Coast",           
-  "Iceland",                   "Kachi Plain",              
-  "Kansai",                    "Kapuasi Basin",            
-  "Konya Plain",               "Latium",                   
-  "Lena River Valley",         "Lowland Andes",            
-  "Middle Yellow River Valley","Niger Inland Delta",       
-  "North Colombia",            "Orkhon Valley",            
-  "Oro PNG",                   "Paris Basin",              
-  "Sogdiana",                  "Susiana",                  
-  "Upper Egypt",               "Yemeni Coastal Plain"    
+  "Big Island Hawaii",          "Cambodian Basin",
+  "Central Java",               "Chuuk Islands",
+  "Cuzco",                      "Deccan",
+  "Garo Hills",                 "Ghanaian Coast",
+  "Iceland",                    "Kachi Plain",
+  "Kansai",                     "Kapuasi Basin",
+  "Konya Plain",                "Latium",
+  "Lena River Valley",          "Lowland Andes",
+  "Middle Yellow River Valley", "Niger Inland Delta",
+  "North Colombia",             "Orkhon Valley",
+  "Oro PNG",                    "Paris Basin",
+  "Sogdiana",                   "Susiana",
+  "Upper Egypt",                "Yemeni Coastal Plain"
 )
 
 dm$nga <- match(dm$NGA, NGAs)

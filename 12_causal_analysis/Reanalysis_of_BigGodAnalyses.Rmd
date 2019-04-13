@@ -33,7 +33,7 @@ This document first replicates (section 1) and later extends (sections 2-4) the 
 The goal of this document is to first explain what Whitehouse et al. did, and later show that their approach was incorrect and suggest better solutions.
 
 
-Note that comments in the text starting with #?? are our new comments.
+Note that comments in the text starting with #?? are our new comments. Also note that we are hailing from the original script, which uses a bit unfortunate approach that reuses and redefines the same variables. Hence, it may be misleading to run a specific section multiple times (it is going to overwrite results) or start from the middle of the script. As a general rule, we recommend to always run the full code that precedes the section that the reader might be interested in.
 
 # 1. Original code
 
@@ -192,7 +192,7 @@ print(t.test(out[,3], out[,2],paired=TRUE))
 
 Plot a histogram of the rate of SC change
 
-```{r cache=TRUE, results='hide', message=FALSE, warning=FALSE, echo=FALSE, fig.height=5, fig.width=5}
+```{r cache=F, results='hide', message=FALSE, warning=FALSE, echo=FALSE, fig.height=5, fig.width=5}
 #tiff("Hist.tiff",width = 6,height = 5.5,units = 'in', res = 300)
 
 #histogram of differences
@@ -309,7 +309,7 @@ out.s <- out.s[out.s$NGA %in% NGAs,]
 
 Let's plot the difference between pre-MG and post-MG SC change with confidence intervals
 
-```{r cache=TRUE, results='hide', message=FALSE, warning=FALSE, echo=FALSE, fig.height=5, fig.width=5}
+```{r cache=F, results='hide', message=FALSE, warning=FALSE, echo=FALSE, fig.height=5, fig.width=5}
 
 ##? This is rate of SC change 2000 years before and after MG
 
@@ -360,7 +360,7 @@ ggplot(data = coefs, aes(x=prepost, y=mean.DV))   +
 The reason why we cannot really see the Pre-/Post-MG difference is beacause the rate of SC change close to the supposed MG appearance is weighte more heavily BUT the clustering within NGAs is not accounted for - therefore, these heavily counted data points are all over the plot.
 
 
-```{r cache=TRUE, results='hide', message=FALSE, warning=FALSE, echo=FALSE, fig.height=20, fig.width=6}
+```{r cache=F, results='hide', message=FALSE, warning=FALSE, echo=FALSE, fig.height=20, fig.width=6}
 
 ##? This is rate of SC change 2000 years before and after MG
 
@@ -433,7 +433,7 @@ print(g12, vp = vplayout(6, 2))
 Looking at the scatter plots illustrates, how small the Pre-/Post-MG differences are. Let's zoom-in on the difference between means.
 
 
-```{r cache=TRUE, results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+```{r cache=F, results='hide', message=FALSE, warning=FALSE, echo=FALSE}
 
 ggplot(data = coefs, aes(x=prepost, y=mean.DV))   +
 geom_line(data = coefs,aes(x=c(1,2), y = c(mean.DV[1],mean.DV[2])), size = 0.8) +
@@ -599,10 +599,12 @@ Let's plot the histogram with the rate of SC change:
 ifelse(FB == 300, d <- d300,d <- d100)
 d <- as.data.frame(d)
 
+ifelse(FB == 300, c <- "#18b0e8",c <- "#cf3a3a")
+
 
 ggplot() + 
-  geom_histogram(data = d, aes(x = d), fill = "darkgrey", colour = "gray42", binwidth = 0.1,
-                 alpha = 0.9) + 
+  geom_histogram(data = d, aes(x = d), fill = c, colour = c, binwidth = 0.1,
+                 alpha = 0.5) + 
   xlim(c(-2,2)) +
   ylim(c(0,100)) +
   geom_vline(xintercept = 0, color = "black", size=1, alpha = 1) +   
@@ -625,7 +627,7 @@ ggplot() +
 
 
 
-# ggsave("hist300.tiff",width = 4,height = 2.7, dpi = 300)
+ #ggsave("hist100.tiff",width = 4,height = 2.7, dpi = 300)
 
 ################################################################### 
 ```
@@ -876,7 +878,6 @@ lines(x, y,type="l")
 lines(x, u,type="l",lty="dotted") 
 lines(x, l,type="l",lty="dotted")
 #abline(h=0.6,lty="dashed")
-
 #dev.off()
 ```
 
@@ -1199,10 +1200,11 @@ Let's check the model fit.
 
 ```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
 simulationOutput = simulateResiduals(lm3)
+#tiff("qq1.tiff",width = 8,height = 5, units = 'in', res = 300)
 plot(simulationOutput)
+#dev.off()
 testUniformity(simulationOutput = simulationOutput)
 testDispersion(simulationOutput = simulationOutput)
-
 ```
 
 
@@ -1211,29 +1213,76 @@ Normal distribution doesn't look like an appropriate assumption here. This is pr
 
 ```{r echo = F, message=FALSE, warning=FALSE}
 #####################################################################
-## Function extracting coefficients from various models
+## Function extracting coefficients and calculating 95% CI from various models
 
- xtract.cof <- function(model,number,extension,package,OR = 1){
-    # Model is model's name e.g. Mod and should be specified as "Mod"
-    # Number is the number of models, e.g. 1:3 corresponding to models
-    # named as Mod1, Mod2, Mod3 (e.g. adding variables step-wise)
-    # Extension is further model name appendices e.g. "Mod1.good" and 
-    # should be specified as ".good". If no appendix is given, then
-    # it has to be specified as ""
-    # Package is a package name identifying which extraction method will be
-    # used. Currently available for "glm","glmer",and "glmmTMB"
-    # OR specifies whether coefficients should be exponentiated (odds ratios and CI)
-    # 0 = no transformation, output coefs, CI, and p-vals;
-    # 1 = exponentiate coefs and CI (for logit link)
-    # 2 = outputs non-transformed coefs and CI for log link
-   
-   # The product of this function is a list of objects called "Mods"
-    
-    Mods <<- list()
-    if(package == "glm"){
+xtract.cof <- function(model,number,extension,package,transform = 0){
+  # Model is model's name e.g. Mod and should be specified as "Mod"
+  
+  # Number is the number of models, e.g. 1:3 corresponding to models
+  # named as Mod1, Mod2, Mod3 (e.g. adding variables step-wise)
+  
+  # Extension is further model name appendices e.g. "Mod1.good" and 
+  # should be specified as ".good". If no appendix is given, then
+  # it has to be specified as ""
+  
+  # Package is a package name identifying which extraction method will be
+  # used. Currently available for "glm","glmer", "glmmadmb", and "glmmTMB"
+  
+  # Transform specifies whether coefficients and 95% CIshould be
+  # back-transformed from log/logit links
+  # 0 = no transformation, output coefs, CI, and p-vals;
+  # 1 = exponentiate coefs and CI (for logit link in logistic regrssion
+  # calculates Odds ratios)
+  # 2 = back-transforms coefs and CI from the log link in negative binomial
+  # regression
+  # 3 = back-transforms coefs and CI from the logit link in beta regression
+  # (currently available only for "glmmadmb" package)
+  
+  # The product of this function is a list of objects called "Mods"
+  
+  Mods <<- list()
+  if(package == "glm"){
+    for(i in number){
+      MOD <- eval(parse(text = paste0(model,i,extension)))
+      cf <- MOD$coefficients
+      se <- sqrt(diag(vcov(MOD)))
+      t <- summary(MOD)$coefficients[,3]
+      ps <- summary(MOD)$coefficients[,4]
+      nans <- length(cf[cf=="NA"])
+      if(nans>0){
+        pos <- which(is.na(cf))
+        cf[pos] <- 111
+        se <- append(se,111,after = pos-1)
+        ps <- append(ps,111,after = pos-1)
+      }
+      if(transform == 1){
+        ci <- exp(cbind(OR = cf, LL = cf - 1.96 * se,
+                        UL = cf +  1.96 * se))
+      }else if(transform == 0) {ci <- (cbind(est = cf, LL = cf - 1.96 * se,
+                                      UL = cf +  1.96 * se))
+      }else if(transform == 2){ci <- (cbind(est = cf, LL = se,
+                                     UL = se))
+      }            
+      if(nans > 0){ci[pos,] = NA;ps[pos] = NA}
+      if(transform != 2){
+        Mods[[i]] <<- round(cbind(ci,ps), digits = 3)
+      }else if(transform == 2){
+        Mds <- cbind(ci,ps,t)
+        print(i)
+        Mds[2:nrow(Mds),1] <- Mds[2:nrow(Mds),1] + Mds[1,1]
+        Mds[,1] <- exp(Mds[,1])
+        
+        Mds[2:nrow(Mds),1] <- Mds[2:nrow(Mds),1] - Mds[1,1] 
+        Mds[,2] <- Mds[,1]/Mds[,5]
+        Mds[,3] <- Mds[,1] + 1.96*Mds[,2]
+        Mds[,2] <- Mds[,1] - 1.96*Mds[,2]
+        Mods[[i]] <<- round(Mds, digits = 3)  
+      }
+      
+    }}else if(package == "glmmadmb" | package == "glmer"){
       for(i in number){
         MOD <- eval(parse(text = paste0(model,i,extension)))
-        cf <- MOD$coefficients
+        cf <- summary(MOD)$coefficients[,1]
         se <- sqrt(diag(vcov(MOD)))
         t <- summary(MOD)$coefficients[,3]
         ps <- summary(MOD)$coefficients[,4]
@@ -1244,20 +1293,23 @@ Normal distribution doesn't look like an appropriate assumption here. This is pr
           se <- append(se,111,after = pos-1)
           ps <- append(ps,111,after = pos-1)
         }
-        if(OR == 1){
+        if(transform == 1){
           ci <- exp(cbind(OR = cf, LL = cf - 1.96 * se,
                           UL = cf +  1.96 * se))
-        }else if(OR == 0) {ci <- (cbind(est = cf, LL = cf - 1.96 * se,
+        }else if(transform == 0) {ci <- (cbind(est = cf, LL = cf - 1.96 * se,
                                         UL = cf +  1.96 * se))
-        }else if(OR == 2){ci <- (cbind(est = cf, LL = se,
+        }else if(transform == 2){ci <- (cbind(est = cf, LL = se,
                                        UL = se))
-        }            
+        }else if(transform == 3){
+          ci <- (cbind(est = (plogis(cf)-0.5), LL = (plogis(cf - 1.96 * se)-0.5),
+                      UL = (plogis(cf + 1.96 * se)-0.5)))
+          ci[1,] <- (ci[1,]+0.5)}
+        
         if(nans > 0){ci[pos,] = NA;ps[pos] = NA}
-        if(OR != 2){
-          Mods[[i]] <<- round(cbind(ci,ps), digits = 3)
-        }else if(OR == 2){
+        if(transform != 2){
+          Mods[[i]] <<- round(cbind(ci,ps), digits = 5)
+        }else{
           Mds <- cbind(ci,ps,t)
-          print(i)
           Mds[2:nrow(Mds),1] <- Mds[2:nrow(Mds),1] + Mds[1,1]
           Mds[,1] <- exp(Mds[,1])
           
@@ -1265,91 +1317,55 @@ Normal distribution doesn't look like an appropriate assumption here. This is pr
           Mds[,2] <- Mds[,1]/Mds[,5]
           Mds[,3] <- Mds[,1] + 1.96*Mds[,2]
           Mds[,2] <- Mds[,1] - 1.96*Mds[,2]
-          Mods[[i]] <<- round(Mds, digits = 3)  
+          Mods[[i]] <<- round(Mds, digits = 5)  
         }
         
-      }}else if(package == "glmmadmb" | package == "glmer"){
-        for(i in number){
-          MOD <- eval(parse(text = paste0(model,i,extension)))
-          cf <- summary(MOD)$coefficients[,1]
-          se <- sqrt(diag(vcov(MOD)))
-          t <- summary(MOD)$coefficients[,3]
-          ps <- summary(MOD)$coefficients[,4]
-          nans <- length(cf[cf=="NA"])
-          if(nans>0){
-            pos <- which(is.na(cf))
-            cf[pos] <- 111
-            se <- append(se,111,after = pos-1)
-            ps <- append(ps,111,after = pos-1)
-          }
-          if(OR == 1){
-            ci <- exp(cbind(OR = cf, LL = cf - 1.96 * se,
-                            UL = cf +  1.96 * se))
-          }else if(OR == 0) {ci <- (cbind(est = cf, LL = cf - 1.96 * se,
-                                          UL = cf +  1.96 * se))
-          }else if(OR == 2){ci <- (cbind(est = cf, LL = se,
-                                         UL = se))
-          }            
-          if(nans > 0){ci[pos,] = NA;ps[pos] = NA}
-          if(OR != 2){
-            Mods[[i]] <<- round(cbind(ci,ps), digits = 5)
-          }else{
-            Mds <- cbind(ci,ps,t)
-            Mds[2:nrow(Mds),1] <- Mds[2:nrow(Mds),1] + Mds[1,1]
-            Mds[,1] <- exp(Mds[,1])
-            
-            Mds[2:nrow(Mds),1] <- Mds[2:nrow(Mds),1] - Mds[1,1] 
-            Mds[,2] <- Mds[,1]/Mds[,5]
-            Mds[,3] <- Mds[,1] + 1.96*Mds[,2]
-            Mds[,2] <- Mds[,1] - 1.96*Mds[,2]
-            Mods[[i]] <<- round(Mds, digits = 5)  
-          }
-          
-        }
       }
-    else if(package == "glmmTMB"){
-        for(i in number){
-          MOD <- eval(parse(text = paste0(model,i,extension)))
-          cf <- summary(MOD)$coefficients$cond[,1]
-          se <- sqrt(diag(vcov(MOD)[1]$cond))
-          t <- summary(MOD)$coefficients$cond[,3]
-          ps <- summary(MOD)$coefficients$cond[,4]
-          nans <- length(cf[cf=="NA"])
-          if(nans>0){
-            pos <- which(is.na(cf))
-            cf[pos] <- 111
-            se <- append(se,111,after = pos-1)
-            ps <- append(ps,111,after = pos-1)
-          }
-          if(OR == 1){
-            ci <- exp(cbind(OR = cf, LL = cf - 1.96 * se,
-                            UL = cf +  1.96 * se))
-          }else if(OR == 0) {ci <- (cbind(est = cf, LL = cf - 1.96 * se,
-                                          UL = cf +  1.96 * se))
-          }else if(OR == 2){ci <- (cbind(est = cf, LL = se,
-                                         UL = se))
-          }            
-          if(nans > 0){ci[pos,] = NA;ps[pos] = NA}
-          if(OR != 2){
-            Mods[[i]] <<- round(cbind(ci,ps), digits = 3)
-          }else{
-            Mds <- cbind(ci,ps,t)
-            Mds[2:nrow(Mds),1] <- Mds[2:nrow(Mds),1] + Mds[1,1]
-            Mds[,1] <- exp(Mds[,1])
-            
-            Mds[2:nrow(Mds),1] <- Mds[2:nrow(Mds),1] - Mds[1,1] 
-            Mds[,2] <- Mds[,1]/Mds[,5]
-            Mds[,3] <- Mds[,1] + 1.96*Mds[,2]
-            Mds[,2] <- Mds[,1] - 1.96*Mds[,2]
-            Mods[[i]] <<- round(Mds, digits = 3)  
-          }
-          
-        }
-      }else
-        print("Wrong model specification")
-  }
+    }
+  else if(package == "glmmTMB"){
+    for(i in number){
+      MOD <- eval(parse(text = paste0(model,i,extension)))
+      cf <- summary(MOD)$coefficients$cond[,1]
+      se <- sqrt(diag(vcov(MOD)[1]$cond))
+      t <- summary(MOD)$coefficients$cond[,3]
+      ps <- summary(MOD)$coefficients$cond[,4]
+      nans <- length(cf[cf=="NA"])
+      if(nans>0){
+        pos <- which(is.na(cf))
+        cf[pos] <- 111
+        se <- append(se,111,after = pos-1)
+        ps <- append(ps,111,after = pos-1)
+      }
+      if(transform == 1){
+        ci <- exp(cbind(OR = cf, LL = cf - 1.96 * se,
+                        UL = cf +  1.96 * se))
+      }else if(transform == 0) {ci <- (cbind(est = cf, LL = cf - 1.96 * se,
+                                      UL = cf +  1.96 * se))
+      }else if(transform == 2){ci <- (cbind(est = cf, LL = se,
+                                     UL = se))
+      }            
+      if(nans > 0){ci[pos,] = NA;ps[pos] = NA}
+      if(transform != 2){
+        Mods[[i]] <<- round(cbind(ci,ps), digits = 3)
+      }else{
+        Mds <- cbind(ci,ps,t)
+        Mds[2:nrow(Mds),1] <- Mds[2:nrow(Mds),1] + Mds[1,1]
+        Mds[,1] <- exp(Mds[,1])
+        
+        Mds[2:nrow(Mds),1] <- Mds[2:nrow(Mds),1] - Mds[1,1] 
+        Mds[,2] <- Mds[,1]/Mds[,5]
+        Mds[,3] <- Mds[,1] + 1.96*Mds[,2]
+        Mds[,2] <- Mds[,1] - 1.96*Mds[,2]
+        Mods[[i]] <<- round(Mds, digits = 3)  
+      }
+      
+    }
+  }else
+    print("Wrong model specification")
+}
 
 ###################################################################
+
 ```
 
 # 4. Social complexity growth model
@@ -1476,18 +1492,17 @@ This plot is based on Whitehouse et al. raw data and nicely shows how unrealisti
 
 ```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
 ###################################################################
-dat.plot <- dat.MG
-dat.plot$Time[dat.plot$MoralisingGods == 1]
 
-ggplot(dat.plot, aes(Time, Mean, color=MoralisingGods)) + 
+ggplot(dat.MG, aes(Time, Mean, color=MoralisingGods)) + 
   stat_summary(fun.data=mean_se, geom="pointrange") + 
   scale_color_manual(values = alpha(c("coral1","aquamarine3"), .8), labels = c("NA", "Present"), name = "Moralizing Gods") + 
   scale_x_continuous(breaks = c(0,200,400,600,700,800,1000,1200,1400),
                      labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
   geom_vline(xintercept = 650,
                 color = "grey", size=10, alpha = 0.5) + 
-  annotate("text", label = "What happens here?", x = 650, y = 0.35, size = 4, colour = "black", angle = 90) +
+  annotate("text", label = "", x = 650, y = 0.35, size = 4, colour = "black", angle = 90) +
   labs(y="Social Complexity", x="Time (years before/after MG)") + 
+  ylim(c(0.1,1)) +
   theme_bw() + 
   theme(
     panel.border = element_blank(),
@@ -1509,6 +1524,106 @@ ggplot(dat.plot, aes(Time, Mean, color=MoralisingGods)) +
 ################################################################### 
 ```
 
+Let's look also at the appearance of writing and whether it will correspond to the same sudden jump in SC.
+
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+###################################################################
+
+##? first, select the 12 NGAs they work with
+dat.W <- dat
+NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium", "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",  "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
+dat.W <- dat.W[dat$NGA %in% NGAs,]
+
+dat.W$Writing[is.na(dat.W$Writing)] <- 0
+dat.W$Writing <- as.factor(dat.W$Writing)
+
+
+##? Standardize Time for each NGA to start with 0 (no matter whether the dates are BCE or CE)
+
+for(i in 1:length(NGAs)){
+  dt <- dat.W[dat.W$NGA == NGAs[i],]
+  mt <- min(dt$Time)
+  if(mt >= 0){
+  dat.W$Time[dat.W$NGA == NGAs[i]] <- dat.W$Time[dat.W$NGA == NGAs[i]]-mt}
+  else if(mt < 0){ 
+  dat.W$Time[dat.W$NGA == NGAs[i]] <- dat.W$Time[dat.W$NGA == NGAs[i]]+abs(mt)
+}
+  }
+
+dat.W$NGA <- as.factor(dat.W$NGA)
+
+##?
+### IMPORTANT! We have to censor the data to the +/- 700 years interval Pre- and Post-MG as in the original t-test analysis. We will also do the same later for the +/-2000 years as in the original paper
+
+# Before doing that, however, we have to fix a mistake at the Deccan NGA - it misses one century (looks like a bug), so we have to recode the other centuries. Note that this problem will have to be fixed for more centuries, if we would like to run the +/- 2000 years analysis.
+
+dat.W$Time[dat.W$NGA == "Deccan" & (dat.W$Time == 3200)] <- 3100
+dat.W$Time[dat.W$NGA == "Deccan" & (dat.W$Time == 3300)] <- 3200
+
+##? Ok, we can continue
+censor = 750 ##? censor the data to +/- 7 centuries
+
+for(i in 1:length(NGAs)){
+  dt <- dat.W[dat.W$NGA == NGAs[i],]
+  MG<-subset(dt,Writing=="1")
+  MGAppear<-subset(MG, Time==min(Time))
+  t <- MGAppear$Time
+  t1 <- t-censor
+  t2 <- t+censor
+  if (min(dat.W$Time[dat.W$NGA == NGAs[i]], na.rm = T) < t1){
+  dat.W$Time[dat.W$NGA == NGAs[i] & (dat.W$Time < t1)] <- NA}
+  if (max(dat.W$Time[dat.W$NGA == NGAs[i]], na.rm = T) > t2){ 
+  dat.W$Time[dat.W$NGA == NGAs[i] & (dat.W$Time > t2)] <- NA}
+  }
+dat.W <- dat.W[!is.na(dat.W$Time),]
+
+##? Make Time series at each NGA to start with 0 and end with 1400 (14 centuries of data = +/- 700 years)
+
+for(i in 1:length(NGAs)){
+  dt <- dat.W[dat.W$NGA == NGAs[i],]
+  m <- max(dt$Time, na.rm=T)
+  dat.W$Time[dat.W$NGA == NGAs[i]] <- dat.W$Time[dat.W$NGA == NGAs[i]] - m
+  dat.W$Time[dat.W$NGA == NGAs[i]] <- dat.W$Time[dat.W$NGA == NGAs[i]] + 1400}
+
+##? OK, now all sites acquire MG at year 700, so our data have 7 centuries before and 7 centuries after MG
+
+##? Now, let's assume that MGs were present at all sites after their first detection (assumption of the t-test analysis presented in section 1.4)
+
+dat.W$Writing[dat.W$Time>600] <- 1
+
+
+ggplot(dat.W, aes(Time, Mean, color=Writing)) + 
+  stat_summary(fun.data=mean_se, geom="pointrange", shape=17) + 
+  scale_color_manual(values = alpha(c("darkviolet","deepskyblue"), .8), labels = c("Missing", "Present"), name = "Writing") + 
+  scale_x_continuous(breaks = c(0,200,400,600,700,800,1000,1200,1400),
+                     labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
+  geom_vline(xintercept = 650,
+                color = "grey", size=10, alpha = 0.5) + 
+  annotate("text", label = "", x = 650, y = 0.35, size = 4, colour = "black", angle = 90) +
+  labs(y="Social Complexity", x="Time (years before/after writing)") + 
+  ylim(c(0.1,1)) +
+  theme_bw() + 
+  theme(
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
+    axis.line = element_line(colour = "black"),
+    legend.position = c(0.35,0.95),
+    legend.justification = c("right", "top"),
+    legend.key.size = unit(0.8, "cm"),
+    legend.text = element_text(size = rel(1)),
+    axis.title = element_text(size = rel(1.5)),
+    axis.text.y= element_text(size = rel(1.5)),
+    axis.text.x= element_text(size = rel(1.5)),
+    plot.margin=unit(c(1,1,1,1),"cm")) 
+
+#ggsave("PrePost_writing.tiff",width = 6,height = 5.5, dpi = 300)
+
+
+################################################################### 
+```
 
 ### 4.1.3. Compare beta with linear
 
@@ -1542,14 +1657,14 @@ This is the main multi-level growth curve analysis assuming a beta distribution 
 Note that it would be possible to also add a quadratic effect of time or to compare the shape of the growth curve (linear vs. quadratic) between conditions. However, this would venture too far beyond the original assumptions of Whitehouse et al.'s paper.
 
 
-```{r results = 'hide', message=FALSE, warning=FALSE, cache=T} 
+```{r results = 'hide', message=FALSE, warning=FALSE, cache=F} 
 summary(glm.b1 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.MG, family = 'beta'))
 
 summary(glm.b2 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA) + (1|World.Region), data = dat.MG, family = 'beta'))
 
 summary(glm.b3 <- glmmadmb(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region), data = dat.MG, family = 'beta'))
 
-xtract.cof("glm.b",c(1:3),"","glmmadmb",0)
+xtract.cof("glm.b",c(1:3),"","glmmadmb",3)
 ##? Define list of coefficients extracted from glmmTMB models: estimates, confidence intervals, and p-values
 E.vector <- list(Mods[[1]][,1],Mods[[2]][,1],Mods[[3]][,1])
 CI.vector <- list(Mods[[1]][,2:3],Mods[[2]][,2:3],Mods[[3]][,2:3])
@@ -1590,7 +1705,9 @@ Let's explore goodness-of-fit measures.
 summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region), data = dat.MG, family = 'beta'))
 
 simulationOutput = simulateResiduals(glm.b3)
+#tiff("qq2.tiff",width = 7,height = 5, units = 'in', res = 300)
 plot(simulationOutput)
+#dev.off()
 testUniformity(simulationOutput = simulationOutput)
 testDispersion(simulationOutput = simulationOutput)
 
@@ -1863,7 +1980,7 @@ ggplot(dat.MG, aes(Time, Mean, color=MoralisingGods)) +
                      labels = c("-2000","-1500","-1000","-500","0","500","1000","1500","2000")) +
   geom_vline(xintercept = 1950,
                 color = "grey", size=3, alpha = 0.5) + 
-  annotate("text", label = "What happens here?", x = 1950, y = 0.35, size = 3, colour = "black", angle = 90) +
+  annotate("text", label = "", x = 1950, y = 0.35, size = 3, colour = "black", angle = 90) +
   labs(y="Social Complexity", x="Time (years before/after MG)") + 
   theme_bw() + 
   theme(
@@ -1910,7 +2027,7 @@ kable(t)
 
 ### 4.2.4. Beta models 
 
-```{r results = 'hide', message=FALSE, warning=FALSE, cache=T} 
+```{r results = 'hide', message=FALSE, warning=FALSE, cache=F} 
 dat.MG1 <- na.omit(subset(dat.MG, select = c(Mean, Time, MoralisingGods, NGA, World.Region)))
 
 summary(glm.b1 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.MG1, family = 'beta'))
@@ -1919,7 +2036,7 @@ summary(glm.b2 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA) + (1|World.Regio
 
 summary(glm.b3 <- glmmadmb(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region), data = dat.MG1, family = 'beta'))
 
-xtract.cof("glm.b",c(1:3),"","glmmadmb",0)
+xtract.cof("glm.b",c(1:3),"","glmmadmb",3)
 ##? Define list of coefficients extracted from glmmTMB models: estimates, confidence intervals, and p-values
 E.vector <- list(Mods[[1]][,1],Mods[[2]][,1],Mods[[3]][,1])
 CI.vector <- list(Mods[[1]][,2:3],Mods[[2]][,2:3],Mods[[3]][,2:3])
@@ -1957,7 +2074,9 @@ stargazer::stargazer(lm1,lm2,lm3, coef=E.vector,ci = TRUE, ci.custom = CI.vector
 summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region), data = dat.MG, family = 'beta'))
 
 simulationOutput = simulateResiduals(glm.b3)
+#tiff("qq3.tiff",width = 8,height = 5, units = 'in', res = 300)
 plot(simulationOutput)
+#dev.off()
 testUniformity(simulationOutput = simulationOutput)
 testDispersion(simulationOutput = simulationOutput)
 

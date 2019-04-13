@@ -278,3 +278,29 @@ for (i in 1:length(NGA_keep)) {
 }
 
 dev.off()
+
+
+# make a population vs social complexity figure with missigness shading
+
+png("./temp/sc_pop.png", res = 300, units = "in", height = 5, width = 5)
+
+d$logPop <- d$PolPop
+d$Pop <- 10^d$logPop
+
+d$na_col <- ifelse(d$MG_missing == 1, "gray", "black")
+
+# plot
+
+plot(d$Mean, d$logPop, col = col_alpha(d$na_col, 0.8), pch = 16,
+  xlim = c(0, 1), xlab = "social complexity",
+  ylab = "log10 population", ylim = c(1.5, 8.5), frame.plot = FALSE)
+
+abline(lm(logPop ~ Mean, data = d), lty = 2)
+
+rect(0.05, 6, 0.35, 7.5)
+points(0.1, 7, col = "black", pch = 20)
+text(0.1, 7, label = "observed", col = "black", pos = 4)
+points(0.1, 6.5, col = "gray", pch = 20)
+text(0.1, 6.5, label = "missing", col = gray(0.4), pos = 4)
+
+dev.off()

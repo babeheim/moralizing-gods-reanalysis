@@ -1,4 +1,3 @@
-// saved as ./temp/model1.stan
 data{
   int<lower=1> N;
   int MG[N];
@@ -18,21 +17,22 @@ parameters{
 }
 model{
   vector[N] p;
-  b_sp ~ normal( 0 , 7 );
-  b_ph ~ normal( 0 , 7 );
-  b_l2 ~ normal( 0 , 7 );
-  b_l1 ~ normal( 0 , 7 );
-  b_sc ~ normal( 0 , 7 );
-  a ~ normal( 0 , 7 );
-  for ( i in 1:N ) {
-    p[i] = a + b_sc * Mean_c[i] + b_l1 * Lag1[i] + b_l2 * Lag2[i] + b_ph * Phylogeny[i] +    b_sp * Space[i];
+  b_sp ~ normal(0, 7);
+  b_ph ~ normal(0, 7);
+  b_l2 ~ normal(0, 7);
+  b_l1 ~ normal(0, 7);
+  b_sc ~ normal(0, 7);
+  a ~ normal(0, 7);
+  for (i in 1:N) {
+    p[i] = a + b_sc * Mean_c[i] + b_l1 * Lag1[i] + b_l2 * Lag2[i] +
+      b_ph * Phylogeny[i] + b_sp * Space[i];
   }
-  MG ~ binomial_logit( 1 , p );
+  MG ~ binomial_logit(1, p);
 }
 generated quantities{
   vector[N] p;
-  for ( i in 1:N ) {
-    p[i] = a + b_sc * Mean_c[i] + b_l1 * Lag1[i] + b_l2 * Lag2[i] + b_ph * Phylogeny[i] +    b_sp * Space[i];
+  for (i in 1:N) {
+    p[i] = a + b_sc * Mean_c[i] + b_l1 * Lag1[i] + b_l2 * Lag2[i] +
+      b_ph * Phylogeny[i] + b_sp * Space[i];
   }
 }
-

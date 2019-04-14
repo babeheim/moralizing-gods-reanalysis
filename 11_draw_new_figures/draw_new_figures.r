@@ -5,8 +5,6 @@ source("../project_support.r")
 
 dir_init("./temp")
 
-# make table 1
-
 d <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
 
 d$MG_og <- as.character(d$MG)
@@ -692,3 +690,10 @@ text(80, 0.3, "MG first recorded", srt = 90)
 text(-1800, 0.9, "B", cex = 2)
 
 dev.off()
+
+#########
+
+dir_init("./output")
+
+files <- list.files("./temp", full.names = TRUE)
+file.copy(files, "./output")

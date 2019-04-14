@@ -68,13 +68,20 @@ dev.off()
 
 m1 <- lm(PolPop ~ MG_known, data = d)
 
-10^(coef(m1)[1] + coef(m1)[2] * 1) # 2.9 million people
-10^(coef(m1)[1] + coef(m1)[2] * 0) # 7000 ppl
+pop1 <- 10^(coef(m1)[1] + coef(m1)[2] * 1) # 2.9 million people
+pop0 <- 10^(coef(m1)[1] + coef(m1)[2] * 0) # 7000 ppl
+
+expect_true(abs(pop1 - 2921630) < 10000)
+expect_true(abs(pop0 - 6954) < 100)
 
 m2 <- glm(Writing ~ MG_known, data = d, family = "binomial")
 
-logistic(coef(m2)[1] + coef(m2)[2]) # 0.92
-logistic(coef(m2)[1]) # 0.16
+pr_read1 <- logistic(coef(m2)[1] + coef(m2)[2]) # 0.92
+pr_read0 <- logistic(coef(m2)[1]) # 0.16
+
+expect_true(abs(pr_read1 - 0.9256) < 0.01)
+expect_true(abs(pr_read0 - 0.1629) < 0.01)
+
 exp(coef(m2)[2]) # OR: 64
 
 m3 <- lm(d$PolPop ~ d$Mean, data = d)
@@ -92,26 +99,6 @@ NGAs <- sort(unique(d$NGA))
 nga_col <- viridis(length(NGAs))
 
 d$nga_col <- nga_col[match(d$NGA, NGAs)]
-
-plot(d$Time, d$Mean, type = "n")
-
-for (i in 1:length(NGAs)) {
-  my_rows <- which(d$NGA == NGAs[i])
-  points(d$Time[my_rows], d$Mean[my_rows],
-    col = d$nga_col[my_rows], type = "l")
-}
-
-d$ybp <- 2000 - d$Time
-
-plot(d$ybp, d$Mean, type = "n",
-  col = d$nga_col, log = "x",
-  xlim = c(12000, 100)) # cool trick!
-
-for (i in 1:length(NGAs)) {
-  my_rows <- which(d$NGA == NGAs[i])
-  points(d$ybp[my_rows], d$Mean[my_rows],
-    col = d$nga_col[my_rows], type = "l")
-}
 
 d$mg_col <- case_when(
   d$MG == 1 ~ "black",
@@ -284,6 +271,8 @@ dev.off()
 
 png("./temp/sc_pop.png", res = 300, units = "in", height = 5, width = 5)
 
+expect_equal(nrow(d), 864)
+
 d$logPop <- d$PolPop
 d$Pop <- 10^d$logPop
 
@@ -304,3 +293,10 @@ points(0.1, 6.5, col = "gray", pch = 20)
 text(0.1, 6.5, label = "missing", col = gray(0.4), pos = 4)
 
 dev.off()
+
+#########
+
+dir_init("./output")
+
+files <- list.files("./temp", full.names = TRUE)
+file.copy(files, "./output")

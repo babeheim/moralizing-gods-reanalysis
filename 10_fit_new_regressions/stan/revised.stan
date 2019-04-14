@@ -17,20 +17,22 @@ parameters{
 }
 model{
     vector[N] p;
-    b_sp ~ normal( 0 , 4 );
-    b_ph ~ normal( 0 , 4 );
-    b_sc ~ normal( 0 , 4 );
-    a_sigma ~ exponential( 1 );
-    a_nga ~ normal( 0 , a_sigma );
-    a ~ normal( 0 , 1 );
-    for ( i in 1:N ) {
-        p[i] = a + a_nga[nga[i]] + b_sc * Mean_c[i] + b_ph * Phylogeny[i] + b_sp * Space[i];
+    b_sp ~ normal(0, 4);
+    b_ph ~ normal(0, 4);
+    b_sc ~ normal(0, 4);
+    a_sigma ~ exponential(1);
+    a_nga ~ normal(0, a_sigma);
+    a ~ normal(0, 1);
+    for (i in 1:N) {
+        p[i] = a + a_nga[nga[i]] + b_sc * Mean_c[i] +
+          b_ph * Phylogeny[i] + b_sp * Space[i];
     }
-    MG ~ binomial_logit( 1 , p );
+    MG ~ binomial_logit(1, p);
 }
 generated quantities{
     vector[N] p;
-    for ( i in 1:N ) {
-        p[i] = a + a_nga[nga[i]] + b_sc * Mean_c[i] + b_ph * Phylogeny[i] + b_sp * Space[i];
+    for (i in 1:N) {
+        p[i] = a + a_nga[nga[i]] + b_sc * Mean_c[i] +
+          b_ph * Phylogeny[i] + b_sp * Space[i];
     }
 }

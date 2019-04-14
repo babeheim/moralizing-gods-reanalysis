@@ -39,9 +39,12 @@ expect_equal(sum(is.na(data$MoralisingHighGods)), 513)
 expect_equal(sum(is.na(data$GeneralMoralisticPunishment)), 545)
 
 data$MG <- data$MoralisingGods
+
+# flags added to keep track of 0's imputed from NA's
 data$MG_missing <- as.numeric(is.na(data$MG))
 data$MHG_missing <- as.numeric(is.na(data$MHG))
 data$BSP_missing <- as.numeric(is.na(data$BSP))
+
 data[is.na(data)] <- 0 
 # This treats NA values as 0. Should checek later to see how much this affects results
 

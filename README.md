@@ -7,7 +7,7 @@ The following code was based on the analyses in:
 
 > Whitehouse, H., François, P., Savage, P. E., Currie, T. E., Feeney, K. C., Cioni, E., Purcell, R., Ross, R. M., Larson, J., Baines, J., ter Haar, B., Covey, A., Turchin, P. (2019). Complex societies precede moralizing gods throughout world history. Nature.
 
-with data file "exportdat.csv" scraped from the Seshat database on 10 Jan 2018. Steps 1 to 8 are the original analysis code with some minor reorganization, while steps 9, 10 and 11 are extensions and modifications.
+with data file "exportdat.csv" scraped from the Seshat database on 10 Jan 2018. Steps 1 to 8 are the original analysis code with some minor reorganization, while steps 9 to 12 are extensions and modifications.
 
 The code was developed on R v3.5.3 with the following packages for steps 1 to 11:
 

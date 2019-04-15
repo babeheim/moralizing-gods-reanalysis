@@ -19,11 +19,11 @@ The code was developed on R v3.5.3 with the following packages for steps 1 to 11
 - viridis (0.5.1)
 - rstan (2.18.2)
 - ggplot (3.1.0)
-- rethinking (1.88)
+- rethinking (1.88) - installation instructions at http://xcelab.net/rm/software/
 
 Step 12 was developed with the following packages:
 
-- glmmADMB (0.8.5)
+- glmmADMB (0.8.5) - installation instructions at https://github.com/bbolker/glmmadmb
 - glmmTMB (0.2.3)
 - nlme (3.1-137)
 - lme4 (1.1-21)
@@ -32,7 +32,7 @@ Step 12 was developed with the following packages:
 - bbmle (1.0.20)
 - knitr (1.22)
 - car (3.0-2)
-- bootpredictlme4 (0.1)
+- bootpredictlme4 (0.1) - installation instructions at https://rdrr.io/github/RemkoDuursma/bootpredictlme4/
 - reshape (0.8.8)
 - yarrr (0.1.5)
 

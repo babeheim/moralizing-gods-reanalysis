@@ -36,6 +36,11 @@ Step 12 was developed with the following packages:
 - reshape (0.8.8)
 - yarrr (0.1.5)
 
+Step 13 was developed with the following packages:
+
+- dplyr (0.8.0.1)
+- ggplot2 (3.1.0.9000)
+
 To run the primary analyses:
 
 1. Set the working directory to "moralizing-gods-reanalysis"

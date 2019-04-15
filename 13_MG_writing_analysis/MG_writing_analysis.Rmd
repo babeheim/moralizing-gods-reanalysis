@@ -1,0 +1,122 @@
+---
+title: "Analysis of the First Appearance of Writing and Moralizing Gods in the Seshat Database"
+author: "Analysis by Rachel Spicer; GitHub:RASpicer"
+date: "2019/09/04"
+output: 
+  html_document:
+    code_folding: hide
+    number_sections: yes
+    theme: cerulean
+    keep_md: true
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(ggplot2)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+# Writing Precedes Moralizing Gods?
+
+Whitehouse et al. claim that *"written records preceded the development of moralizing gods in 9 out of the 12 regions analysed (by an average period of 400 years; Supplementary Table 2)"*. These 12 regions were selected because they had social complexity data available both before and after the appearance of moralizing gods. 
+
+However, whilst the claim that writing appeared on average 400 years (433 years) before moralizing gods for these 12 regions is true, it is also misleading. This is because the mean is skewed by 2 NGAs with very large differences between the first presence of writing and moralising gods: Kachi Plain (2200 years) and Susiana (1600 years). The median difference between the first recorded appearance of writing and moralising gods is 150 years for the 12 analyzed regions. Including all NGAs with both moralizing gods and writing, on average writing precedes moralizing gods by 261 years. The median difference between the appearance of writing and moralizing gods across all NGAs is 0 years.
+
+It must also be noted that whilst writing first appears at 2500 BCE in the Kachi Plain, it is absent for the subsequent two polities and does not reappear until 300 BCE, the same time as the first appearance of moralizing gods. Setting the difference between the first appearance of writing and moralizing gods to 0 years for Kachi Plain, reduces the average time writing appears before moralizing gods to 139 years for the entire dataset and to 250 years for the 12 regions used for analysis.
+
+
+```{r MGwriting}
+# Load data
+# ImpDatRepl.csv was downloaded from https://github.com/pesavage/moralizing-gods on 2019/09/04
+ImpData <- read.csv("ImpDatRepl.csv", stringsAsFactors = FALSE)
+
+# Find when writing first appeared for each NGA
+writing <- ImpData %>%
+  filter(Writing == 1) %>%
+  group_by(NGA) %>%
+  filter(row_number()==1) %>%
+  select(NGA, Time, Writing) %>%
+  rename(`Writing First Recorded` = Time)
+
+# Find when moralising gods first appeared for each NGA
+MG <- ImpData %>%
+  filter(MoralisingGods == 1) %>%
+  group_by(NGA) %>%
+  filter(row_number()==1) %>%
+  select(NGA, Time, MoralisingGods) %>%
+  rename(`Moralizing Gods First Recorded` = Time)
+
+# join writing and moralising gods data
+MGwriting <- left_join(writing, MG)
+
+# remove Valley of Oaxaca which is always NA for MGs
+MGwriting <- MGwriting %>%
+  filter(NGA != "Valley of Oaxaca") %>%
+  # calculate time difference between writing and MGs first appearing (negative means MGs appeared first)
+   mutate(TimeDifference = `Moralizing Gods First Recorded` -  `Writing First Recorded`) %>%
+  # add whether NGA was used in analysis or not
+   mutate(`Social complexity data available \nboth before and after the appearance \nof MG` = if_else(NGA == "Deccan" | NGA == "Kachi Plain" | NGA == "Kansai" | NGA == "Konya Plain" | NGA == "Latium" | NGA == "Middle Yellow River Valley" | NGA == "Niger Inland Delta" | NGA == "Orkhon Valley" | NGA == "Paris Basin" | NGA == "Sogdiana" | NGA == "Susiana" | NGA == "Upper Egypt", "Yes", "No"))
+
+# extract just NGAs used in analysis
+MGwritinganl <- MGwriting[MGwriting$`Social complexity data available 
+both before and after the appearance 
+of MG` == "Yes",]
+
+# calculate the mean difference between the appearance of writing and moralising gods of just NGAs included in analysis
+mean(MGwritinganl$TimeDifference)
+
+# calculate the median difference between the appearance of writing and moralising gods of just NGAs included in analysis
+median(MGwritinganl$TimeDifference)
+
+# calculate the mean difference between the appearance of writing and moralising gods across all NGAs  
+mean(MGwriting$TimeDifference)
+
+# calculate the median difference between the appearance of writing and moralising gods across all NGAs  
+median(MGwriting$TimeDifference)
+
+# set the time difference between writing and moralizing gods to 0 for Kachi Plain
+MGwritingfilt <- MGwriting %>%
+  mutate(TimeDifference = if_else(NGA == "Kachi Plain", 0, as.numeric(TimeDifference)))
+# calculate the mean difference between the appearance of writing and moralising gods across all NGAs with the difference in Kachi Plain set to 0
+mean(MGwritingfilt$TimeDifference)
+
+# set the time difference between writing and moralizing gods to 0 for Kachi Plain for subset of NGAs used in analysis
+MGwritinganlfilt <- MGwritinganl %>%
+  mutate(TimeDifference = if_else(NGA == "Kachi Plain", 0, as.numeric(TimeDifference)))
+# calculate the mean difference between the appearance of writing and moralising gods NGAs used in analysis with the difference in Kachi Plain set to 0
+mean(MGwritinganlfilt$TimeDifference)
+```
+
+# The first appearance of writing and moralizing gods across NGAs. 
+
+The solid line indicates when writing and moralizing gods are first recorded in the same century, and the dashed lines show when writing appeared 100 years before moralizing gods and when moralizing gods appeared 100 years before writing. NGAs are colored by whether social complexity data are available both before and after the appearance of moralizing gods or not.
+
+```{r MGWritingFig, results='asis', fig.align='center', fig.width = 6, fig.height = 6}
+
+# save output
+#pdf("../fig/WritingMG.pdf", height = 5.5, width = 5.5)
+ggplot(MGwriting, aes(x = `Writing First Recorded`, y = `Moralizing Gods First Recorded`, colour = `Social complexity data available \nboth before and after the appearance \nof MG`)) +
+  geom_point(size = 3) +
+  geom_abline(slope = 1, intercept = 0, color = 'gray50', size = 1) +
+  geom_abline(slope = 1, intercept = 100, color = 'gray60', linetype = "dashed") +
+  geom_abline(slope = 1, intercept = -100, color = 'gray60', linetype = "dashed") +
+  geom_text(aes(x = `Writing First Recorded`, y = `Moralizing Gods First Recorded`, label=ifelse(NGA == "Susiana" | NGA == "Kachi Plain", NGA,'')), vjust = -1.25, inherit.aes = FALSE, size = 4, color = "#0072B2") +
+  scale_color_manual(values=c("#E69F00", "#0072B2")) + 
+  scale_y_continuous(limits = c(-4000,2000)) +
+  scale_x_continuous(limits = c(-4000,2000)) +
+  theme_bw() +
+  theme(
+    legend.position = c(0.70, 0.2),
+    legend.text = element_text(size = 11),
+    legend.title = element_text(size = 13),
+    axis.text = element_text(colour = "black", size=11),
+    axis.title.x = element_text(size = 13),
+    axis.title.y = element_text(size = 13),
+    axis.line.x = element_line(color="black", size = 0.5),
+    axis.line.y = element_line(color="black", size = 0.5),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank())
+#dev.off()
+```

@@ -34,6 +34,8 @@ expect_equal(n_known_present, 299)
 expect_equal(n_known_absent, 12)
 expect_equal(n_unknown, 490)
 
+expect_true(abs(cor(dm$MG_known, dm$MG) - 0.97) < 0.01)
+
 png("./temp/barbell.png", res = 300, units = "in", height = 5, width = 6)
 
 plot(1, 1, type = "n", xlim = c(0.5, 3.5), ylim = c(0, 1),

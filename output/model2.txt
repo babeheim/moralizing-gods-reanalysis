@@ -1,0 +1,10 @@
+ & Est. (SE) & P(sign) \\
+\hline
+Intercept & 0.98 (0.64) & - \\
+Social Complexity & 8.66 (2.29) & $<$0.01 \\
+Phylogeny & 1.50 (3.94) & 0.35 \\
+Space & 6.84 (2.56) & $<$0.01 \\
+NGA Varying Effect & 2.20 (1.14) & - \\
+\hline
+N & 336 &  \\
+Deviance & 98.1 &  \\

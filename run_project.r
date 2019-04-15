@@ -110,3 +110,8 @@ file.copy(files, "./13_MG_writing_analysis/", overwrite = TRUE)
 setwd("./13_MG_writing_analysis")
 render("MG_writing_analysis.Rmd")
 setwd("..")
+
+dir_init("./output")
+files <- list.files("./09_draw_missingness/output", pattern = ".", full.names = TRUE)
+files <- c(files, list.files("./11_draw_new_figures/output", pattern = ".", full.names = TRUE))
+file.copy(files, "./output")

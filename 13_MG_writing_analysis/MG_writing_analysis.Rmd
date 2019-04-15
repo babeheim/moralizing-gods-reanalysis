@@ -36,7 +36,7 @@ writing <- ImpData %>%
   group_by(NGA) %>%
   filter(row_number()==1) %>%
   select(NGA, Time, Writing) %>%
-  rename(`Writing First Recorded` = Time)
+  dplyr::rename(`Writing First Recorded` = Time)
 
 # Find when moralising gods first appeared for each NGA
 MG <- ImpData %>%
@@ -44,7 +44,7 @@ MG <- ImpData %>%
   group_by(NGA) %>%
   filter(row_number()==1) %>%
   select(NGA, Time, MoralisingGods) %>%
-  rename(`Moralizing Gods First Recorded` = Time)
+  dplyr::rename(`Moralizing Gods First Recorded` = Time)
 
 # join writing and moralising gods data
 MGwriting <- left_join(writing, MG)

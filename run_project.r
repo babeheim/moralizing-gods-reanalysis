@@ -108,7 +108,7 @@ source("./project_support.r")
 files <- c("./02_impute_data/output/ImpDatRepl.csv")
 file.copy(files, "./13_MG_writing_analysis/", overwrite = TRUE)
 setwd("./13_MG_writing_analysis")
-render("MG_writing_analysis.Rmd")
+source("MG_writing_analysis.r")
 setwd("..")
 
 dir_init("./output")

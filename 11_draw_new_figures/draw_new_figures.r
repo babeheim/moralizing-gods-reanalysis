@@ -30,7 +30,7 @@ for (i in 1:length(NGAs_short)) {
   d$time_to_first_obs[nga_rows] <- d$Time[nga_rows] - d$Time[nga_first_mg_row]
 }
 
-png("./temp/figure1.png", res = 300, units = "in", height = 5.5, width = 11)
+png("./temp/missingness_table.png", res = 300, units = "in", height = 5.5, width = 11)
 
 par(mar = c(5.1, 12, 4.1, 2.1))
 
@@ -214,55 +214,6 @@ for (i in 1:nrow(d)) {
   }
 }
 
-png("./temp/m1_predictions_missingness.png", res = 300,
-  height = 5, width = 5, units = "in")
-
-plot(counter$Mean_c, counter$m1_pr_mg_mean, ylim = c(0, 1), type = "l",
-  ylab = "pr(moralizing gods)", xlab = "social complexity",
-  main = "retrodicted probability of MG appearance", xaxt = "n")
-polygon(c(counter$Mean_c, rev(counter$Mean_c)),
-  c(counter$m1_pr_mg_ub, rev(counter$m1_pr_mg_lb)),
-  border = NA, col = col_alpha("black", 0.2))
-
-axis(1, at = seq(0, 1, by = 0.2) - 0.5,
-  labels = seq(0, 1, by = 0.2))
-
-for (i in 1:nrow(d)) lines(c(d$Mean_c[i], d$Mean_c[i]),
-  c(d$m1_pr_mg_lb[i], d$m1_pr_mg_ub[i]), col = col_alpha(d$na_col[i], 0.05))
-
-points(d$Mean_c, d$m1_pr_mg_mean, pch = 16, col = d$na_col, cex = 0.6)
-
-dev.off()
-
-# now create a three-panel plot including each alternative
-
-png("./temp/alternative_missingness.png", res = 300,
-  height = 3, width = 8, units = "in")
-
-par(mfrow = c(1, 3))
-
-plot(counter$Mean_c, counter$m1_pr_mg_mean, ylim = c(0, 1), type = "l",
-  ylab = "pr(moralizing gods)", xlab = "social complexity",
-  main = "original model: all 'NA' to '0'", xaxt = "n")
-polygon(c(counter$Mean_c, rev(counter$Mean_c)),
-  c(counter$m1_pr_mg_ub, rev(counter$m1_pr_mg_lb)),
-  border = NA, col = col_alpha("black", 0.2))
-
-axis(1, at = seq(0, 1, by = 0.2) - 0.5,
-  labels = seq(0, 1, by = 0.2))
-
-for (i in 1:nrow(d)) lines(c(d$Mean_c[i], d$Mean_c[i]),
-  c(d$m1_pr_mg_lb[i], d$m1_pr_mg_ub[i]), col = col_alpha(d$na_col[i], 0.05))
-
-points(d$Mean_c, d$m1_pr_mg_mean, pch = 16, col = d$na_col, cex = 0.6)
-
-points(-0.45, 0.9, col = "firebrick", pch = 20)
-text(-0.45, 0.9, "originally NA", col = "firebrick", pos = 4)
-
-points(-0.45, 0.8, col = "dodgerblue", pch = 20)
-text(-0.45, 0.8, "known outcome", col = "dodgerblue", pos = 4)
-
-
 # now do this for m1_alt1
 
 counter$m1_alt1_pr_mg_mean <- NA
@@ -314,27 +265,6 @@ for (i in 1:nrow(d)) {
   }
 }
 
-plot(counter$Mean_c, counter$m1_alt1_pr_mg_mean, ylim = c(0, 1), type = "l",
-  ylab = "pr(moralizing gods)", xlab = "social complexity",
-  main = "alternative 1: 96% 'NA' to '1'", xaxt = "n")
-polygon(c(counter$Mean_c, rev(counter$Mean_c)),
-  c(counter$m1_alt1_pr_mg_ub, rev(counter$m1_alt1_pr_mg_lb)),
-  border = NA, col = col_alpha("black", 0.2))
-
-axis(1, at = seq(0, 1, by = 0.2) - 0.5,
-  labels = seq(0, 1, by = 0.2))
-
-for (i in 1:nrow(d)) lines(c(d$Mean_c[i], d$Mean_c[i]),
-  c(d$m1_alt1_pr_mg_lb[i], d$m1_alt1_pr_mg_ub[i]), col = col_alpha(d$na_col[i], 0.05))
-
-points(d$Mean_c, d$m1_alt1_pr_mg_mean, pch = 16, col = d$na_col, cex = 0.6)
-
-points(0, 0.3, col = "firebrick", pch = 20)
-text(0, 0.3, "originally NA", col = "firebrick", pos = 4)
-
-points(0, 0.2, col = "dodgerblue", pch = 20)
-text(0, 0.2, "known outcome", col = "dodgerblue", pos = 4)
-
 # and for m1_alt2
 
 counter$m1_alt2_pr_mg_mean <- NA
@@ -385,6 +315,57 @@ for (i in 1:nrow(d)) {
     d$m1_alt2_hit90[i] <- mean(pr_mg > 0.9) > density_threshold
   }
 }
+
+
+# create a three-panel plot including each alternative
+
+png("./temp/alternative_missingness.png", res = 300,
+  height = 3, width = 8, units = "in")
+
+par(mfrow = c(1, 3))
+
+plot(counter$Mean_c, counter$m1_pr_mg_mean, ylim = c(0, 1), type = "l",
+  ylab = "pr(moralizing gods)", xlab = "social complexity",
+  main = "original model: all 'NA' to '0'", xaxt = "n")
+polygon(c(counter$Mean_c, rev(counter$Mean_c)),
+  c(counter$m1_pr_mg_ub, rev(counter$m1_pr_mg_lb)),
+  border = NA, col = col_alpha("black", 0.2))
+
+axis(1, at = seq(0, 1, by = 0.2) - 0.5,
+  labels = seq(0, 1, by = 0.2))
+
+for (i in 1:nrow(d)) lines(c(d$Mean_c[i], d$Mean_c[i]),
+  c(d$m1_pr_mg_lb[i], d$m1_pr_mg_ub[i]), col = col_alpha(d$na_col[i], 0.05))
+
+points(d$Mean_c, d$m1_pr_mg_mean, pch = 16, col = d$na_col, cex = 0.6)
+
+points(-0.45, 0.9, col = "firebrick", pch = 20)
+text(-0.45, 0.9, "originally NA", col = "firebrick", pos = 4)
+
+points(-0.45, 0.8, col = "dodgerblue", pch = 20)
+text(-0.45, 0.8, "known outcome", col = "dodgerblue", pos = 4)
+
+
+plot(counter$Mean_c, counter$m1_alt1_pr_mg_mean, ylim = c(0, 1), type = "l",
+  ylab = "pr(moralizing gods)", xlab = "social complexity",
+  main = "alternative 1: 96% 'NA' to '1'", xaxt = "n")
+polygon(c(counter$Mean_c, rev(counter$Mean_c)),
+  c(counter$m1_alt1_pr_mg_ub, rev(counter$m1_alt1_pr_mg_lb)),
+  border = NA, col = col_alpha("black", 0.2))
+
+axis(1, at = seq(0, 1, by = 0.2) - 0.5,
+  labels = seq(0, 1, by = 0.2))
+
+for (i in 1:nrow(d)) lines(c(d$Mean_c[i], d$Mean_c[i]),
+  c(d$m1_alt1_pr_mg_lb[i], d$m1_alt1_pr_mg_ub[i]), col = col_alpha(d$na_col[i], 0.05))
+
+points(d$Mean_c, d$m1_alt1_pr_mg_mean, pch = 16, col = d$na_col, cex = 0.6)
+
+points(0, 0.3, col = "firebrick", pch = 20)
+text(0, 0.3, "originally NA", col = "firebrick", pos = 4)
+
+points(0, 0.2, col = "dodgerblue", pch = 20)
+text(0, 0.2, "known outcome", col = "dodgerblue", pos = 4)
 
 plot(counter$Mean_c, counter$m1_alt2_pr_mg_mean, ylim = c(0, 1), type = "l",
   ylab = "pr(moralizing gods)", xlab = "social complexity",
@@ -478,35 +459,6 @@ for (i in 1:nrow(d)) {
 }
 
 
-# now show the predictions for all missing values
-
-png("./temp/m2_missingness_predictions.png", res = 300,
-  height = 5, width = 5, units = "in")
-
-plot(counter$Mean_c, counter$m2_pr_mg_mean, ylim = c(0, 1), type = "l",
-  ylab = "pr(moralizing gods)", xlab = "social complexity",
-  main = "", xaxt = "n")
-polygon(c(counter$Mean_c, rev(counter$Mean_c)),
-  c(counter$m2_pr_mg_ub, rev(counter$m2_pr_mg_lb)),
-  border = NA, col = col.alpha("dodgerblue", 0.2))
-
-axis(1, at = seq(0, 1, by = 0.2) - 0.5, labels = seq(0, 1, by = 0.2))
-
-tar <- which(d$MG_missing == 1)
-
-points(d$Mean_c[tar], d$m2_pr_mg_mean[tar], pch = 16,
-  col = col_alpha(d$nga_col[tar], 0.8), cex = 0.6)
-
-points(d$Mean_c[tar], d$m1_pr_mg_mean[tar], pch = 16,
-  col = col_alpha("gray", 0.8), cex = 0.6)
-
-points(counter$Mean_c, counter$m1_pr_mg_mean,
-  col = gray(0.45), type = "l", lty = 2)
-text(0.4, 0.5, "original model", col = gray(0.45), srt = 63)
-
-dev.off()
-
-
 # now predict on the focal 12 NGAs over their existences using m2
 
 NGAs_short <- c("Upper Egypt", "Susiana", "Konya Plain",
@@ -598,37 +550,6 @@ data <- read.csv("./input/PrePostComparison.csv", stringsAsFactors = FALSE)
 year_appear_50_mean <- mean(nga_dat$m2_year_appear_50, na.rm = TRUE)
 year_appear_50_se <- sd(nga_dat$m2_year_appear_50, na.rm = TRUE) /
   sqrt(sum(!is.na(nga_dat$m2_year_appear_50)))
-
-png("./temp/revised_fig2.png", res = 300, height = 5, width = 5, units = "in")
-
-col1 <- rgb(0, 0, 0, max = 255, alpha = 50)
-
-plot(SCNorm$x, SCNorm$Mean, type = "n", ylim = c(0, 1),
-  xlim = c(-2000, 2000), ann = FALSE, xaxs = "i", yaxs = "i")
-
-# 'MG observed' period
-rect(0, 0, 0 + mean(data$RangeMGAppear), 1,
-  border = NA, col = col1)
-
-lines(SCNorm$x, SCNorm$Mean, type = "l")
-lines(SCNorm$x, SCNorm$Upper, type = "l", lty = "dotted")
-lines(SCNorm$x, SCNorm$Lower, type = "l", lty = "dotted")
-
-polygon(
-  c(year_appear_50_mean + c(-1.96, 1.96) * year_appear_50_se,
-  year_appear_50_mean + c(1.96, -1.96) * year_appear_50_se),
-  c(0, 0, 1, 1),
-  border = NA,
-  col = col.alpha("firebrick", 0.3)
-)
-
-abline(v = year_appear_50_mean, col = "firebrick")
-
-text(year_appear_50_mean, 0.7, "predicted MG\nemergence", srt = 90)
-text(80, 0.3, "MG first recorded", srt = 90)
-
-dev.off()
-
 
 # combine m2 prediction figure with estimated first appearance figure
 

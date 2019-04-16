@@ -168,29 +168,6 @@ m2 <- sampling(m2_bin, data = dm)
 
 save(m2, file = "./temp/m2.rdata")
 
-# now the revised model on the original data, which puts NA's as 0's
-
-dm <- d[, c("NGA", "MG", "Mean_c", "Lag1", "Lag2", "Phylogeny", "Space")]
-
-# not strictly necessary
-drop <- which(is.na(dm$Lag1) | is.na(dm$Lag2))
-if (length(drop) > 0) dm <- dm[-drop, ]
-
-expect_equal(nrow(dm), 801)
-
-NGAs <- sort(unique(dm$NGA))
-dm$nga <- match(dm$NGA, NGAs)
-
-dm <- as.list(dm)
-dm$N <- length(dm$MG)
-dm$N_nga <- length(unique(dm$nga))
-
-expect_equal(length(unique(dm$nga)), 28)
-
-m2_alt1 <- sampling(m2_bin, data = dm)
-
-save(m2_alt1, file = "./temp/m2_alt1.rdata")
-
 ############
 
 dir_init("./output")

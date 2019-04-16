@@ -27,12 +27,9 @@ Step 12 was developed with the following packages:
 - glmmTMB (0.2.3)
 - nlme (3.1-137)
 - lme4 (1.1-21)
-- stargazer (5.2.2)
 - DHARMa (0.2.4)
 - bbmle (1.0.20)
-- knitr (1.22)
 - car (3.0-2)
-- bootpredictlme4 (0.1) - installation instructions at https://rdrr.io/github/RemkoDuursma/bootpredictlme4/
 - reshape (0.8.8)
 - yarrr (0.1.5)
 

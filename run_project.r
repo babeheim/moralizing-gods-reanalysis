@@ -96,12 +96,13 @@ setwd("./11_draw_new_figures")
 source("draw_new_figures.r")
 setwd("..")
 
-source("./project_support.r")
-files <- c("./02_impute_data/output/polities.csv")
+dir_init("./12_causal_analysis/input")
+files <- "./02_impute_data/output/polities.csv"
 files <- c(files, "./03_run_pca/output/PC1_traj_merged.csv")
-file.copy(files, "./12_causal_analysis/", overwrite = TRUE)
+file.copy(files, "./12_causal_analysis/input/")
 setwd("./12_causal_analysis")
-render("Reanalysis_of_BigGodAnalyses.Rmd")
+source("forward_bias_correction.r")
+source("hierarchical_models.r")
 setwd("..")
 
 source("./project_support.r")

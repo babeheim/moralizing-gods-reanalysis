@@ -31,7 +31,6 @@
   
   #setwd("./12_causal_analysis")
   
-  #source("../project_support.r")
   
   #dir_init("./input")
   #files <- "../02_impute_data/output/polities.csv"
@@ -79,10 +78,7 @@
   NGAs <- NGAs[NGAs != "Crete"]    #### Remove new NGAs
   NGAs <- NGAs[NGAs != "Galilee"]
   
-  ##?OUR_COMMENT:: We have to include these variables for later use in the multi-level
-  # models (they will serve as nesting factors) 
-  dat$World.Region <- as.factor(dat$World.Region)
-  dat$Family <- as.factor(dat$Family)
+ 
 }
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -122,7 +118,7 @@ write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
 #Full time windows (up to 10,000 years before and after moralizing gods)
 NGAs <- levels(out$NGA)
-out <- matrix(NA, nrow=0, ncol=7)
+out <- matrix(NA, nrow=0, ncol=5)
 for(i in 1:length(NGAs)){
   dt <- dat[dat$NGA == NGAs[i],]
   MG<-subset(dt,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" 
@@ -133,19 +129,18 @@ for(i in 1:length(NGAs)){
   MGAppear<-subset(MG, Time==min(Time))
   for(j in 1: 100){
     Earliest<-subset(dt, Time==MGAppear$Time-j*100) ##?OUR_COMMENT:: Potentially confusing label,
-    # it's not earliest, this is just the number
-    # of centuries before MG
+    # it's not earliest, this is just the number of centuries before MG
     Latest<-subset(dt, Time==MGAppear$Time+j*100) ##?OUR_COMMENT:: Same as above
     rates<-cbind(MGAppear$NGA,ifelse(class(Earliest$Time)=="NULL","NA",
                                      (MGAppear$Mean-Earliest$Mean)/(MGAppear$Time-Earliest$Time)),
                  ifelse(class(Latest$Time)=="NULL","NA",
                         ((Latest$Mean-MGAppear$Mean)/(Latest$Time-MGAppear$Time))),
-                 (MGAppear$End-MGAppear$Start),j*100,MGAppear$World.Region,MGAppear$Family)
+                 (MGAppear$End-MGAppear$Start),j*100)
     out <- rbind(out,rates)
   }
   out <- rbind(out,rates)
 }
-colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow","Region", "Lang")
+colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
 
 #mean(out$MGUncertainty) #Use this while replacing "MoralisingGods" as above to get uncertainty
 # values for time-series
@@ -167,9 +162,9 @@ d0 <- out$Difference*1000
 
 
 for(i in 2:length(out[,5])){
-  out[i,9]<-out[i,5]-out[i-1,5]
+  out[i,7]<-out[i,5]-out[i-1,5]
 }
-out <-subset(out, out[,9]!=0) #getting rid of bug when the final row repeats in each NGA
+out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in each NGA
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
@@ -194,13 +189,30 @@ write.csv(out, file="./forward_bias_output/EqualRates.csv",  row.names=FALSE)
 
 print(t.test(out[,3], out[,2],paired=TRUE))
 
+##?OUR_COMMENT:: How many rows of Pre-/Post-MG data?
+NROW(out[(!is.na(out[,2]+out[,3])),])
+
+
+##?OUR_COMMENT:: Was the rate of missigness equal across NGAs?
+  # First select NGAs used in the t-test
+NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium", 
+          "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
+          "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
+
+miss <- matrix(NA,12,1)
+for(i in 1:length(NGAs)){
+  ot <- out[out$NGA == NGAs[i],]
+  miss[i] <- NROW(ot[(is.na(ot[,2]+ot[,3])),])
+  }
+cbind(NGAs,miss) ##?OUR_COMMENT:: missing centuries per NGA
+
 
 ##?OUR_COMMENT:: Plot a histogram of the rate of SC change.
 
 tiff("./forward_bias_output/histogram_MG0.tiff",width = 6,height = 5.5,units = 'in', res = 300)
 
 #histogram of differences
-hist(1000*out[,8],col="gray",breaks="FD",xlim=c(-15,5),ylim=c(0,80),
+hist(1000*out[,6],col="gray",breaks="FD",xlim=c(-15,5),ylim=c(0,80),
      xlab="Rates of change in social complexity (SC per kyr)", ylab="Frequency")
 abline(v = 0,col="black")
 dev.off()
@@ -236,194 +248,27 @@ write.csv(out, file="./temp/EqualRates.csv",  row.names=FALSE)
 
 print(t.test(out[,3], out[,2],paired=TRUE))
 
+
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#### 1.5 Plotting Pre-Post MG ####
+### 1.5. Dating uncertainty ####
 
-##?OUR_COMMENT:: As per Whitehouse et al.’s main text, we will work mostly with the
-# +/- 2000 years timespan as a baseline. 
+##?OUR_COMMENT:: Whitehouse et al. provided robustness check against dating uncertainty, randomly sampling time
+  # within the polity in which MG first appeared. How many polities could potentially shifr MGs back in time?
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
-
-out$Difference<-out[,3]-out[,2]
-
-for(i in 2:length(out[,5])){
-  out[i,8]<-out[i,5]-out[i-1,5]
-}
-out <-subset(out, out[,8]!=0) #getting rid of bug when the final row repeats in each NGA
-
-write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
-
-out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700
-# years pre/post moralizing gods (<750) or # out to use
-# full time-window
-
-
-##?OUR_COMMENT:: Create stacked data set for further analyses
-out.s <- rbind(out,out)
-out.s$Rate <- out.s$PostRate
-out.s$prepost <- 1
-
-out.s$Rate[1:length(out$PreRate)] <- out$PreRate
-out.s$prepost[1:length(out$PreRate)] <- 0
-out.s$prepost <- factor(out.s$prepost)
-
-NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium", 
-          "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
-          "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
-
-out.s <- out.s[out.s$NGA %in% NGAs,]
-
-#______________________________________________________________________________________________
-##### 1.5.1 Scatter with regression line ####
-
-##?OUR_COMMENT:: This is a plot of the difference between pre-MG and post-MG
-# SC change with confidence intervals.
-
-##?OUR_COMMENT:: First, compute raw means and 95% CI
-coefs <- out.s %>% dplyr::group_by(prepost) %>%
-  dplyr::summarise(mean.DV = mean(Rate, na.rm = TRUE),
-                   sd.DV = sd(Rate, na.rm = TRUE),
-                   n.DV = n()) %>%
-  dplyr::mutate(se.DV = sd.DV / sqrt(n.DV),
-                lower.ci.DV = mean.DV - qt(1 - (0.05 / 2), n.DV - 1) *
-                  se.DV,
-                upper.ci.DV = mean.DV + qt(1 - (0.05 / 2), n.DV - 1) *
-                  se.DV)
-
-coefs <- as.data.frame(coefs)
-
-##?OUR_COMMENT:: Now raw means and 95% CI over a scatter plot of raw data
-ggplot(data = coefs, aes(x=prepost, y=mean.DV))   +
-  geom_jitter(data = out.s, alpha=0.3, aes(x=prepost, y=Rate, colour = TimeWindow),
-              width = 0.1, height = 0.05,size = 2.2) +
-  scale_color_distiller(palette = "RdPu") +
-  geom_line(data = coefs,aes(x=c(1,2), y = c(mean.DV[1],mean.DV[2])), size = 0.8) +
-  geom_errorbar(data = coefs, aes(x=prepost,
-                                  ymin=lower.ci.DV,ymax=upper.ci.DV), width=.3, size = 0.8,
-                position=position_dodge(0.05)) +
-  scale_x_discrete(labels = c("Pre-MG", "Post-MG"),expand = c(0.1,0.2)) +
-  labs(x="", y="Rate of SC change") +
-  theme_bw() + 
-  theme(
-    panel.border = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
-    axis.line = element_line(colour = "black"),
-    legend.position = c(1.2,0.95),
-    legend.justification = c("right", "top"),
-    legend.key.size = unit(0.8, "cm"),
-    legend.text = element_text(size = rel(1.5)),
-    axis.title = element_text(size = rel(1.5)),
-    axis.text.y= element_text(size = rel(1.5)),
-    axis.text.x= element_text(size = rel(1.5)),
-    plot.margin=unit(c(1,2,1,1),"cm")) 
-
-##?OUR_COMMENT:: If needed, save the plot
-ggsave("./forward_bias_output/scatter_rate_SC_change_2000.tiff",width = 6,height = 5.5, dpi = 300)
-
-
-##?OUR_COMMENT:: Now, we can plot the same figure by each NGA.
-
-##?OUR_COMMENT:: In this loop, we create a plot for each NGA
+matched <- matrix(NA, nrow=12, ncol=1)
+unmatched <- matrix(NA, nrow=12, ncol=1)
 for(i in 1:length(NGAs)){
-  out.sx <- out.s[out.s$NGA==NGAs[i],]
-  
-  coefs <- out.sx %>% dplyr::group_by(prepost) %>%
-    dplyr::summarise(mean.DV = mean(Rate, na.rm = TRUE),
-                     sd.DV = sd(Rate, na.rm = TRUE),
-                     n.DV = n()) %>%
-    dplyr::mutate(se.DV = sd.DV / sqrt(n.DV),
-                  lower.ci.DV = mean.DV - qt(1 - (0.05 / 2), n.DV - 1) *
-                    se.DV,
-                  upper.ci.DV = mean.DV + qt(1 - (0.05 / 2), n.DV - 1) *
-                    se.DV)
-  
-  coefs <- as.data.frame(coefs)
-  
-  assign(paste0("g",i),
-         ggplot(data = coefs, aes(x=prepost, y=mean.DV))   +
-           geom_jitter(data = out.sx, alpha=0.3, aes(x=prepost, y=Rate, colour = TimeWindow), width =
-                         0.1, height = 0.05,size = 2.2) +
-           scale_color_distiller(palette = "RdPu") +
-           geom_line(data = coefs,aes(x=c(1,2), y = c(mean.DV[1],mean.DV[2])), size = 0.8) +
-           geom_errorbar(data = coefs, aes(x=prepost,
-                                           ymin=lower.ci.DV,ymax=upper.ci.DV), width=.3, size = 0.8,
-                         position=position_dodge(0.05)) +
-           scale_x_discrete(labels = c("Pre-MG", "Post-MG"),expand =
-                              c(0.1,0.2)) +
-           labs(x="", y="") +
-           ggtitle(NGAs[i]) + 
-           theme_bw() + 
-           theme(
-             panel.border = element_blank(),
-             panel.grid.major = element_blank(),
-             panel.grid.minor = element_blank(),
-             plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
-             axis.line = element_line(colour = "black"),
-             legend.position = "",
-             legend.justification = c("right", "top"),
-             legend.key.size = unit(0.8, "cm"),
-             legend.text = element_text(size = rel(1.5)),
-             axis.title = element_text(size = rel(1.5)),
-             axis.text.y= element_text(size = rel(1.5)),
-             axis.text.x= element_text(size = rel(1.5)),
-             plot.margin=unit(c(1,2,1,1),"cm"))) 
+  dt <- dat[dat$NGA == NGAs[i],]
+  firstMG.row <- match(1, dt$MoralisingGods)  ##?OUR_COMMENT:: find first MG appearance
+  pol1 <- dt$PolID[firstMG.row]  ##?OUR_COMMENT:: find polity with first MG
+  if(dt$PolID[firstMG.row-1]==pol1){ ##?OUR_COMMENT:: MG appeared during polity
+    matched[i] <- as.character(pol1)}
+  else if(dt$PolID[firstMG.row-1]!=pol1){ ##?OUR_COMMENT:: MG appeared at beginning of polity
+    unmatched[i] <- as.character(pol1)}
 }
 
-##?OUR_COMMENT:: Here we plot all NGAs side by side
-tiff("./forward_bias_output/scatter_rate_SC_change_2000_byNGA.tiff",width = 8,height = 20, units = 'in', res = 300)
-{grid.newpage()
-  pushViewport(viewport(layout = grid.layout(6, 2)))
-  vplayout <- function(x, y) viewport(layout.pos.row = x, layout.pos.col = y)
-  print(g1, vp = vplayout(1, 1))  # key is to define vplayout
-  print(g2, vp = vplayout(1, 2))
-  print(g3, vp = vplayout(2, 1))
-  print(g4, vp = vplayout(2, 2))
-  print(g5, vp = vplayout(3, 1))
-  print(g6, vp = vplayout(3, 2))
-  print(g7, vp = vplayout(4, 1))
-  print(g8, vp = vplayout(4, 2))
-  print(g9, vp = vplayout(5, 1))
-  print(g10, vp = vplayout(5, 2))
-  print(g11, vp = vplayout(6, 1))
-  print(g12, vp = vplayout(6, 2))
-}
-
-##?OUR_COMMENT:: If needed, save the plot
-dev.off()
-
-#______________________________________________________________________________________________
-#### 1.5.2 Density plot ####
-
-##?OUR_COMMENT:: Density plot of difference between Pre- and Post-MG.
-
-ggplot() + 
-  geom_density(data = out.s, aes(x = Rate, fill = prepost, colour = prepost,
-                                 linetype=prepost),size = 0.5) +
-  scale_color_manual(values = alpha(c("lightskyblue4","lightskyblue4"), 1)) + 
-  scale_fill_manual(values = alpha(c("coral2","turquoise3"),0.6)) +
-  xlim(c(-0.0007,0.005)) +
-  
-  labs(x="Rate of SC change", y="Density") +
-  theme_bw() + 
-  theme(
-    panel.border = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
-    axis.line = element_line(colour = "black"),
-    legend.position = c(0.95,0.95),
-    legend.justification = c("right", "top"),
-    legend.key.size = unit(0.8, "cm"),
-    legend.text = element_text(size = rel(1.5)),
-    axis.title = element_text(size = rel(1.5)),
-    axis.text.y= element_text(size = rel(1.5)),
-    axis.text.x= element_text(size = rel(1.5)),
-    plot.margin=unit(c(1,1,1,1),"cm")) 
-
-##?OUR_COMMENT:: If needed, save the plot
-#ggsave("./temp/PrePost.tiff",width = 6,height = 5.5, dpi = 300)
+##?OUR_COMMENT:: For 11 NGAs, MGs appeared during the polity's first century
+cbind(matched,unmatched)
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 ## 2. Forward-bias correction t-100 ####
@@ -438,7 +283,7 @@ ggplot() +
 ### 2.1 Shift MG for t-100 ####
 
 
-{
+
   NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
             "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
             "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
@@ -447,7 +292,7 @@ ggplot() +
   #MG appearence times. # Can be changed to e.g. 300
   
   ##?OUR_COMMENT:: Adapting the original script...
-  out <- matrix(NA, nrow=0, ncol=7)
+  out <- matrix(NA, nrow=0, ncol=5)
   for(i in 1:length(NGAs)){
     dt <- dat[dat$NGA == NGAs[i],]
     MG<-subset(dt,MoralisingGods=="1")
@@ -466,15 +311,14 @@ ggplot() +
                    ifelse(class(Latest$Time)=="NULL","NA",
                           ((Latest$Mean-MGAppear.FB$Mean)/(Latest$Time-MGAppear.FB$Time))),
                    (MGAppear.FB$End-MGAppear.FB$Start),
-                   j*100,MGAppear$World.Region,
-                   MGAppear$Family)
+                   j*100)
       out <- rbind(out,rates)
     }
     out <- rbind(out,rates) ##?OUR_COMMENT:: This line is responsible for the "bug" described
     # a few lines below. It could be removed, but let's stick with
     # the original script.
   }
-  colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow","Region", "Lang")
+  colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
   
   write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to read
   #as numeric (there is probably a more
@@ -490,8 +334,8 @@ ggplot() +
   
   
   for(i in 2:length(out[,5])){
-    out[i,9]<-out[i,5]-out[i-1,5]}
-  out <-subset(out, out[,9]!=0) #getting rid of bug when the final row repeats in each NGA
+    out[i,7]<-out[i,5]-out[i-1,5]}
+  out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in each NGA
   
   write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
   
@@ -501,21 +345,6 @@ ggplot() +
   #pre/post moralizing gods (<750) or 2050 out to use full time-window
   write.csv(out, file="./forward_bias_output/EqualRates_FB.csv",  row.names=FALSE)
   
-  
-  ##?OUR_COMMENT:: Create stacked data set for a proper Pre-/Post-MG analysis
-  out.s <- rbind(out,out)
-  out.s$Rate <- out.s$PostRate
-  out.s$prepost <- 1
-  
-  out.s$Rate[1:length(out$PreRate)] <- out$PreRate
-  out.s$prepost[1:length(out$PreRate)] <- 0
-  out.s$prepost <- factor(out.s$prepost)
-  NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
-            "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
-            "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
-  
-  out.s <- out.s[out.s$NGA %in% NGAs,]
-}
 
 ##?OUR_COMMENT:: Result for +/- 2000 years Pre/Post-MG with MG appearance shifted
 #  100 years back in time.
@@ -526,73 +355,9 @@ print(t.test(out[,3], out[,2],paired=TRUE))
 ##?OUR_COMMENT:: This result shows that if we decrease each MG time by 100 years, MG positively
 # predict SC.
 
-##?OUR_COMMENT:: Let's plot the histogram with the rate of SC change:
-
-##?OUR_COMMENT:: select the size of FB
-ifelse(FB == 300, d <- d300,d <- d100)
-d <- as.data.frame(d)
-
-ifelse(FB == 300, c <- "#18b0e8",c <- "#cf3a3a")
-
-
-ggplot() + 
-  geom_histogram(data = d, aes(x = d), fill = c, colour = c, binwidth = 0.1,
-                 alpha = 0.5) + 
-  xlim(c(-2,2)) +
-  ylim(c(0,100)) +
-  geom_vline(xintercept = 0, color = "black", size=1, alpha = 1) +   
-  labs(x="Rate of SC change", y="Frequency") +
-  theme_bw() + 
-  theme(
-    panel.border = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
-    axis.line = element_line(colour = "black"),
-    legend.position = c(0.95,0.95),
-    legend.justification = c("right", "top"),
-    legend.key.size = unit(0.8, "cm"),
-    legend.text = element_text(size = rel(1)),
-    axis.title = element_text(size = rel(1.1)),
-    axis.text.y= element_text(size = rel(1.1)),
-    axis.text.x= element_text(size = rel(1.1)),
-    plot.margin=unit(c(1,1,1,1),"cm")) 
-
-
-##?OUR_COMMENT:: If needed, save the plot
-ggsave("./forward_bias_output/Histogram_MG100.tiff",width = 4,height = 2.7, dpi = 300)
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 2.2 Density plot for t-100####
-ggplot() + 
-  geom_density(data = out.s, aes(x = Rate, fill = prepost, colour = prepost,
-                                 linetype=prepost),size = 0.5) +
-  scale_color_manual(values = alpha(c("lightskyblue4","lightskyblue4"), 1)) + 
-  scale_fill_manual(values = alpha(c("coral2","turquoise3"),0.6),
-                    labels = c("Pre-MG", "Post-MG"), name = "") +
-  xlim(c(-0.0005,0.003)) +
-  labs(x="Rate of SC change", y="Density") +
-  theme_bw() + 
-  theme(
-    panel.border = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
-    axis.line = element_line(colour = "black"),
-    legend.position = "",
-    legend.justification = c("right", "top"),
-    legend.key.size = unit(0.8, "cm"),
-    legend.text = element_text(size = rel(1.5)),
-    axis.title = element_text(size = rel(1.5)),
-    axis.text.y= element_text(size = rel(1.5)),
-    axis.text.x= element_text(size = rel(1.5)),
-    plot.margin=unit(c(1,1,1,1),"cm")) 
-
-##?OUR_COMMENT:: If needed, save the plot
-#ggsave("./temp/PrePost_100.tiff",width = 6,height = 5.5, dpi = 300)
-
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-## 2.3 Main plot t-100 ####
+## 2.2 Main plot t-100 ####
 
 ##?OUR_COMMENT:: Here, we report the same plot as Whitehouse et al.'s Fig. 2a,
 # only moving the assumed appearance of MGs 100 years back.
@@ -818,311 +583,7 @@ text(-1200, 0.1, "Doctrinal rituals",
 dev.off()
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 2.4 T-100 plot for all sites ####
-
-####Plot 12 NGA time-series with pre- and post-moralizing god SC data
-#First average normalized to moralizing gods time
-{
-  out<-read.csv('./forward_bias_output/SCNorm.csv', header=TRUE)
-  data<-read.csv('./forward_bias_output/PrePostComparison.csv', header=TRUE)
-  
-  ####Next plot each NGA individually without normalizing time
-  data <- read.table("./forward_bias_output/TimeNorm.csv", sep=",", header=TRUE)
-  y <- data$Mean
-  x <- data$Time
-  l <- data$Lower
-  u <- data$Upper
-  earliest<-read.csv('./forward_bias_output/PrePostComparison.csv', header=TRUE)
-  MG<-earliest[,15]
-  DM<-earliest[,10]+MG
-  WR<-earliest[,11]+MG
-  MGR<-earliest[,12]
-  DMR<-earliest[,13]
-  WRR<-earliest[,14]
-  #ylim <- c(min(na.rm=TRUE,y), max(na.rm=TRUE,y)) #This sets y-axis from the minimum to
-  #maximum values throughout the whole global dataset
-  ylim <- c(0,1) #This sets x-axis to min (0) to max (1) social complexity
-  #xlim <- c(min(na.rm=TRUE,x), max(na.rm=TRUE,x)) #Use this instead to set x-axis from
-  #earliest to latest time in dataset
-  xlim <- c(-10000,2000) #This sets x-axis to 1,000 years before and after the appearance
-  #of moralising gods
-  pch=19
-  cex=.5
-  xaxt='s'  
-  yaxt='s' 
-  xaxs="i"
-  yaxs="i"
-  
-  ann=FALSE
-  #v1=min(subset(x,a==1))
-  #v2=min(subset(x,c==1))
-  linecol1<-"red"
-  linecol2<-"green"
-  linecol3<-"blue"
-  linecol4<-"orange"
-  lty1<-2
-  lty2<-4
-  lty3<-3
-  lty4<-2
-  lwd<-1.5
-  type="l"
-  h=0
-  
-  col1<-rgb(0,0,255,max=255,alpha=125)
-  col2<-rgb(0,255,0,max=255,alpha=125)
-  col3<-rgb(255,0,0,max=255,alpha=125)
-  
-  par(mfrow=c(2,6),mar=c(1.5,1.5,1.5,1.5),oma=c(0,0,0,0),mgp = c(.5, .5, 0),xpd = FALSE)
-  
-  NGA<-"Upper Egypt"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim,
-       xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) ,
-          col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Susiana"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Konya Plain"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Middle Yellow River Valley"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Kachi Plain"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Sogdiana"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Latium"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Deccan"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Paris Basin"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch, 
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Orkhon Valley"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Kansai"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) , 
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)), 
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Niger Inland Delta"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim,
-       pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  par(mfrow=c(1,1))
-  
-}
-
-
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-## 3. Forward-bias correction t-300 ####
-
-##?OUR_COMMENT:: From now on, we present our own re-analysis of the original script.
-
-##?OUR_COMMENT:: In this section (Section 3), we will keep up with the t-test,
-# but try to correct for forward bias, i.e., the fact that if we take the first known
-# occurrence of MG, it is very unlikely that it is actually the oldest occurrence.
-
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 3.1 Shift MG for t-300 ####
-
-
-{
-    NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
-            "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
-            "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
-  
-  FB <- 300 ##?OUR_COMMENT:: this is Forward Bias in years - we will subtract this number from
-  #MG appearence times.
-  
-  ##?OUR_COMMENT:: Adapting the original script...
-  out <- matrix(NA, nrow=0, ncol=7)
-  for(i in 1:length(NGAs)){
-    dt <- dat[dat$NGA == NGAs[i],]
-    MG<-subset(dt,MoralisingGods=="1")
-    ##?OUR_COMMENT:: This is our addition - we have to create a new subset MGAppear.FB,
-    # which will contain Mean SC for the time of MG's first appearance minus forward bias(FB)
-    MGAppear<-subset(MG, Time==min(Time))
-    t <- min(MG$Time)-FB
-    MGAppear.FB<-subset(dt, Time==t)
-    ##?OUR_COMMENT:: Now calculate the rate of SC change for the time-shifted data
-    for(j in 1: 100){
-      Earliest<-subset(dt, Time==MGAppear.FB$Time-j*100) 
-      Latest<-subset(dt, Time==MGAppear.FB$Time+j*100)
-      rates<-cbind(as.character(MGAppear$NGA),
-                   ifelse(class(Earliest$Time)=="NULL","NA",
-                          (MGAppear.FB$Mean-Earliest$Mean)/(MGAppear.FB$Time-Earliest$Time)),
-                   ifelse(class(Latest$Time)=="NULL","NA",
-                          ((Latest$Mean-MGAppear.FB$Mean)/(Latest$Time-MGAppear.FB$Time))),
-                   (MGAppear.FB$End-MGAppear.FB$Start),
-                   j*100,MGAppear$World.Region,
-                   MGAppear$Family)
-      out <- rbind(out,rates)
-    }
-    out <- rbind(out,rates) ##?OUR_COMMENT:: This line is responsible for the "bug" described
-    # a few lines below. It could be removed, but let's stick with
-    # the original script.
-  }
-  colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow","Region", "Lang")
-  
-  write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to read
-  #as numeric (there is probably a more
-  #elegant way to do this)
-  
-  out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
-  
-  out$Difference<-out[,3]-out[,2]
-  
-  ##?OUR_COMMENT:: save the difference into separate variable needed for histogram comparisons;
-  # note this variable automatically codes FB size
-  assign(paste0("d",FB),out$Difference*1000 )
-  
-  
-  for(i in 2:length(out[,5])){
-    out[i,9]<-out[i,5]-out[i-1,5]}
-  out <-subset(out, out[,9]!=0) #getting rid of bug when the final row repeats in each NGA
-  
-  write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
-  
-  out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
-  
-  out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
-  #pre/post moralizing gods (<750) or 2050 out to use full time-window
-  write.csv(out, file="./forward_bias_output/EqualRates_FB.csv",  row.names=FALSE)
-  
-  
-  ##?OUR_COMMENT:: Create stacked data set for a proper Pre-/Post-MG analysis
-  out.s <- rbind(out,out)
-  out.s$Rate <- out.s$PostRate
-  out.s$prepost <- 1
-  
-  out.s$Rate[1:length(out$PreRate)] <- out$PreRate
-  out.s$prepost[1:length(out$PreRate)] <- 0
-  out.s$prepost <- factor(out.s$prepost)
-  NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
-            "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
-            "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
-  
-  out.s <- out.s[out.s$NGA %in% NGAs,]
-}
-
-##?OUR_COMMENT:: Result for +/- 2000 years Pre/Post-MG with MG appearance shifted
-#  100 years back in time.
-
-print(t.test(out[,3], out[,2],paired=TRUE))
-
-
-##?OUR_COMMENT:: This result shows that if we decrease each MG time by 100 years, MG positively
-# predict SC.
+## 2.3 Histogram for t-100 ####
 
 ##?OUR_COMMENT:: Let's plot the histogram with the rate of SC change:
 
@@ -1158,39 +619,93 @@ ggplot() +
 
 
 ##?OUR_COMMENT:: If needed, save the plot
-ggsave("./forward_bias_output/Histogram_MG300.tiff",width = 4,height = 2.7, dpi = 300)
+ggsave("./forward_bias_output/Histogram_MG100.tiff",width = 4,height = 2.7, dpi = 300)
+
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+## 3. Forward-bias correction t-300 ####
+
+##?OUR_COMMENT:: In this section, we will keep up with the t-test,
+# but try to correct for forward bias, i.e., the fact that if we take the first known
+# occurrence of MG, it is very unlikely that it is actually the oldest occurrence.
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 3.2 Density plot for t-300####
-ggplot() + 
-  geom_density(data = out.s, aes(x = Rate, fill = prepost, colour = prepost,
-                                 linetype=prepost),size = 0.5) +
-  scale_color_manual(values = alpha(c("lightskyblue4","lightskyblue4"), 1)) + 
-  scale_fill_manual(values = alpha(c("coral2","turquoise3"),0.6),
-                    labels = c("Pre-MG", "Post-MG"), name = "") +
-  xlim(c(-0.0005,0.003)) +
-  labs(x="Rate of SC change", y="Density") +
-  theme_bw() + 
-  theme(
-    panel.border = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
-    axis.line = element_line(colour = "black"),
-    legend.position = "",
-    legend.justification = c("right", "top"),
-    legend.key.size = unit(0.8, "cm"),
-    legend.text = element_text(size = rel(1.5)),
-    axis.title = element_text(size = rel(1.5)),
-    axis.text.y= element_text(size = rel(1.5)),
-    axis.text.x= element_text(size = rel(1.5)),
-    plot.margin=unit(c(1,1,1,1),"cm")) 
+### 3.1 Shift MG for t-300 ####
 
-##?OUR_COMMENT:: If needed, save the plot
-#ggsave("./temp/PrePost_300.tiff",width = 6,height = 5.5, dpi = 300)
+  NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
+            "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
+            "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
+  
+  FB <- 300 ##?OUR_COMMENT:: this is Forward Bias in years - we will subtract this number from
+  #MG appearence times.
+  
+  ##?OUR_COMMENT:: Adapting the original script...
+  out <- matrix(NA, nrow=0, ncol=5)
+  for(i in 1:length(NGAs)){
+    dt <- dat[dat$NGA == NGAs[i],]
+    MG<-subset(dt,MoralisingGods=="1")
+    ##?OUR_COMMENT:: This is our addition - we have to create a new subset MGAppear.FB,
+    # which will contain Mean SC for the time of MG's first appearance minus forward bias(FB)
+    MGAppear<-subset(MG, Time==min(Time))
+    t <- min(MG$Time)-FB
+    MGAppear.FB<-subset(dt, Time==t)
+    ##?OUR_COMMENT:: Now calculate the rate of SC change for the time-shifted data
+    for(j in 1: 100){
+      Earliest<-subset(dt, Time==MGAppear.FB$Time-j*100) 
+      Latest<-subset(dt, Time==MGAppear.FB$Time+j*100)
+      rates<-cbind(as.character(MGAppear$NGA),
+                   ifelse(class(Earliest$Time)=="NULL","NA",
+                          (MGAppear.FB$Mean-Earliest$Mean)/(MGAppear.FB$Time-Earliest$Time)),
+                   ifelse(class(Latest$Time)=="NULL","NA",
+                          ((Latest$Mean-MGAppear.FB$Mean)/(Latest$Time-MGAppear.FB$Time))),
+                   (MGAppear.FB$End-MGAppear.FB$Start),
+                   j*100)
+      out <- rbind(out,rates)
+    }
+    out <- rbind(out,rates) ##?OUR_COMMENT:: This line is responsible for the "bug" described
+    # a few lines below. It could be removed, but let's stick with
+    # the original script.
+  }
+  colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
+  
+  write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to read
+  #as numeric (there is probably a more
+  #elegant way to do this)
+  
+  out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+  
+  out$Difference<-out[,3]-out[,2]
+  
+  ##?OUR_COMMENT:: save the difference into separate variable needed for histogram comparisons;
+  # note this variable automatically codes FB size
+  assign(paste0("d",FB),out$Difference*1000 )
+  
+  
+  for(i in 2:length(out[,5])){
+    out[i,7]<-out[i,5]-out[i-1,5]}
+  out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in each NGA
+  
+  write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
+  
+  out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+  
+  out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
+  #pre/post moralizing gods (<750) or 2050 out to use full time-window
+  write.csv(out, file="./forward_bias_output/EqualRates_FB.csv",  row.names=FALSE)
+  
+  
+##?OUR_COMMENT:: Result for +/- 2000 years Pre/Post-MG with MG appearance shifted
+#  100 years back in time.
+
+print(t.test(out[,3], out[,2],paired=TRUE))
+
+
+##?OUR_COMMENT:: This result shows that if we decrease each MG time by 100 years, MG positively
+# predict SC.
+
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-## 3.3 Main plot t-300 ####
+## 3.2 Main plot t-300 ####
 
 ##?OUR_COMMENT:: Here, we report the same plot as Whitehouse et al.'s Fig. 2a,
 # only moving the assumed appearance of MGs 100 years back.
@@ -1409,211 +924,46 @@ text(100, 0.2, "Moralizing gods",
      cex = 1, srt=90)
 text(-1200, 0.1, "Doctrinal rituals",
      cex = 1)
-
 #abline(h=0.6,lty="dashed")
 dev.off()
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 3.4 T-300 plot for all sites ####
+### 3.3 Histogram for t-300####
 
-####Plot 12 NGA time-series with pre- and post-moralizing god SC data
-#First average normalized to moralizing gods time
-{
-  out<-read.csv('./forward_bias_output/SCNorm.csv', header=TRUE)
-  data<-read.csv('./forward_bias_output/PrePostComparison.csv', header=TRUE)
-  
-  ####Next plot each NGA individually without normalizing time
-  data <- read.table("./forward_bias_output/TimeNorm.csv", sep=",", header=TRUE)
-  y <- data$Mean
-  x <- data$Time
-  l <- data$Lower
-  u <- data$Upper
-  earliest<-read.csv('./forward_bias_output/PrePostComparison.csv', header=TRUE)
-  MG<-earliest[,15]
-  DM<-earliest[,10]+MG
-  WR<-earliest[,11]+MG
-  MGR<-earliest[,12]
-  DMR<-earliest[,13]
-  WRR<-earliest[,14]
-  #ylim <- c(min(na.rm=TRUE,y), max(na.rm=TRUE,y)) #This sets y-axis from the minimum to
-  #maximum values throughout the whole global dataset
-  ylim <- c(0,1) #This sets x-axis to min (0) to max (1) social complexity
-  #xlim <- c(min(na.rm=TRUE,x), max(na.rm=TRUE,x)) #Use this instead to set x-axis from
-  #earliest to latest time in dataset
-  xlim <- c(-10000,2000) #This sets x-axis to 1,000 years before and after the appearance
-  #of moralising gods
-  pch=19
-  cex=.5
-  xaxt='s'  
-  yaxt='s' 
-  xaxs="i"
-  yaxs="i"
-  
-  ann=FALSE
-  #v1=min(subset(x,a==1))
-  #v2=min(subset(x,c==1))
-  linecol1<-"red"
-  linecol2<-"green"
-  linecol3<-"blue"
-  linecol4<-"orange"
-  lty1<-2
-  lty2<-4
-  lty3<-3
-  lty4<-2
-  lwd<-1.5
-  type="l"
-  h=0
-  
-  col1<-rgb(0,0,255,max=255,alpha=125)
-  col2<-rgb(0,255,0,max=255,alpha=125)
-  col3<-rgb(255,0,0,max=255,alpha=125)
-  
-  par(mfrow=c(2,6),mar=c(1.5,1.5,1.5,1.5),oma=c(0,0,0,0),mgp = c(.5, .5, 0),xpd = FALSE)
-  
-  NGA<-"Upper Egypt"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim,
-       xlim=xlim, pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) ,
-          col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Susiana"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Konya Plain"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Middle Yellow River Valley"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Kachi Plain"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Sogdiana"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Latium"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Deccan"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Paris Basin"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch, 
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Orkhon Valley"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Kansai"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim, pch=pch,
-       cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) , 
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)), 
-                     1e6, col=c(col1,col3), border=NA)
-  
-  NGA<-"Niger Inland Delta"
-  plot(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),  ylim=ylim, xlim=xlim,
-       pch=pch, cex=cex, xaxt=xaxt, ann=ann, yaxt=yaxt,type=type, xaxs=xaxs,yaxs=yaxs)
-  polygon(c(subset(x, data$NGA==NGA), rev(subset(x, data$NGA==NGA))) ,
-          c(subset(u, data$NGA==NGA) , rev(subset(l, data$NGA==NGA))) , col = 'grey' , border = NA)
-  lines(subset(x, data$NGA==NGA), subset(y, data$NGA==NGA),type="l")
-  abline(h=h,lty=lty1)
-  panel.first = rect(c(subset(DM, earliest$NGA==NGA), subset(MG, earliest$NGA==NGA)),
-                     -1e6, c(subset(DM, earliest$NGA==NGA) + subset(DMR, earliest$NGA==NGA),
-                             subset(MG, earliest$NGA==NGA) + subset(MGR, earliest$NGA==NGA)),
-                     1e6, col=c(col1,col3), border=NA)
-  par(mfrow=c(1,1))
-  
-}
+
+##?OUR_COMMENT:: Let's plot the histogram with the rate of SC change:
+
+##?OUR_COMMENT:: select the size of FB
+ifelse(FB == 300, d <- d300,d <- d100)
+d <- as.data.frame(d)
+
+ifelse(FB == 300, c <- "#18b0e8",c <- "#cf3a3a")
+
+
+ggplot() + 
+  geom_histogram(data = d, aes(x = d), fill = c, colour = c, binwidth = 0.1,
+                 alpha = 0.5) + 
+  xlim(c(-2,2)) +
+  ylim(c(0,100)) +
+  geom_vline(xintercept = 0, color = "black", size=1, alpha = 1) +   
+  labs(x="Rate of SC change", y="Frequency") +
+  theme_bw() + 
+  theme(
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
+    axis.line = element_line(colour = "black"),
+    legend.position = c(0.95,0.95),
+    legend.justification = c("right", "top"),
+    legend.key.size = unit(0.8, "cm"),
+    legend.text = element_text(size = rel(1)),
+    axis.title = element_text(size = rel(1.1)),
+    axis.text.y= element_text(size = rel(1.1)),
+    axis.text.x= element_text(size = rel(1.1)),
+    plot.margin=unit(c(1,1,1,1),"cm")) 
+
+
+##?OUR_COMMENT:: If needed, save the plot
+ggsave("./forward_bias_output/Histogram_MG300.tiff",width = 4,height = 2.7, dpi = 300)
+

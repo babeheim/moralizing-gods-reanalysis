@@ -156,7 +156,7 @@ Code:
 
 Dots represent mean social complexity (SC) collapsed across the primary 12 NGAs. Bars represent +/- SE. The x-axis represents centered time before/after the presumed appearance of MG/writing at each NGA. Note that for Fig. S1A, 0 on this axis represents widely disparate times, ranging from 2900 BCE to 1100 CE. A. The plot shows that MGs can be detected in the archaeo-historical records just after a sudden jump in social complexity that represents the smallest temporal unit in Whitehouse, et al.’s analysis (one century). B. The appearance of writing in the archaeo-historical record closely matches the appearance of MGs and both correspond to a sudden jump in social complexity (see also Extended Data Figure 1). 
 
-![Panel A](./output/PrePost_MG.tiff) ![Panel B](./output/PrePost_Writing.tiff)
+![Panel A](./output/PrePost_MG.png) ![Panel B](./output/PrePost_Writing.png)
 
 Code:
 
@@ -185,7 +185,7 @@ Code:
 
 Scatter and density plots of the rate of SC change for each NGA. The black horizontal line represents the mean rate of SC change across NGAs while black bars represent the mean rate of SC change for each NGA. If the assumption of independence would be satisfied, the data for each NGA should be approximately normally distributed around the general mean. Instead, data from several NGAs (e.g., Susiana) are clustered around their own mean.
 
-![Testing the assumption of data independence across NGAs](./output/NGA_nesting.tiff)
+![Testing the assumption of data independence across NGAs](./output/NGA_nesting.png)
 
 [Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L172-L206)
 

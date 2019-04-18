@@ -9,6 +9,10 @@ The following code was based on the analyses in:
 
 with data file "exportdat.csv" scraped from the Seshat database on 10 Jan 2018. Steps 1 to 8 are the original analysis code with some minor reorganization, while steps 9 to 12 are extensions and modifications.
 
+This code is derivative modification of [moralizing-gods](https://github.com/pesavage/moralizing-gods) by Patrick Savage and Peter Turchin, used under Creative Commons License [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/), modified and extended by Bret Beheim, Martin Lang and Rachel Spicer under the same license. See LICENSE.md for details.
+
+## Setup
+
 The code was developed on R v3.5.3 with the following packages for steps 1 to 11:
 
 - maps (3.3.0)
@@ -41,11 +45,9 @@ To run the primary analyses:
 1. Set the working directory to "moralizing-gods-reanalysis"
 2. In R, type `source("run_project.r")`.
 
-This code is derivative modification of [moralizing-gods](https://github.com/pesavage/moralizing-gods) by Patrick Savage and Peter Turchin, used under Creative Commons License [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/), modified and extended by Bret Beheim, Martin Lang and Rachel Spicer under the same license. See LICENSE.md for details.
+# Key Findings of Reanalysis
 
-# Main Take-homes from Analysis
-
-## Main Text
+## from Main Text
 
 61% of all dependent variable data and 98% of the analyzed absences were originally unknown values (‘NA’) that were converted into known absences (‘0’).
 

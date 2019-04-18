@@ -209,7 +209,7 @@ cbind(NGAs,miss) ##?OUR_COMMENT:: missing centuries per NGA
 
 ##?OUR_COMMENT:: Plot a histogram of the rate of SC change.
 
-tiff("./forward_bias_output/histogram_MG0.tiff",width = 6,height = 5.5,units = 'in', res = 300)
+png("./forward_bias_output/histogram_MG0.png",width = 6,height = 5.5,units = 'in', res = 300)
 
 #histogram of differences
 hist(1000*out[,6],col="gray",breaks="FD",xlim=c(-15,5),ylim=c(0,80),
@@ -554,7 +554,7 @@ write.csv(out, file="./forward_bias_output/SCNorm.csv",  row.names=FALSE)
   col3<-rgb(24,176,232,max=255,alpha=200)
 }
 
-tiff("./forward_bias_output/Fig2A_MG100.tiff",width = 6,height = 5.5,units = 'in', res = 300)
+png("./forward_bias_output/Fig2A_MG100.png",width = 6,height = 5.5,units = 'in', res = 300)
 
 plot(x, y, ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt,
      ann=ann, yaxt=yaxt,type=type,xaxs=xaxs,yaxs=yaxs)
@@ -619,7 +619,7 @@ ggplot() +
 
 
 ##?OUR_COMMENT:: If needed, save the plot
-ggsave("./forward_bias_output/Histogram_MG100.tiff",width = 4,height = 2.7, dpi = 300)
+ggsave("./forward_bias_output/Histogram_MG100.png",width = 4,height = 2.7, dpi = 300)
 
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -900,7 +900,7 @@ write.csv(out, file="./forward_bias_output/SCNorm.csv",  row.names=FALSE)
   col2<-rgb(207,58,58,max=255,alpha=200)
   col3<-rgb(24,176,232,max=255,alpha=200)
 }
-tiff("./forward_bias_output/Fig2A_MG300.tiff",width = 6,height = 5.5,units = 'in', res = 300)
+png("./forward_bias_output/Fig2A_MG300.png",width = 6,height = 5.5,units = 'in', res = 300)
 
 ##?OUR_COMMENT:: Had to take the doctrinal rituals shading out, it coverd the shifted MGs
 
@@ -965,5 +965,5 @@ ggplot() +
 
 
 ##?OUR_COMMENT:: If needed, save the plot
-ggsave("./forward_bias_output/Histogram_MG300.tiff",width = 4,height = 2.7, dpi = 300)
+ggsave("./forward_bias_output/Histogram_MG300.png",width = 4,height = 2.7, dpi = 300)
 

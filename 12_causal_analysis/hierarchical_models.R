@@ -483,7 +483,7 @@ ggplot(dat.MG.700, aes(Time, Mean, color=MoralisingGods)) +
     plot.margin=unit(c(1,1,1,1),"cm")) 
 
 ##?OUR_COMMENT:: Save the plot if needed
-ggsave("./hierarchical_models_output/PrePost_MG.tiff",width = 6,height = 5.5, dpi = 300)
+ggsave("./hierarchical_models_output/PrePost_MG.png",width = 6,height = 5.5, dpi = 300)
 
 ##?OUR_COMMENT:: Compute the between-century rate of SC change before MGs
 MG.change <- ((mean(dat.MG.700$Mean[dat.MG.700$Time == (700)], na.rm = T)/
@@ -533,7 +533,7 @@ ggplot(dat.W, aes(Time, Mean, color=Writing)) +
     plot.margin=unit(c(1,1,1,1),"cm")) 
 
 ##?OUR_COMMENT:: Save if needed
-ggsave("./hierarchical_models_output/PrePost_Writing.tiff",width = 6,height = 5.5, dpi = 300)
+ggsave("./hierarchical_models_output/PrePost_Writing.png",width = 6,height = 5.5, dpi = 300)
 
 
 
@@ -618,7 +618,7 @@ NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
 
 out.s <- out.s[out.s$NGA %in% NGAs,]
 
-tiff("./hierarchical_models_output/NGA_nesting.tiff",width = 8,height = 5.5,units = 'in', res = 300)
+png("./hierarchical_models_output/NGA_nesting.png",width = 8,height = 5.5,units = 'in', res = 300)
 pirateplot(formula = Rate ~ NGA,
            data = out.s,
            theme = 0,
@@ -667,7 +667,7 @@ dev.off()
 #    axis.text.y= element_text(size = rel(1.5)),
 #    axis.text.x= element_text(angle = 45, hjust = 1,size = rel(1.5)),
 #    plot.margin=unit(c(1,1,1,1),"cm")) 
-#ggsave("pirbars.tiff",width = 8,height = 5.5, dpi = 300)
+#ggsave("pirbars.png",width = 8,height = 5.5, dpi = 300)
 
 ggplot() + 
   
@@ -703,7 +703,7 @@ summary(lm3 <- lmer(Rate ~ prepost + (prepost|NGA) + (1|Region),data = out.s))
 ##?OUR_COMMENT:: Let's check the model fit.
 
 simulationOutput = simulateResiduals(lm3)
-tiff("./hierarchical_models_output/qq1.tiff",width = 8,height = 5, units = 'in', res = 300)
+png("./hierarchical_models_output/qq1.png",width = 8,height = 5, units = 'in', res = 300)
 plot(simulationOutput)
 dev.off()
 testUniformity(simulationOutput = simulationOutput)
@@ -818,7 +818,7 @@ summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Reg
                           data = dat.MG.2000, family = 'beta'))
 
 simulationOutput = simulateResiduals(glm.b3)
-tiff("./hierarchical_models_output/qq3.tiff",width = 8,height = 5, units = 'in', res = 300)
+png("./hierarchical_models_output/qq3.png",width = 8,height = 5, units = 'in', res = 300)
 plot(simulationOutput)
 dev.off()
 testUniformity(simulationOutput = simulationOutput)
@@ -896,7 +896,7 @@ summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Reg
                           data = dat.MG.700, family = 'beta'))
 
 simulationOutput = simulateResiduals(glm.b3)
-#tiff("./temp/qq2.tiff",width = 7,height = 5, units = 'in', res = 300)
+#png("./temp/qq2.png",width = 7,height = 5, units = 'in', res = 300)
 plot(simulationOutput)
 #dev.off()
 testUniformity(simulationOutput = simulationOutput)

@@ -7,9 +7,9 @@ The following code was based on the analyses in:
 
 > Whitehouse, H., François, P., Savage, P. E., Currie, T. E., Feeney, K. C., Cioni, E., Purcell, R., Ross, R. M., Larson, J., Baines, J., ter Haar, B., Covey, A., Turchin, P. (2019). Complex societies precede moralizing gods throughout world history. Nature.
 
-with data file "exportdat.csv" scraped from the Seshat database on 10 Jan 2018. Steps 1 to 8 are the original analysis code with some minor reorganization, while steps 9 to 12 are extensions and modifications.
-
 This code is derivative modification of [moralizing-gods](https://github.com/pesavage/moralizing-gods) by Patrick Savage and Peter Turchin, used under Creative Commons License [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/), modified and extended by Bret Beheim, Martin Lang and Rachel Spicer under the same license. See LICENSE.md for details.
+
+Steps 1 to 8 are the original analysis code with some minor reorganization, while steps 9 and beyond are extensions and modifications.
 
 ## Setup
 
@@ -45,9 +45,21 @@ To run the primary analyses:
 1. Set the working directory to "moralizing-gods-reanalysis"
 2. In R, type `source("run_project.r")`.
 
-# Key Findings of Reanalysis
+## Reproduction of Whitehouse, et al. Findings
 
-## from Main Text
+Seshat data file "exportdat.csv" was scraped on 10 January 2018. All other project data files are found in `data/`. Steps 1 to 3 reshape this data and apply a multiple-imputation algorithm to fill in missing predictor values, resulting in `PC1_traj_merged.csv`. This file serves as the primary data source for steps 4 (preparing the t-tests) and 6 (preparing the logistic regression).
+
+t-tests:
+
+- [Calculation of t-test](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/04_prep_comparisons/prep_comparisons.r#L244)
+
+logistic regressions:
+
+- [Confirmation of 801 cases in design matrix](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/07_fit_regressions/fit_regressions.r#L23)
+- [Regression estimates comparable to Whitehouse, et al.'s Extended Data Table 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/07_fit_regressions/fit_regressions.r#L29-L35)
+
+
+## Key Findings of Reanalysis, Main Text
 
 61% of all dependent variable data and 98% of the analyzed absences were originally unknown values (‘NA’) that were converted into known absences (‘0’).
 
@@ -120,7 +132,7 @@ Code:
 - [Panel B for t-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.R#L931-L968)
 
 
-## Supplementary Material
+## Key Findings of Reanalysis, Supplementary Material
 
 Of the 22 societies observed over 399 cumulative centuries at an SC < 0.4, only 3 are coded with (records of) MGs, and only Hawaii, in the 19th century, with 99,000 people, is coded as having (records of) MGs during the study window.
 

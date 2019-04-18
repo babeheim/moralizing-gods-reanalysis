@@ -110,10 +110,10 @@ Social complexity (SC) before and after the appearance of moralizing gods. Zero 
 </p>
 
 Code:
-- [Panel A for t-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.r#L360-L583)
-- [Panel A for t-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.r#L708-L928)
-- [Panel B for t-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.r#L586-L622)
-- [Panel B for t-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.r#L931-L968)
+- [Panel A for t-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.R#L360-L583)
+- [Panel A for t-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.R#L708-L928)
+- [Panel B for t-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.R#L586-L622)
+- [Panel B for t-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.R#L931-L968)
 
 
 ## Supplementary Material

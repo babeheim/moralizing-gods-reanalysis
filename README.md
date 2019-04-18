@@ -61,21 +61,13 @@ logistic regressions:
 
 ## Key Findings of Reanalysis, Main Text
 
-61% of all dependent variable data and 98% of the analyzed absences were originally unknown values (‘NA’) that were converted into known absences (‘0’).
+### Missing outcome data replaced with 0's
 
-Code:
-- 61% dependent variable NA: `sum(data$MG_missing == 1)/nrow(data)\*100 (prep_regression_data.r)/ sum(d$MG_missing == 1)/nrow(d)\*100 (draw_missingness.r)`
-- 98% analyzed absences NA: 801 observations, 12 are 0, 299 are 1, and 490 are NA. 490/502 = 97.6% 
-```
-ifelse(data$GeneralMoralisticPunishment>0.1 | data$MoralisingHighGods>0.1 ,1,0)
-data$MoralisingGodsCorr<-ifelse(is.na(data$GeneralMoralisticPunishment) & is.na(data$MoralisingGods), data$MoralisingHighGods, data$MoralisingGods)
+[All missing data (`NA`) coded with `0`, a.k.a. known absence](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/06_prep_regression_data/prep_regression_data.r#L48)
 
-data$NGAPolDate <- paste(data$NGA, data$PolID, data$Time)
-RD2$NGAPolDate <- paste(RD2$NGA, RD2$PolID, RD2$Time)
-DataFilt <- data[data$NGAPolDate %in% RD2$NGAPolDate,]
+[Creation of indicators for `0`'s derived from `NA`'s](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/06_prep_regression_data/prep_regression_data.r#L43-L46)
 
-sum(is.na(DataFilt$MoralisingGods))/ (sum(DataFilt$MoralisingGods == 0, na.rm = TRUE) + sum(is.na(DataFilt$MoralisingGods))) * 100
-```
+[Confirmation of 490 `0` outcome points in regression dataframe, out of 502 `0`s and 801 total observations](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_draw_missingness/draw_missingness.r#L31-L35)
 
 ### Table 1 | Moralizing gods across 12 regions in Seshat
 

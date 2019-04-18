@@ -52,6 +52,7 @@ This code is derivative modification of [moralizing-gods](https://github.com/pes
 Code:
 - 61% dependent variable NA: `sum(data$MG_missing == 1)/nrow(data)\*100 (prep_regression_data.r)/ sum(d$MG_missing == 1)/nrow(d)\*100 (draw_missingness.r)`
 - 98% analyzed absences NA: 801 observations, 12 are 0, 299 are 1, and 490 are NA. 490/502 = 97.6% 
+```
 ifelse(data$GeneralMoralisticPunishment>0.1 | data$MoralisingHighGods>0.1 ,1,0)
 data$MoralisingGodsCorr<-ifelse(is.na(data$GeneralMoralisticPunishment) & is.na(data$MoralisingGods), data$MoralisingHighGods, data$MoralisingGods)
 
@@ -60,7 +61,7 @@ RD2$NGAPolDate <- paste(RD2$NGA, RD2$PolID, RD2$Time)
 DataFilt <- data[data$NGAPolDate %in% RD2$NGAPolDate,]
 
 sum(is.na(DataFilt$MoralisingGods))/ (sum(DataFilt$MoralisingGods == 0, na.rm = TRUE) + sum(is.na(DataFilt$MoralisingGods))) * 100
-
+```
 
 ### Table 1 | Moralizing gods across 12 regions in Seshat
 
@@ -76,9 +77,9 @@ Panel (A) Estimated relationship between the probability of MGs being observed a
 ![Contrasts between model predictions with imputed data and reanalysis using actual data](./output/m2_predictions_fig2_combined.png)
 
 Code: 
-- Data for A: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L394-L459
-- Data for B: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L545-L552
-- Figure: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L554-L613
+- [Data for A](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L394-L459)
+- [Data for B](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L545-L552)
+- [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L554-L613)
 
 ### Extended Data Figure 1 | The first appearance of writing and moralizing gods across NGAs
 

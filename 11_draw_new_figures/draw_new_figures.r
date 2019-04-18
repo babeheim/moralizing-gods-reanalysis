@@ -35,7 +35,7 @@ png("./temp/missingness_table.png", res = 300, units = "in", height = 5.5, width
 par(mar = c(5.1, 12, 4.1, 2.1))
 
 plot(1, 1, type = "n", frame.plot = FALSE,
-  xlim = c(-1050, 100), ylim = c(1, 12.5), axes = FALSE, ann = FALSE)
+  xlim = c(-1010, 100), ylim = c(1, 12.5), axes = FALSE, ann = FALSE)
 axis(2, at = 12:1, labels = NGAs_short, las = 1)
 
 years <- seq(-1000, 100, by = 100)
@@ -45,9 +45,9 @@ for (i in 1:length(NGAs_short)) {
   my_rows <- which(d$NGA == NGAs_short[i] &
     d$time_to_first_obs <= 100 & d$time_to_first_obs >= -1000)
 
-  for (j in 1:length(years)) {
-    rect(years[j] - 50, (13 - i) - 0.5, years[j] + 50, (13 - i) + 0.5,
-      col = d$na_writing_col[my_rows[j]], border = NA)
+  for (j in 1:length(my_rows)) {
+    rect(d$time_to_first_obs[my_rows[j]] - 50, (13 - i) - 0.5, d$time_to_first_obs[my_rows[j]] + 50, (13 - i) + 0.5,
+       col = d$na_writing_col[my_rows[j]], border = NA)
   }
 
   text(d$time_to_first_obs[my_rows], 13 - i, labels = d$MG_og[my_rows],
@@ -550,6 +550,9 @@ data <- read.csv("./input/PrePostComparison.csv", stringsAsFactors = FALSE)
 year_appear_50_mean <- mean(nga_dat$m2_year_appear_50, na.rm = TRUE)
 year_appear_50_se <- sd(nga_dat$m2_year_appear_50, na.rm = TRUE) /
   sqrt(sum(!is.na(nga_dat$m2_year_appear_50)))
+
+expect_true(abs(year_appear_50_mean - (-997)) < 50)
+expect_true(abs(year_appear_50_se - (200)) < 50)
 
 # combine m2 prediction figure with estimated first appearance figure
 

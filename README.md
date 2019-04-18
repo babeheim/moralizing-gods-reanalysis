@@ -106,9 +106,15 @@ Before the regression analysis, the authors re-coded the 490 “unknown” cases
 Social complexity (SC) before and after the appearance of moralizing gods. Zero on the x-axis represents a standardized appearance of moralizing gods at each NGA per original Whitehouse et al. paper. The grey column illustrates that moralizing gods arrived just after the main rise of SC while the red column illustrates that shifting the arrival of moralizing gods just 100 years (the smallest time unit) earlier would imply that moralizing gods preceded the main SC increase. The blue column displays the first appearance of moralizing gods shifted 300 years earlier. Column width illustrates uncertainty around the time of MG appearance and corresponds to the mean duration of the polity in which MG appeared (after correcting for forward bias). Panel (B) Histograms of the differences in the rates of change in SC Pre-MG minus Post-MG (multiplied by 1000). Y-axes are the number of centuries with a specific rate of SC change (collapsed across the 12 NGAs). The grey histogram is from the original Whitehouse et al. data, while the red and blue histograms shift the first appearance of moralizing gods 100 and 300 years earlier, leading to more positive change in SC after MGs appearance.
 
 <p align="center">
-  <img src="./output/forward bias.png" width="650" height="450">
+  <img src="./output/forward bias.png" width="750" height="450">
 </p>
-Code: 
+
+Code:
+- [Panel A for t-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.r#L360-L583)
+- [Panel A for t-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.r#L708-L928)
+- [Panel B for t-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.r#L586-L622)
+- [Panel B for t-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.r#L931-L968)
+
 
 ## Supplementary Material
 

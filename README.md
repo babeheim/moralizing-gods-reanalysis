@@ -63,11 +63,9 @@ logistic regressions:
 
 ### Missing outcome data replaced with 0's
 
-[All missing data (`NA`) coded with `0`, a.k.a. known absence](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/06_prep_regression_data/prep_regression_data.r#L48)
+- [All missing data (`NA`) coded with `0`, a.k.a. known absence](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/06_prep_regression_data/prep_regression_data.r#L48)
 
-[Creation of indicators for `0`'s derived from `NA`'s](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/06_prep_regression_data/prep_regression_data.r#L43-L46)
-
-[Confirmation of 490 `0` outcome points in regression dataframe, out of 502 `0`s and 801 total observations](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_draw_missingness/draw_missingness.r#L31-L35)
+- [Confirmation of 490 `0` outcome points in regression dataframe, out of 502 `0`s and 801 total observations](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_draw_missingness/draw_missingness.r#L31-L35)
 
 ### Table 1 | Moralizing gods across 12 regions in Seshat
 

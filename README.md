@@ -68,7 +68,7 @@ sum(is.na(DataFilt$MoralisingGods))/ (sum(DataFilt$MoralisingGods == 0, na.rm = 
 ![Moralizing gods across 12 regions in Seshat.](./output/figure1.png)
 Here, a ‘1’ indicates MGs are known to be present in the century-by-century data, ‘0’ that they are known to be absent. An ‘NA’ refers to missing data in the authors’ data table. MGs only appear in the database simultaneously with or after the appearance of writing (green), despite ethnographic records of many non-literate societies with MGs. Only one of the 30 world regions in Whitehouse, et al. includes a known absence preceding an MG presence (Middle Yellow River Valley, red), a datum we dispute as a miscoding based on expert-generated data (Supplemental S4).
 
-Code: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L8-L63
+[Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L8-L63)
 
 ### Figure 1 | Contrasts between model predictions with imputed data and reanalysis using actual data
 

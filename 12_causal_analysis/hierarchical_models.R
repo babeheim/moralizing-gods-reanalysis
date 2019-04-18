@@ -48,7 +48,7 @@
   
 ##?OUR_COMMENT:: Packages needed
 libs <- c("dplyr", "glmmTMB", "glmmADMB", "lme4", "plotrix", "ggplot2", 
-          "DHARMa", "bbmle", "car", "reshape", "grid", "yarrr")
+          "DHARMa", "bbmle", "reshape", "yarrr")
 
 ##?OUR_COMMENT:: First check if all required packages are installed and install those
 # that are not
@@ -64,12 +64,13 @@ sessionInfo()
 
 ##?OUR_COMMENT:: versions of the loaded packages
 
-# [1] yarrr_0.1.5            circlize_0.4.6         BayesFactor_0.9.12-4.2 coda_0.19-2           
-# [5] jpeg_0.1-8             reshape_0.8.8          car_3.0-2              carData_3.0-2         
-# [9] bbmle_1.0.20           DHARMa_0.2.4           ggplot2_3.1.1          plotrix_3.7-5         
-# [13] lme4_1.1-21            Matrix_1.2-15          nlme_3.1-139           glmmADMB_0.8.5        
-# [17] MASS_7.3-51.3          glmmTMB_0.2.3          dplyr_0.8.0.1      
-
+#[1] yarrr_0.1.5            circlize_0.4.6         BayesFactor_0.9.12-4.2 coda_0.19-2           
+#[5] jpeg_0.1-8             reshape_0.8.8          bbmle_1.0.20           DHARMa_0.2.4          
+#[9] lme4_1.1-21            Matrix_1.2-15          glmmADMB_0.8.5         MASS_7.3-51.3         
+#[13] glmmTMB_0.2.3          rmarkdown_1.12         rethinking_1.59        rstan_2.18.2          
+#[17] StanHeaders_2.18.1     ggplot2_3.1.1          viridis_0.5.1          viridisLite_0.3.0     
+#[21] testthat_2.0.1         dplyr_0.8.0.1          plyr_1.8.4             plotrix_3.7-5         
+#[25] maps_3.3.0            
 
 #library(plotrix)
 #setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
@@ -257,7 +258,7 @@ dat$Family <- as.factor(dat$Family)
   
   dat.MG$Time[dat.MG$NGA=="Upper Egypt"] <- seq(0,3900,100)
   
-}
+
 
 ##?OUR_COMMENT::OK, now all sites acquire MG at year 2000, so our data have 20 centuries before
 # and 20 centuries after MG, although we miss data from some sites where there are not so
@@ -274,11 +275,12 @@ dat.MG$NGA <- as.factor(dat.MG$NGA)
 
 ##?OUR_COMMENT:: Save this data set for later use
 dat.MG.2000 <- dat.MG
-
+}
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ### 1.2. MG data for +/- 700 SC analysis ####
 
+{
 dat.MG <- dat
 NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
           "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
@@ -361,10 +363,12 @@ for(i in 1:length(NGAs)){
 dat.MG$MoralisingGods[dat.MG$Time>600] <- 1
 
 dat.MG.700 <- dat.MG
+}
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ### 1.3. Writing data for +/- 700 SC analysis ####
 
+{
 ##?OUR_COMMENT:: first, select the 12 NGAs they work with
 dat.W <- dat
 NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
@@ -436,7 +440,7 @@ for(i in 1:length(NGAs)){
 
 dat.W$Writing[dat.W$Time>600] <- 1
 
-
+}
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 ## 2. SC growth plot ####
@@ -603,7 +607,8 @@ out.s$NGA <- as.factor(out.s$NGA)
 out.s$Region <- as.factor(out.s$Region)
 out.s$Lang <- as.factor(out.s$Lang)
 
-
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+### 3.2. Plot nesting within NGAs ####
 ##?OUR_COMMENT:: Now explore data nesting within NGAs, which was suspected during
   # the t-test analysis.
 
@@ -664,9 +669,13 @@ dev.off()
 #    plot.margin=unit(c(1,1,1,1),"cm")) 
 #ggsave("pirbars.tiff",width = 8,height = 5.5, dpi = 300)
 
+ggplot() + 
+  
+  geom_smooth(data = dat.MG.2000, aes(Time, Mean, group = NGA, color = NGA)) +
+  geom_smooth(data = dat.MG.2000, aes(Time, Mean), method = "lm")
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 3.2. Linear models of the rate of change ####
+### 3.3. Linear models of the rate of change ####
 ##?OUR_COMMENT::
   # Starting with a straightforward linear model, we should first account for the nesting
   # of time-points within NGAs, then the nesting of time-points within world regions, and finally
@@ -826,7 +835,7 @@ testDispersion(simulationOutput = simulationOutput)
 
 #### 4.2.1. Compare beta with linear ####
 
-##?OUR_COMMENT:: Herw, we use AIC to compare gaussian and beta assumptions.
+##?OUR_COMMENT:: Here, we use AIC to compare gaussian and beta assumptions.
 
 summary(lm1 <- glmmadmb(Mean ~ Time + (1|NGA), data = dat.MG.700, family = 'gaussian'))
 
@@ -935,6 +944,13 @@ colnames(t) <- c("dAIC","df")
 rownames(t) <- c("glm.b3","glm.b2","glm.b1")
 t
 
+##?OUR_COMMENT:: Transform coefficients and compute 95%CI
+cf <- summary(glm.b3)$coefficients[,1]
+se <- sqrt(diag(vcov(glm.b3)))
+ci <- (cbind(est = (plogis(cf)-0.5), LL = (plogis(cf - 1.96 * se)-0.5),
+             UL = (plogis(cf + 1.96 * se)-0.5)))
+ci[1,] <- (ci[1,]+0.5)
+
 ##?OUR_COMMENT:: Again, we see an opposite trend than reported by Whitehouse et al.
 
 #______________________________________________________________________________________________
@@ -970,6 +986,13 @@ t <- matrix(c(a$dAIC[1],a$dAIC[2],a$dAIC[3],a$df[1],a$df[2],a$df[3]),ncol=2,byro
 colnames(t) <- c("dAIC","df")
 rownames(t) <- c("glm.b3","glm.b2","glm.b1")
 t
+
+##?OUR_COMMENT:: Transform coefficients and compute 95%CI
+cf <- summary(glm.b3)$coefficients[,1]
+se <- sqrt(diag(vcov(glm.b3)))
+ci <- (cbind(est = (plogis(cf)-0.5), LL = (plogis(cf - 1.96 * se)-0.5),
+             UL = (plogis(cf + 1.96 * se)-0.5)))
+ci[1,] <- (ci[1,]+0.5)
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 ## 6. Summary ####

@@ -42,7 +42,7 @@
   dir_init("./forward_bias_output")
   
   ##?OUR_COMMENT:: Packages needed
-  libs <- c("dplyr","plotrix", "ggplot2", "reshape", "grid")
+  libs <- c("dplyr","plotrix", "ggplot2", "reshape")
   
   ##?OUR_COMMENT:: First check if all required packages are installed and install those
   # that are not
@@ -58,9 +58,9 @@
   
   ##?OUR_COMMENT:: versions of the loaded packages
   
-  # [1] reshape_0.8.8      carData_3.0-2      rmarkdown_1.12     rethinking_1.59    rstan_2.18.2      
-  # [6] StanHeaders_2.18.1 ggplot2_3.1.1      viridis_0.5.1      viridisLite_0.3.0  testthat_2.0.1    
-  # [11] dplyr_0.8.0.1      plyr_1.8.4         plotrix_3.7-5      maps_3.3.0       
+  # [1] reshape_0.8.8      rmarkdown_1.12     rethinking_1.59    rstan_2.18.2       StanHeaders_2.18.1
+  # [6] ggplot2_3.1.1      viridis_0.5.1      viridisLite_0.3.0  testthat_2.0.1     dplyr_0.8.0.1     
+  # [11] plyr_1.8.4         plotrix_3.7-5      maps_3.3.0    
   
   #library(plotrix)
   #setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")

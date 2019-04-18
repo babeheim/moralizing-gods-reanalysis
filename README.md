@@ -79,6 +79,8 @@ Panel (A) Estimated relationship between the probability of MGs being observed a
 Code: 
 - [Data for A](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L394-L459)
 - [Data for B](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L545-L552)
+- [Original model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L21-L36) ([stan code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/stan/original.stan))
+- [Revised model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L144-L170) ([stan code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/stan/revised.stan))
 - [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L554-L613)
 
 ### Extended Data Figure 1 | The first appearance of writing and moralizing gods across NGAs
@@ -247,7 +249,7 @@ Estimated relationship between the probability of moral gods being observed and 
 ![Estimated relationship between the probability of moral gods being observed and social complexity](./output/alternative_missingness.png)
 
 Code:
-- [Original model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L21-L36)
+- [Original model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L21-L36) ([stan code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/stan/original.stan))
 - [Alternative model 1](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L38-L83)
 - [Alternative model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L85-L130)
 - [Counterfactual estimates for sc/mg relationship](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L154-L317)

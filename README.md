@@ -50,7 +50,7 @@ This code is derivative modification of [moralizing-gods](https://github.com/pes
 61% of all dependent variable data and 98% of the analyzed absences were originally unknown values (‘NA’) that were converted into known absences (‘0’).
 
 Code:
-- 61% dependent variable NA: sum(data$MG_missing == 1)/nrow(data)\*100 (prep_regression_data.r)/ sum(d$MG_missing == 1)/nrow(d)\*100 (draw_missingness.r)
+- 61% dependent variable NA: `sum(data$MG_missing == 1)/nrow(data)\*100 (prep_regression_data.r)/ sum(d$MG_missing == 1)/nrow(d)\*100 (draw_missingness.r)`
 - 98% analyzed absences NA: 801 observations, 12 are 0, 299 are 1, and 490 are NA. 490/502 = 97.6% 
 ifelse(data$GeneralMoralisticPunishment>0.1 | data$MoralisingHighGods>0.1 ,1,0)
 data$MoralisingGodsCorr<-ifelse(is.na(data$GeneralMoralisticPunishment) & is.na(data$MoralisingGods), data$MoralisingHighGods, data$MoralisingGods)

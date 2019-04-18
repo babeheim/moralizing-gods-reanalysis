@@ -98,7 +98,7 @@ The solid line indicates when writing and moralizing gods are first recorded in 
 Before the regression analysis, the authors re-coded the 490 “unknown” cases as “absent” without explicitly documenting this decision. This choice is responsible for their central claimed results. As described in text, societies with “known” and “unknown” outcome data differ dramatically in social complexity, population size and the presence of writing.
 
 <p align="center">
-  <img src="./output/barbell.png"  height="600">
+  <img src="./output/barbell.png" height="600">
 </p>
 
 [Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_draw_missingness/draw_missingness.r#L7-L66)
@@ -156,7 +156,13 @@ Code:
 
 Dots represent mean social complexity (SC) collapsed across the primary 12 NGAs. Bars represent +/- SE. The x-axis represents centered time before/after the presumed appearance of MG/writing at each NGA. Note that for Fig. S1A, 0 on this axis represents widely disparate times, ranging from 2900 BCE to 1100 CE. A. The plot shows that MGs can be detected in the archaeo-historical records just after a sudden jump in social complexity that represents the smallest temporal unit in Whitehouse, et al.’s analysis (one century). B. The appearance of writing in the archaeo-historical record closely matches the appearance of MGs and both correspond to a sudden jump in social complexity (see also Extended Data Figure 1). 
 
-![Panel A](./output/PrePost_MG.png) ![Panel B](./output/PrePost_Writing.png)
+<p align="center">
+  <img src="./output/PrePost_MG.png" width="600" height="600">
+</p>
+
+<p align="center">
+  <img src="./output/PrePost_Writing.png" width="600" height="600">
+</p>
 
 Code:
 

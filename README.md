@@ -89,7 +89,7 @@ The solid line indicates when writing and moralizing gods are first recorded in 
   <img src="./output/WritingMG.png" width="450" height="450">
 </p>
 
-Code: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_MG_writing_analysis/MG_writing_analysis.R#L8-L72
+[Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_MG_writing_analysis/MG_writing_analysis.R#L8-L72)
 
 ### Extended Data Figure 2 | Distributions of “social complexity” score for N = 801 observations, by ‘moralizing gods’ outcome status
 
@@ -99,7 +99,7 @@ Before the regression analysis, the authors re-coded the 490 “unknown” cases
   <img src="./output/barbell.png"  height="600">
 </p>
 
-Code: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_draw_missingness/draw_missingness.r#L7-L66
+[Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_draw_missingness/draw_missingness.r#L7-L66)
 
 ### Extended Data Figure 3 | Effect of small corrections to forward bias
 
@@ -133,10 +133,10 @@ Social complexity scores for n = 864 observations in the full Seshat dataset plo
 
 Code:
 
-- Figure: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_draw_missingness/draw_missingness.r#L272-L297
-- Pearson's r: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_draw_missingness/draw_missingness.r#L104
+- [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_draw_missingness/draw_missingness.r#L272-L297)
+- [Pearson's r](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_draw_missingness/draw_missingness.r#L104)
 
- As illustrated in Fig. S1A, societies increased their complexity on average by 39% within 100 years before the appearance of MGs while the average between-century increase in SC for the preceding 700 years was approximately 7%.
+As illustrated in Fig. S1A, societies increased their complexity on average by 39% within 100 years before the appearance of MGs while the average between-century increase in SC for the preceding 700 years was approximately 7%.
 
 Code:
 
@@ -151,8 +151,8 @@ Dots represent mean social complexity (SC) collapsed across the primary 12 NGAs.
 
 Code:
 
-- Panel A: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L314-L439
-- Panel B: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L441-L549
+- [Panel A](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L314-L439)
+- [Panel B](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L441-L549)
 
 
 Code:
@@ -161,8 +161,8 @@ To examine the effect of such a time-lag, we moved the first appearance of MG at
 
 Code: 
 
-- Original paired t-test: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/04_prep_comparisons/prep_comparisons.r#L144
-- New paired t-test: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.R#L523
+- [Original paired t-test](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/04_prep_comparisons/prep_comparisons.r#L144)
+- [New paired t-test](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.R#L523)
 
 Whitehouse et al. tested their results for robustness against dating uncertainty by randomly placing MG appearance within the time-span of the polity in which MG first appeared. However, for 11 out of 12 NGAs, MGs were always detected during the first century of the polity’s existence, so any random placing of MGs within the polity time-span would always make the first appearance of MG more recent, i.e. only worsening the forward bias.
 
@@ -178,7 +178,7 @@ Scatter and density plots of the rate of SC change for each NGA. The black horiz
 
 ![Testing the assumption of data independence across NGAs](./output/NGA_nesting.tiff)
 
-Code: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L172-L206
+[Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L172-L206)
 
 ### Figure S4 | Q-Q plots of standardized residuals (0-1) for gaussian and beta models
 
@@ -188,7 +188,7 @@ Code:
 
 Table S1, Model 1 displays the results of the full model: Time is the estimated increase in SC over one millenium before the arrival of MG  (we chose one millenium rather than century to improve interpretability); MG [Pre vs. Post] is the difference in intercepts for the Pre-MG and Post-MG regression lines, i.e., SC 2000 years Pre-MG and vs. SC at the time of the supposed MG appearance; and Time\*MG interaction is the difference in linear slopes for the Pre- and Post-MG periods.
 
-Code: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L868-L869
+[Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L868-L869)
 
 ### Table S1 | Estimates with 95% CI from the models of social complexity
 
@@ -200,14 +200,14 @@ Code:
 
 ### Table S2 | Revised logistic regression estimates for the presence or absence of moralizing gods in the reduced dataset
 
-Table S2: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/output/model2.txt
+[Table S2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/output/model2.txt)
 
 Revised logistic regression estimates for the presence or absence of moralizing gods in the reduced dataset, with means, standard errors, and probability each effect is null or negative (the Type-S sign error)60. Outcome values coded as “unknown” or “suspected unknown” in the Seshat database and ‘NA’ in the analysis dataset were removed, and to account for within-region non-independence, a varying-effects intercept was added for each NGA. Without NA values converted to 0, lag terms in the original model become linearly dependent with the outcome variable and are removed as well. Social complexity is centered on 0.5 to aid intercept interpretability.
 
 Code:
 
-- Model: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L132-L169
-- Table: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L120-L138
+- [Model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L132-L169)
+- [Table](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L120-L138)
 
 ### Figure S5 | Posterior predictions for the probability of moralizing gods present by year
 
@@ -217,21 +217,21 @@ Posterior predictions for the probability of moralizing gods present by year for
 
 Code:
 
-- Analysis: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L462-L493
-- Figure: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L522-L541
+- [Analysis](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L462-L493)
+- [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L522-L541)
 
 ### Table S3 | Regression estimates for the presence/absence of moralizing gods under three “missingness regimes”
 
-Table S3: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/output/model1_variations.txt
+[Table S3](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/output/model1_variations.txt)
 
 Regression estimates for the presence/absence of moralizing gods under three “missingness regimes” for the 490 missing values: means, standard errors, and posterior probability each effect is null or negative (the Type-S sign error)60. The “Original model” treats all missing values (\`NA’) as 0, corresponding to the estimates in Whitehouse et al. (‘social complexity’ has been re-centered at 0.5 to improve interpretability). Two alternatives using the same regression model, but different imputation methods for missing values: (1) 96% of NA’s assigned randomly to \`1’ (the frequency of occurrence in the observed data), and (2) 50% of NA’s randomly assigned to \`1’, 50% to \`0’. Social complexity is centered on 0.5 to aid intercept interpretability.
 
 Code: 
 
-- Original model: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L21-L36
-- Alternative model 1: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L38-L83
-- Alternative model 2: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L85-L130
-- Table: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L65-L118
+- [Original model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L21-L36)
+- [Alternative model 1](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L38-L83)
+- [Alternative model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L85-L130)
+- [Table](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L65-L118)
 
 ### Figure S6 | Estimated relationship between the probability of moral gods being observed and social complexity
 
@@ -240,9 +240,9 @@ Estimated relationship between the probability of moral gods being observed and 
 ![Estimated relationship between the probability of moral gods being observed and social complexity](./output/alternative_missingness.png)
 
 Code:
-- Original model: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L21-L36
-- Alternative model 1: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L38-L83
-- Alternative model 2: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L85-L130
-- Counterfactual estimates for sc/mg relationship: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L154-L317
-- Figure: https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L320-L391
+- [Original model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L21-L36)
+- [Alternative model 1](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L38-L83)
+- [Alternative model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_fit_new_regressions/fit_new_regressions.r#L85-L130)
+- [Counterfactual estimates for sc/mg relationship](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L154-L317)
+- [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L320-L391)
 

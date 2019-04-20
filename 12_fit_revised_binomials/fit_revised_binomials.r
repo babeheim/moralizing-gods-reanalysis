@@ -44,12 +44,13 @@ drop <- which(is.na(dm$Lag1) | is.na(dm$Lag2))
 if (length(drop) > 0) dm <- dm[-drop, ]
 
 mg_known_present <- sum(dm$MG == 1)
+mg_known_absent <- sum(dm$MG == 0 & dm$MG_missing == 0)
 mg_known <- sum(dm$MG_missing == 0)
 mg_missing <- sum(dm$MG_missing == 1)
 missing_rows <- which(dm$MG_missing == 1)
 
-expect_equal(mg_known_present, 299)
-expect_equal(mg_known, 311)
+expect_equal(mg_known_present, 218)
+expect_equal(mg_known, 229)
 
 imputation_prob <- mg_known_present / mg_known # occurance of 1's in known data
 
@@ -90,13 +91,7 @@ dm <- d[, c("NGA", "MG", "Mean_c", "Lag1", "Lag2",
 drop <- which(is.na(dm$Lag1) | is.na(dm$Lag2))
 if (length(drop) > 0) dm <- dm[-drop, ]
 
-mg_known_present <- sum(dm$MG == 1)
-mg_known <- sum(dm$MG_missing == 0)
 mg_missing <- sum(dm$MG_missing == 1)
-missing_rows <- which(dm$MG_missing == 1)
-
-expect_equal(mg_known_present, 299)
-expect_equal(mg_known, 311)
 
 imputation_prob <- 0.5 # principle of indifference
 
@@ -137,7 +132,7 @@ dm <- d[, c("NGA", "MG", "Mean_c", "Phylogeny", "Space", "MG_missing")]
 drop <- which(dm$MG_missing == 1)
 dm <- dm[-drop, ]
 
-expect_equal(nrow(dm), 336)
+# expect_equal(nrow(dm), 336)
 # 311 cases are left from the 801 originally
 # but 25 more because we don't have to drop Lag1 = NA cases
 
@@ -167,6 +162,12 @@ dm$N_nga <- length(unique(dm$nga))
 m2 <- sampling(m2_bin, data = dm)
 
 save(m2, file = "./temp/m2.rdata")
+
+dm <- d[, c("MG", "Mean_c", "Phylogeny", "Space")]
+
+m2_alt <- sampling(m2_bin, data = dm)
+
+save(m2_alt2, file = "./temp/m2_alt1.rdata")
 
 ############
 

@@ -1,86 +1,11 @@
-### "Check of 'Complex societies precede moralizing gods' causal analysis" ########
-### PART B: Hierarchical analyses
 
-# Created with R version 3.5.3
+rm(list = ls())
 
-# This script aims to build hierarchical models of data 
-# published in the paper "Whitehouse, H., François, P., Savage, P. E., Currie, T. E.,
-# Feeney, K. C., Cioni, E., Purcell, R., Ross, R. M., Larson, J., Baines, J., ter Haar, B.,
-# Covey, A., Turchin, P. (2019). Complex societies precede moralizing gods throughout world
-# history. Nature." 
+source("../project_support.r")
 
-# In this script, we will use the original data (not corrected for forward bias)
-# but try to correct for the violation of independence and normality observed in the t-test analysis.
-# To this end, we first build linear mixed models (LMMs) of the rate of SC change, 
-# and later generalized linear mixed models (GLMMs)
+dir_init("./temp")
 
-# Note that comments in the text starting with #??OUR_COMMENT are our new comments.
-# We left all the all comments in the text as well. 
-
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-### 1. Load libraries and data ####
-
-
-# This section loads data on polities, their social complexity (SC),
-# and the presence moralizing gods (MG).
-
-{
-  rm(list = ls())
-  
-  source("../project_support.r")
-  
-  #__________
-  ##?OUR_COMMENT:: if running this script on it's own (rather than through the "run_project.r"),
-  # uncomment the lines below to set up directories and input data:
-  
-  #setwd("./12_causal_analysis")
-  
-  #source("../project_support.r")
-  
-  #dir_init("./input")
-  #files <- "../02_impute_data/output/polities.csv"
-  #files <- c(files, "../03_run_pca/output/PC1_traj_merged.csv")
-  #file.copy(files, "./input/")
-  #__________
-  
-  dir_init("./temp")
-  dir_init("./hierarchical_models_output")
-  
-##?OUR_COMMENT:: Packages needed
-libs <- c("dplyr", "glmmTMB", "glmmADMB", "lme4", "plotrix", "ggplot2", 
-          "DHARMa", "bbmle", "reshape", "yarrr")
-
-##?OUR_COMMENT:: First check if all required packages are installed and install those
-# that are not
-for(i in 1:length(libs)){
-if(libs[i] %in% rownames(installed.packages())==FALSE){install.packages(libs[i],
-                                                                        dependencies = TRUE)}  
-}
-
-##?OUR_COMMENT:: Load libraries - need to be installed before loading
-lapply(libs, require, character.only = TRUE)
-
-sessionInfo()
-
-##?OUR_COMMENT:: versions of the loaded packages
-
-#[1] yarrr_0.1.5            circlize_0.4.6         BayesFactor_0.9.12-4.2 coda_0.19-2           
-#[5] jpeg_0.1-8             reshape_0.8.8          bbmle_1.0.20           DHARMa_0.2.4          
-#[9] lme4_1.1-21            Matrix_1.2-15          glmmADMB_0.8.5         MASS_7.3-51.3         
-#[13] glmmTMB_0.2.3          rmarkdown_1.12         rethinking_1.59        rstan_2.18.2          
-#[17] StanHeaders_2.18.1     ggplot2_3.1.1          viridis_0.5.1          viridisLite_0.3.0     
-#[21] testthat_2.0.1         dplyr_0.8.0.1          plyr_1.8.4             plotrix_3.7-5         
-#[25] maps_3.3.0            
-
-#library(plotrix)
-#setwd("/Users/pesavage/Documents/Research/Oxford Seshat/Data/SCBigGodsOct2017")
-#polities <- read.csv('polities.csv', header=TRUE)
 polities <- read.csv("./input/polities.csv", header = TRUE)
-
-#New scripts for automated analysis of rates of change in social complexity pre/post
-# moralising gods/doctrinal mode/writing
-
-#dat <- read.table("PC1_traj_merged.csv", sep=",", header=TRUE) #?? everything is here
 dat <- read.csv("./input/PC1_traj_merged.csv", stringsAsFactors = FALSE)
 
 dat$NGA<-as.character(dat$NGA)
@@ -92,7 +17,6 @@ NGAs <- NGAs[NGAs != "Galilee"]
 # models (they will serve as nesting factors) 
 dat$World.Region <- as.factor(dat$World.Region)
 dat$Family <- as.factor(dat$Family)
-}
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ### 1.1. MG data for +/- 2000 SC analysis ####
@@ -483,7 +407,7 @@ ggplot(dat.MG.700, aes(Time, Mean, color=MoralisingGods)) +
     plot.margin=unit(c(1,1,1,1),"cm")) 
 
 ##?OUR_COMMENT:: Save the plot if needed
-ggsave("./hierarchical_models_output/PrePost_MG.png",width = 6,height = 5.5, dpi = 300)
+ggsave("./temp/PrePost_MG.png",width = 6,height = 5.5, dpi = 300)
 
 ##?OUR_COMMENT:: Compute the between-century rate of SC change before MGs
 MG.change <- ((mean(dat.MG.700$Mean[dat.MG.700$Time == (700)], na.rm = T)/
@@ -533,7 +457,7 @@ ggplot(dat.W, aes(Time, Mean, color=Writing)) +
     plot.margin=unit(c(1,1,1,1),"cm")) 
 
 ##?OUR_COMMENT:: Save if needed
-ggsave("./hierarchical_models_output/PrePost_Writing.png",width = 6,height = 5.5, dpi = 300)
+ggsave("./temp/PrePost_Writing.png",width = 6,height = 5.5, dpi = 300)
 
 
 
@@ -618,7 +542,7 @@ NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
 
 out.s <- out.s[out.s$NGA %in% NGAs,]
 
-png("./hierarchical_models_output/NGA_nesting.png",width = 8,height = 5.5,units = 'in', res = 300)
+png("./temp/NGA_nesting.png",width = 8,height = 5.5,units = 'in', res = 300)
 pirateplot(formula = Rate ~ NGA,
            data = out.s,
            theme = 0,
@@ -644,30 +568,6 @@ pirateplot(formula = Rate ~ NGA,
            )
 abline(0.0002511869,0.00, )
 dev.off()
-
-##?OUR_COMMENT:: Older bar plot used to get x-axis labels for pirate plot
-#ggplot(out.s, aes(NGA, Rate, color= NGA)) + 
-#   geom_bar(stat="identity") +
- # scale_x_continuous(breaks = c(0,200,400,600,700,800,1000,1200,1400),
-#                     labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
-#  labs(y="Rate of SC Change", x="NGA") + 
-#  ylim(c(-0.002,0.003)) +
-#  theme_bw() + 
-#  theme(
-#    panel.border = element_blank(),
-#    panel.grid.major = element_blank(),
-#    panel.grid.minor = element_blank(),
-#    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
-#    axis.line = element_line(colour = "black"),
-#    legend.position = "",
-#    legend.justification = c("right", "top"),
-#    legend.key.size = unit(0.8, "cm"),
-#    legend.text = element_text(size = rel(1)),
-#    axis.title = element_text(size = rel(1.5)),
-#    axis.text.y= element_text(size = rel(1.5)),
-#    axis.text.x= element_text(angle = 45, hjust = 1,size = rel(1.5)),
-#    plot.margin=unit(c(1,1,1,1),"cm")) 
-#ggsave("pirbars.png",width = 8,height = 5.5, dpi = 300)
 
 ggplot() + 
   
@@ -703,7 +603,7 @@ summary(lm3 <- lmer(Rate ~ prepost + (prepost|NGA) + (1|Region),data = out.s))
 ##?OUR_COMMENT:: Let's check the model fit.
 
 simulationOutput = simulateResiduals(lm3)
-png("./hierarchical_models_output/qq1.png",width = 8,height = 5, units = 'in', res = 300)
+png("./temp/qq1.png",width = 8,height = 5, units = 'in', res = 300)
 plot(simulationOutput)
 dev.off()
 testUniformity(simulationOutput = simulationOutput)
@@ -818,7 +718,7 @@ summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Reg
                           data = dat.MG.2000, family = 'beta'))
 
 simulationOutput = simulateResiduals(glm.b3)
-png("./hierarchical_models_output/qq3.png",width = 8,height = 5, units = 'in', res = 300)
+png("./temp/qq3.png",width = 8,height = 5, units = 'in', res = 300)
 plot(simulationOutput)
 dev.off()
 testUniformity(simulationOutput = simulationOutput)
@@ -994,19 +894,7 @@ ci <- (cbind(est = (plogis(cf)-0.5), LL = (plogis(cf - 1.96 * se)-0.5),
              UL = (plogis(cf + 1.96 * se)-0.5)))
 ci[1,] <- (ci[1,]+0.5)
 
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-## 6. Summary ####
+dir_init("./output")
 
-# The main point of this document was to re-analyze Whitehouse et al. causal analysis. 
-# We showed that shifting the first appearance of MGs a few centuries back reverses
-# causality arrow - i.e., MGs precede social complexity growth.
-
-# We also attempted to account for the violations of independence and normality by using
-# generalized linear mixed models, which allowed us to control for the nesting within data,
-# fit individual time effects for each NGA, and account for the non-normality of residuals.
-  
-# The growth curve model also allows for further investigation of non-linearity in growth curves 
-# (and their Pre-/Post-MG difference), which we omitted from the current analysis for the sake 
-# of simplicity. Finally, we realize that the growth curve model has several disadvantages 
-# (e.g., it cannot model a continous growth of MGs), and is therefore a good starting point for
-# more complex analyses rather than the final model assessing causality between MGs and SC.
+files <- list.files("./temp", full.names = TRUE)
+file.copy(files, "./output")

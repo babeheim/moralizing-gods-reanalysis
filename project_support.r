@@ -7,6 +7,15 @@ library(testthat)
 library(viridis)
 library(rethinking) # github.com/rmcelreath/rethinking
 
+library(dplyr)
+library(glmmTMB)
+library(glmmADMB)
+library(lme4)
+library(DHARMa)
+library(bbmle)
+library(reshape)
+library(yarrr)
+
 library(rmarkdown)
 
 set.seed(1234)

@@ -5,63 +5,6 @@ source("../project_support.r")
 
 dir_init("./temp")
 
-d <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
-
-d$MG_og <- as.character(d$MG)
-d$MG_og[d$MG_missing == 1] <- "NA"
-d$na_col <- ifelse(d$MG_missing == 1, gray(0.3), "black")
-d$na_writing_col <- case_when(
-  d$Writing == 1 & d$MG_og %in% c("1", "NA") ~ "#d6e6a5",
-  d$Writing == 1 & d$MG_og == "0" ~ "#FFA8A0",
-  d$Writing == 0 ~ "white"
-)
-
-# calculate "time of first appearance" and subtract off
-
-NGAs_short <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain",
-  "Latium", "Middle Yellow River Valley", "Niger Inland Delta", 
-  "Orkhon Valley", "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
-
-d$time_to_first_obs <- NA
-
-for (i in 1:length(NGAs_short)) {
-  nga_rows <- which(d$NGA == NGAs_short[i])
-  nga_first_mg_row <- nga_rows[min(which(d$MG[nga_rows] == 1))]
-  d$time_to_first_obs[nga_rows] <- d$Time[nga_rows] - d$Time[nga_first_mg_row]
-}
-
-png("./temp/missingness_table.png", res = 300, units = "in", height = 5.5, width = 11)
-
-par(mar = c(5.1, 12, 4.1, 2.1))
-
-plot(1, 1, type = "n", frame.plot = FALSE,
-  xlim = c(-1010, 100), ylim = c(1, 12.5), axes = FALSE, ann = FALSE)
-axis(2, at = 12:1, labels = NGAs_short, las = 1)
-
-years <- seq(-1000, 100, by = 100)
-
-for (i in 1:length(NGAs_short)) {
-
-  my_rows <- which(d$NGA == NGAs_short[i] &
-    d$time_to_first_obs <= 100 & d$time_to_first_obs >= -1000)
-
-  for (j in 1:length(my_rows)) {
-    rect(d$time_to_first_obs[my_rows[j]] - 50, (13 - i) - 0.5, d$time_to_first_obs[my_rows[j]] + 50, (13 - i) + 0.5,
-       col = d$na_writing_col[my_rows[j]], border = NA)
-  }
-
-  text(d$time_to_first_obs[my_rows], 13 - i, labels = d$MG_og[my_rows],
-    col = d$na_col[my_rows])
-
-}
-
-abline(h = 1:13 - 0.5, col = "gray")
-
-axis(3, years)
-mtext(text = "years until first appearance of moralizing god", line = 2.3)
-
-dev.off()
-
 # load models and extract their posterior samples
 
 load("./input/m1.rdata")
@@ -137,9 +80,11 @@ rownames(x) <- varnames
 
 writeLines(texttab(x, hlines = c(1, 6)), "./temp/model2.txt")
 
-
-
 # now plot
+
+density_threshold <- 0.8
+
+d <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
 
 # add centering
 d$Mean_c <- d$Mean - 0.5
@@ -186,14 +131,11 @@ for (i in 1:nrow(counter)) {
 
 # summarize m1's posterior predictions for each case
 
-density_threshold <- 0.8
-
 d$m1_pr_mg_mean <- NA
 d$m1_pr_mg_sd <- NA
 d$m1_pr_mg_lb <- NA
 d$m1_pr_mg_ub <- NA
 d$m1_hit50 <- NA
-d$m1_hit90 <- NA
 
 for (i in 1:nrow(d)) {
   if (!is.na(d$Lag1[i]) & !is.na(d$Lag2[i])) {
@@ -210,7 +152,6 @@ for (i in 1:nrow(d)) {
     d$m1_pr_mg_lb[i] <- HPDI(pr_mg)[1]
     d$m1_pr_mg_ub[i] <- HPDI(pr_mg)[2]
     d$m1_hit50[i] <- mean(pr_mg > 0.5) > density_threshold
-    d$m1_hit90[i] <- mean(pr_mg > 0.9) > density_threshold
   }
 }
 
@@ -244,7 +185,6 @@ d$m1_alt1_pr_mg_sd <- NA
 d$m1_alt1_pr_mg_lb <- NA
 d$m1_alt1_pr_mg_ub <- NA
 d$m1_alt1_hit50 <- NA
-d$m1_alt1_hit90 <- NA
 
 for (i in 1:nrow(d)) {
   if (!is.na(d$Lag1[i]) & !is.na(d$Lag2[i])) {
@@ -261,7 +201,6 @@ for (i in 1:nrow(d)) {
     d$m1_alt1_pr_mg_lb[i] <- HPDI(pr_mg)[1]
     d$m1_alt1_pr_mg_ub[i] <- HPDI(pr_mg)[2]
     d$m1_alt1_hit50[i] <- mean(pr_mg > 0.5) > density_threshold
-    d$m1_alt1_hit90[i] <- mean(pr_mg > 0.9) > density_threshold
   }
 }
 
@@ -288,14 +227,11 @@ for (i in 1:nrow(counter)) {
 
 # summarize m1_alt2's posterior predictions for each case
 
-density_threshold <- 0.8
-
 d$m1_alt2_pr_mg_mean <- NA
 d$m1_alt2_pr_mg_sd <- NA
 d$m1_alt2_pr_mg_lb <- NA
 d$m1_alt2_pr_mg_ub <- NA
 d$m1_alt2_hit50 <- NA
-d$m1_alt2_hit90 <- NA
 
 for (i in 1:nrow(d)) {
   if (!is.na(d$Lag1[i]) & !is.na(d$Lag2[i])) {
@@ -312,10 +248,8 @@ for (i in 1:nrow(d)) {
     d$m1_alt2_pr_mg_lb[i] <- HPDI(pr_mg)[1]
     d$m1_alt2_pr_mg_ub[i] <- HPDI(pr_mg)[2]
     d$m1_alt2_hit50[i] <- mean(pr_mg > 0.5) > density_threshold
-    d$m1_alt2_hit90[i] <- mean(pr_mg > 0.9) > density_threshold
   }
 }
-
 
 # create a three-panel plot including each alternative
 
@@ -393,8 +327,6 @@ dev.off()
 
 # plot predictions from m2, which could not see the MG that are NA
 
-density_threshold <- 0.8
-
 counter$m2_pr_mg_mean <- NA
 counter$m2_pr_mg_sd <- NA
 counter$m2_pr_mg_lb <- NA
@@ -434,7 +366,6 @@ d$m2_pr_mg_sd <- NA
 d$m2_pr_mg_lb <- NA
 d$m2_pr_mg_ub <- NA
 d$m2_hit50 <- NA
-d$m2_hit90 <- NA
 
 for (i in 1:nrow(d)) {
   if (d$NGA[i] %in% NGAs_m2) {
@@ -455,7 +386,6 @@ for (i in 1:nrow(d)) {
   d$m2_pr_mg_lb[i] <- HPDI(pr_mg)[1]
   d$m2_pr_mg_ub[i] <- HPDI(pr_mg)[2]
   d$m2_hit50[i] <- mean(pr_mg > 0.5) > density_threshold
-  d$m2_hit90[i] <- mean(pr_mg > 0.9) > density_threshold
 }
 
 
@@ -466,13 +396,21 @@ NGAs_short <- c("Upper Egypt", "Susiana", "Konya Plain",
   "Latium", "Deccan", "Paris Basin", "Orkhon Valley",
   "Kansai", "Niger Inland Delta")
 
+# this should be put earlier in the script...add it to regression prep?
+d$time_to_first_obs <- NA
+
+for (i in 1:length(NGAs_short)) {
+  nga_rows <- which(d$NGA == NGAs_short[i])
+  nga_first_mg_row <- nga_rows[min(which(d$MG[nga_rows] == 1))]
+  d$time_to_first_obs[nga_rows] <- d$Time[nga_rows] - d$Time[nga_first_mg_row]
+}
+
+
 # define the evidence threshold for "first appearance" analysis
 
 nga_dat <- data.frame(NGA = NGAs_short)
 nga_dat$m1_year_appear_50 <- NA
-nga_dat$m1_year_appear_90 <- NA
 nga_dat$m2_year_appear_50 <- NA
-nga_dat$m2_year_appear_90 <- NA
 
 for (i in 1:nrow(nga_dat)) {
   dn <- d[which(d$NGA == nga_dat$NGA[i] & d$time_to_first_obs < 0), ]
@@ -480,15 +418,8 @@ for (i in 1:nrow(nga_dat)) {
     hit_rows <- which(dn$m1_hit50 == 1)
     nga_dat$m1_year_appear_50[i] <- min(dn$time_to_first_obs[hit_rows])
   }
-  if (any(dn$m1_hit90 == 1, na.rm = TRUE)) {
-    hit_rows <- which(dn$m1_hit90 == 1)
-    nga_dat$m1_year_appear_90[i] <- min(dn$time_to_first_obs[hit_rows])
-  }
   if (any(dn$m2_hit50 == 1)) {
     nga_dat$m2_year_appear_50[i] <- min(dn$time_to_first_obs[dn$m2_hit50 == 1])
-  }
-  if (any(dn$m2_hit90 == 1)) {
-    nga_dat$m2_year_appear_90[i] <- min(dn$time_to_first_obs[dn$m2_hit90 == 1])
   }
 }
 

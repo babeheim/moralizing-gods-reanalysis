@@ -81,8 +81,8 @@ Panel (A) Estimated relationship between the probability of MGs being observed a
 ![Contrasts between model predictions with imputed data and reanalysis using actual data](./output/m2_predictions_fig2_combined.png)
 
 Code: 
-- [Data for A](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L328-L391)
-- [Data for B](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L392-425)
+- [Data for A](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_explore_models/explore_models.r#L328-L391)
+- [Data for B](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_explore_models/explore_models.r#L392-425)
 - [Original model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L21-L36) ([stan code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/stan/original.stan))
 - [Revised model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L127-L170) ([stan code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/stan/revised.stan))
 - [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_explore_models/explore_models.r#L490-L547)
@@ -95,7 +95,7 @@ The solid line indicates when writing and moralizing gods are first recorded in 
   <img src="./output/WritingMG.png" width="450" height="450">
 </p>
 
-[Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_MG_writing_analysis/MG_writing_analysis.R#L8-L72)
+[Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_explore_data/explore_data.R#L13-95)
 
 ### Extended Data Figure 2 | Distributions of “social complexity” score for N = 801 observations, by ‘moralizing gods’ outcome status
 
@@ -105,7 +105,7 @@ Before the regression analysis, the authors re-coded the 490 “unknown” cases
   <img src="./output/barbell.png" height="600">
 </p>
 
-[Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_draw_missingness/draw_missingness.r#L7-L66)
+[Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_explore_data/explore_data.r#L171-L222)
 
 ### Extended Data Figure 3 | Effect of small corrections to forward bias
 
@@ -116,11 +116,12 @@ Social complexity (SC) before and after the appearance of moralizing gods. Zero 
 </p>
 
 Code:
-- [Panel A for t-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.R#L360-L583)
-- [Panel A for t-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.R#L708-L928)
-- [Panel B for t-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.R#L586-L622)
-- [Panel B for t-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/forward_bias_correction.R#L931-L968)
+- [Panel A for t-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.R#L360-L583)
+- [Panel A for t-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.R#L708-L928)
+- [Panel B for t-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.R#L586-L622)
+- [Panel B for t-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.R#L931-L968)
 
+(UPDATE THE LINE REFS here!)
 
 ## Key Findings of Reanalysis, Supplementary Material
 
@@ -138,7 +139,7 @@ Code:
 
 ### Figure S1 | Social complexity scores for n = 864 observations in the full Seshat dataset plotted against log-population sizes
 
-Social complexity scores for n = 864 observations in the full Seshat dataset plotted against log-population sizes, with best-fit line (Pearson’s r = 0.94) and shading indicating whether the MG outcome variable has known or missing values.
+Social complexity scores for n = 864 observations in the full Seshat dataset plotted against log-population sizes, with best-fit line (Pearson’s r = 0.93) and shading indicating whether the MG outcome variable has known or missing values.
 
 <p align="center">
   <img src="./output/sc_pop.png" width="600" height="600">
@@ -146,8 +147,8 @@ Social complexity scores for n = 864 observations in the full Seshat dataset plo
 
 Code:
 
-- [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_draw_missingness/draw_missingness.r#L272-L297)
-- [Pearson's r](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_draw_missingness/draw_missingness.r#L104)
+- [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_explore_data/explore_data.r#L253-279)
+- [Pearson's r](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_explore_data/explore_data.r#L261)
 
 As illustrated in Fig. S1A, societies increased their complexity on average by 39% within 100 years before the appearance of MGs while the average between-century increase in SC for the preceding 700 years was approximately 7%.
 
@@ -197,7 +198,7 @@ Scatter and density plots of the rate of SC change for each NGA. The black horiz
 
 ![Testing the assumption of data independence across NGAs](./output/NGA_nesting.png)
 
-[Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L172-L206)
+[Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.R#L535-L570)
 
 ### Figure S4 | Q-Q plots of standardized residuals (0-1) for gaussian and beta models
 
@@ -226,7 +227,7 @@ Revised logistic regression estimates for the presence or absence of moralizing 
 Code:
 
 - [Model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L132-L169)
-- [Table](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L120-L138)
+- [Table](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_explore_models/explore_models.r#L63-L81)
 
 ### Figure S5 | Posterior predictions for the probability of moralizing gods present by year
 
@@ -236,8 +237,8 @@ Posterior predictions for the probability of moralizing gods present by year for
 
 Code:
 
-- [Analysis](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L462-L493)
-- [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L522-L541)
+- [Analysis](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_explore_models/explore_models.r#L328-L389)
+- [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_explore_models/explore_models.r#L453-L474)
 
 ### Table S3 | Regression estimates for the presence/absence of moralizing gods under three “missingness regimes”
 
@@ -250,7 +251,7 @@ Code:
 - [Original model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L21-L36)
 - [Alternative model 1](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L38-L83)
 - [Alternative model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L85-L130)
-- [Table](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L65-L118)
+- [Table](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_explore_models/explore_models.r#L65-L118)
 
 ### Figure S6 | Estimated relationship between the probability of moral gods being observed and social complexity
 
@@ -260,8 +261,7 @@ Estimated relationship between the probability of moral gods being observed and 
 
 Code:
 - [Original model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L21-L36) ([stan code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/stan/original.stan))
-- [Alternative model 1](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L38-L83)
-- [Alternative model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L85-L130)
-- [Counterfactual estimates for sc/mg relationship](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L154-L317)
-- [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_draw_new_figures/draw_new_figures.r#L320-L391)
-
+- [Alternative model 1](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L38-L84)
+- [Alternative model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L86-L125)
+- [Counterfactual estimates for sc/mg relationship](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_explore_models/explore_models.r#L111-L253)
+- [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_explore_models/explore_models.r#L256-L325)

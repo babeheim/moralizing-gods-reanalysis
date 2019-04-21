@@ -185,10 +185,10 @@ n_known_absent <- sum(dm$MG == 0 & dm$MG_known == 1)
 n_unknown <- sum(dm$MG_known == 0)
 
 # 801 in the original analysis
-# expect_equal(nrow(dm), 751)
-# expect_equal(n_known_present, 249)
-# expect_equal(n_known_absent, 12)
-# expect_equal(n_unknown, 490)
+expect_equal(nrow(dm), 801)
+expect_equal(n_known_present, 299)
+expect_equal(n_known_absent, 12)
+expect_equal(n_unknown, 490)
 
 expect_true(abs(cor(dm$MG_known, dm$MG) - 0.97) < 0.01)
 

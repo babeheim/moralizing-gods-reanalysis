@@ -6,6 +6,8 @@ dir_init("./temp")
 
 ######
 
+print("Load regression dataset")
+
 d <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
 
 
@@ -95,17 +97,16 @@ ggplot(MGwriting, aes(x = `Writing First Recorded`, y = `Moralizing Gods First R
 ggsave("./temp/WritingMG.png",width = 6,height = 5.5, dpi = 300)
 
 
+print("show transition to MG = 1 in 12 NGAs")
 
-d$MG_og <- as.character(d$MG)
-d$MG_og[d$MG_missing == 1] <- "NA"
-d$na_col <- ifelse(d$MG_missing == 1, gray(0.3), "black")
-d$na_writing_col <- case_when(
-  d$Writing == 1 & d$MG_og %in% c("1", "NA") ~ "#d6e6a5",
-  d$Writing == 1 & d$MG_og == "0" ~ "#FFA8A0",
+d$MG_original <- as.character(d$MG)
+d$MG_original[d$MG_missing == 1] <- "NA"
+d$text_color <- ifelse(d$MG_missing == 1, gray(0.3), "black")
+d$cell_color <- case_when(
+  d$Writing == 1 & d$MG_original %in% c("1", "NA") ~ "#d6e6a5",
+  d$Writing == 1 & d$MG_original == "0" ~ "#FFA8A0",
   d$Writing == 0 ~ "white"
 )
-
-print("show transition to MG = 1 in 12 NGAs")
 
 # calculate "time of first appearance" and subtract off
 
@@ -137,12 +138,17 @@ for (i in 1:length(NGAs_short)) {
     d$time_to_first_obs <= 100 & d$time_to_first_obs >= -1000)
 
   for (j in 1:length(my_rows)) {
-    rect(d$time_to_first_obs[my_rows[j]] - 50, (13 - i) - 0.5, d$time_to_first_obs[my_rows[j]] + 50, (13 - i) + 0.5,
-       col = d$na_writing_col[my_rows[j]], border = NA)
+    rect(
+      d$time_to_first_obs[my_rows[j]] - 50,
+      (13 - i) - 0.5,
+      d$time_to_first_obs[my_rows[j]] + 50,
+      (13 - i) + 0.5,
+      col = d$cell_color[my_rows[j]], border = NA
+    )
   }
 
-  text(d$time_to_first_obs[my_rows], 13 - i, labels = d$MG_og[my_rows],
-    col = d$na_col[my_rows])
+  text(d$time_to_first_obs[my_rows], 13 - i, labels = d$MG_original[my_rows],
+    col = d$text_color[my_rows])
 
 }
 
@@ -156,9 +162,6 @@ dev.off()
 
 
 print("show MG missingness pattern by SC")
-
-d$key <- paste(d$PolID, d$Time)
-sort(unique(d$key[duplicated(d$key)]))
 
 d$MG_known <- 1 - d$MG_missing
 
@@ -175,10 +178,6 @@ dm <- d[, c("NGA", "OriginalNGA", "Writing", "PolPop", "MG", "Mean", "Lag1", "La
 # drop cases to create publication dataset
 drop <- which(is.na(dm$Lag1) | is.na(dm$Lag2))
 dm <- dm[-drop, ]
-
-# drop the bad rows accidentally given wrong NGA
-# drop <- which(dm$NGA != dm$OriginalNGA)
-# dm <- dm[-drop, ]
 
 n_known_present <- sum(dm$MG == 1)
 n_known_absent <- sum(dm$MG == 0 & dm$MG_known == 1)
@@ -223,58 +222,58 @@ dev.off()
 
 
 
-print("calc descriptives")
+print("calculate descriptives")
 
 # calc missingness patterns
 
 m1 <- lm(PolPop ~ MG_known, data = dm)
 
-pop1 <- 10^(coef(m1)[1] + coef(m1)[2] * 1) # 2.7 million people
+pop1 <- 10^(coef(m1)[1] + coef(m1)[2] * 1) # 3.9 million people
 pop0 <- 10^(coef(m1)[1] + coef(m1)[2] * 0) # 7756 ppl
 
-# expect_true(abs(pop1 - 2760593) < 10000)
-# expect_true(abs(pop0 - 7756) < 100)
+expect_true(abs(pop1 - 3891008) < 10000)
+expect_true(abs(pop0 - 7756) < 100)
 
-m2 <- glm(Writing ~ MG_known, data = dm, family = "binomial")
+m2 <- glm(MG_known ~ Writing, data = dm, family = "binomial")
 
-pr_read1 <- logistic(coef(m2)[1] + coef(m2)[2]) # 0.94
-pr_read0 <- logistic(coef(m2)[1]) # 0.18
+table(d$MG_known, d$Writing)
 
-exp(coef(m2)[2]) # OR: 64
+pr_read1 <- logistic(coef(m2)[1] + coef(m2)[2]) # 0.77
+pr_read0 <- logistic(coef(m2)[1]) # 0.03
+
+exp(coef(m2)[2]) # OR: 99
 
 m3 <- lm(PolPop ~ Mean, data = dm)
 
-10^(coef(m1)[1] + coef(m1)[2] * 0.2) # 25k
-10^(coef(m1)[1] + coef(m1)[2] * 0.4) # 81k
-10^(coef(m1)[1] + coef(m1)[2] * 0.6) # 263k
+10^(coef(m1)[1] + coef(m1)[2] * 0.2) # 27k
+10^(coef(m1)[1] + coef(m1)[2] * 0.4) # 93k
+10^(coef(m1)[1] + coef(m1)[2] * 0.6) # 323k
 
 
 
 print("make a population vs social complexity figure with missigness shading")
 
-# expect_equal(nrow(dm), 751)
+expect_equal(nrow(dm), 801)
 
 dm$logPop <- dm$PolPop
 
 dm$na_col <- ifelse(dm$MG_known == 0, "gray", "black")
 
-cor(dm$Mean, dm$logPop) # 0.93
+cor(dm$Mean, dm$logPop) # 0.94
 
 png("./temp/sc_pop.png", res = 300, units = "in", height = 5, width = 5)
 
-# plot
-
-plot(dm$Mean, dm$logPop, col = col_alpha(dm$na_col, 0.8), pch = 16,
+plot(dm$Mean, dm$logPop, col = col_alpha(dm$na_col, 0.7), pch = 16,
   xlim = c(0, 1), xlab = "social complexity",
   ylab = "log10 population", ylim = c(1.5, 8.5), frame.plot = FALSE)
 
 abline(lm(logPop ~ Mean, data = dm), lty = 2)
 
-rect(0.05, 6, 0.35, 7.5)
-points(0.1, 7, col = "black", pch = 20)
-text(0.1, 7, label = "observed", col = "black", pos = 4)
-points(0.1, 6.5, col = "gray", pch = 20)
-text(0.1, 6.5, label = "missing", col = gray(0.4), pos = 4)
+rect(0.00, 6, 0.4, 7.5)
+points(0.05, 7, col = "black", pch = 20)
+text(0.05, 7, label = "has MG data", col = "black", pos = 4)
+points(0.05, 6.5, col = "gray", pch = 20)
+text(0.05, 6.5, label = "MG unknown", col = gray(0.4), pos = 4)
 
 dev.off()
 

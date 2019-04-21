@@ -5,7 +5,10 @@ source("../project_support.r")
 
 dir_init("./temp")
 
-# load models and extract their posterior samples
+#####
+
+
+print("load models and extract their posterior samples")
 
 load("./input/m1.rdata")
 m1_post <- extract.samples(m1)
@@ -19,7 +22,9 @@ m1_alt2_post <- extract.samples(m1_alt2)
 load("./input/m2.rdata")
 m2_post <- extract.samples(m2)
 
-# make m1 tables
+
+
+print("make m1 tables")
 
 varnames <- c("Intercept", "Social Complexity", "Lag1", "Lag2",
   "Phylogeny", "Space", "N", "Deviance")
@@ -60,7 +65,9 @@ rownames(x) <- varnames
 
 writeLines(texttab(x, hlines = c(1, 7)), "./temp/model1_variations.txt")
 
-# now table for m2
+
+
+print("make m2 tables")
 
 varnames <- c("Intercept", "Social Complexity", "Phylogeny",
   "Space", "NGA Varying Effect", "N", "Deviance")
@@ -80,7 +87,9 @@ rownames(x) <- varnames
 
 writeLines(texttab(x, hlines = c(1, 6)), "./temp/model2.txt")
 
-# now plot
+
+
+print("calculate posterior predictions and counterfactual predictions")
 
 density_threshold <- 0.8
 
@@ -251,7 +260,9 @@ for (i in 1:nrow(d)) {
   }
 }
 
-# create a three-panel plot including each alternative
+
+
+print("create a three-panel plot including each alternative")
 
 png("./temp/alternative_missingness.png", res = 300,
   height = 3, width = 8, units = "in")
@@ -273,12 +284,11 @@ for (i in 1:nrow(d)) lines(c(d$Mean_c[i], d$Mean_c[i]),
 
 points(d$Mean_c, d$m1_pr_mg_mean, pch = 16, col = d$na_col, cex = 0.6)
 
-points(-0.45, 0.9, col = "firebrick", pch = 20)
-text(-0.45, 0.9, "originally NA", col = "firebrick", pos = 4)
+points(-0.45, 0.8, col = "firebrick", pch = 20)
+text(-0.45, 0.8, "no MG data", col = "firebrick", pos = 4)
 
-points(-0.45, 0.8, col = "dodgerblue", pch = 20)
-text(-0.45, 0.8, "known outcome", col = "dodgerblue", pos = 4)
-
+points(-0.45, 0.7, col = "dodgerblue", pch = 20)
+text(-0.45, 0.7, "has MG data", col = "dodgerblue", pos = 4)
 
 plot(counter$Mean_c, counter$m1_alt1_pr_mg_mean, ylim = c(0, 1), type = "l",
   ylab = "pr(moralizing gods)", xlab = "social complexity",
@@ -290,16 +300,18 @@ polygon(c(counter$Mean_c, rev(counter$Mean_c)),
 axis(1, at = seq(0, 1, by = 0.2) - 0.5,
   labels = seq(0, 1, by = 0.2))
 
-for (i in 1:nrow(d)) lines(c(d$Mean_c[i], d$Mean_c[i]),
-  c(d$m1_alt1_pr_mg_lb[i], d$m1_alt1_pr_mg_ub[i]), col = col_alpha(d$na_col[i], 0.05))
+for (i in 1:nrow(d)) {
+  lines(c(d$Mean_c[i], d$Mean_c[i]), c(d$m1_alt1_pr_mg_lb[i],
+    d$m1_alt1_pr_mg_ub[i]), col = col_alpha(d$na_col[i], 0.05))
+}
 
 points(d$Mean_c, d$m1_alt1_pr_mg_mean, pch = 16, col = d$na_col, cex = 0.6)
 
 points(0, 0.3, col = "firebrick", pch = 20)
-text(0, 0.3, "originally NA", col = "firebrick", pos = 4)
+text(0, 0.3, "no MG data", col = "firebrick", pos = 4)
 
 points(0, 0.2, col = "dodgerblue", pch = 20)
-text(0, 0.2, "known outcome", col = "dodgerblue", pos = 4)
+text(0, 0.2, "has MG data", col = "dodgerblue", pos = 4)
 
 plot(counter$Mean_c, counter$m1_alt2_pr_mg_mean, ylim = c(0, 1), type = "l",
   ylab = "pr(moralizing gods)", xlab = "social complexity",
@@ -311,21 +323,23 @@ polygon(c(counter$Mean_c, rev(counter$Mean_c)),
 axis(1, at = seq(0, 1, by = 0.2) - 0.5,
   labels = seq(0, 1, by = 0.2))
 
-for (i in 1:nrow(d)) lines(c(d$Mean_c[i], d$Mean_c[i]),
-  c(d$m1_alt2_pr_mg_lb[i], d$m1_alt2_pr_mg_ub[i]), col = col_alpha(d$na_col[i], 0.05))
+for (i in 1:nrow(d)) {
+  lines(c(d$Mean_c[i], d$Mean_c[i]), c(d$m1_alt2_pr_mg_lb[i],
+    d$m1_alt2_pr_mg_ub[i]), col = col_alpha(d$na_col[i], 0.05))
+}
 
 points(d$Mean_c, d$m1_alt2_pr_mg_mean, pch = 16, col = d$na_col, cex = 0.6)
 
 points(0, 0.3, col = "firebrick", pch = 20)
-text(0, 0.3, "originally NA", col = "firebrick", pos = 4)
+text(0, 0.3, "no MG data", col = "firebrick", pos = 4)
 
 points(0, 0.2, col = "dodgerblue", pch = 20)
-text(0, 0.2, "known outcome", col = "dodgerblue", pos = 4)
+text(0, 0.2, "has MG data", col = "dodgerblue", pos = 4)
 
 dev.off()
 
 
-# plot predictions from m2, which could not see the MG that are NA
+print("plot predictions from m2")
 
 counter$m2_pr_mg_mean <- NA
 counter$m2_pr_mg_sd <- NA
@@ -389,14 +403,14 @@ for (i in 1:nrow(d)) {
 }
 
 
-# now predict on the focal 12 NGAs over their existences using m2
+
+print("estimate MG first emergence from model posteriors")
 
 NGAs_short <- c("Upper Egypt", "Susiana", "Konya Plain",
   "Middle Yellow River Valley", "Kachi Plain", "Sogdiana",
   "Latium", "Deccan", "Paris Basin", "Orkhon Valley",
   "Kansai", "Niger Inland Delta")
 
-# this should be put earlier in the script...add it to regression prep?
 d$time_to_first_obs <- NA
 
 for (i in 1:length(NGAs_short)) {
@@ -404,7 +418,6 @@ for (i in 1:length(NGAs_short)) {
   nga_first_mg_row <- nga_rows[min(which(d$MG[nga_rows] == 1))]
   d$time_to_first_obs[nga_rows] <- d$Time[nga_rows] - d$Time[nga_first_mg_row]
 }
-
 
 # define the evidence threshold for "first appearance" analysis
 
@@ -423,7 +436,9 @@ for (i in 1:nrow(nga_dat)) {
   }
 }
 
-# visualize each NGA seperately of the 12
+
+
+print("visualize each NGA individually")
 
 png("./temp/revised_EDfig1_m1.png", res = 300,
   height = 8, width = 10, units = "in")
@@ -473,7 +488,9 @@ for (i in 1:nrow(nga_dat)) {
 
 dev.off()
 
-# aggregate first appearance estimates for revised fig2 from paper
+
+
+print("aggregate first appearance estimates for revised fig2 from paper")
 
 SCNorm <- read.csv("./input/SCNorm.csv", stringsAsFactors = FALSE)
 data <- read.csv("./input/PrePostComparison.csv", stringsAsFactors = FALSE)
@@ -484,8 +501,6 @@ year_appear_50_se <- sd(nga_dat$m2_year_appear_50, na.rm = TRUE) /
 
 expect_true(abs(year_appear_50_mean - (-997)) < 50)
 expect_true(abs(year_appear_50_se - (200)) < 50)
-
-# combine m2 prediction figure with estimated first appearance figure
 
 png("./temp/m2_predictions_fig2_combined.png", res = 300,
   height = 5, width = 10, units = "in")

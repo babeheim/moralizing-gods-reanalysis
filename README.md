@@ -147,7 +147,7 @@ Social complexity scores for n = 864 observations in the full Seshat dataset plo
 
 Code:
 
-- [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_explore_data/explore_data.r#L253-279)
+- [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_explore_data/explore_data.r#L253-L279)
 - [Pearson's r](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_explore_data/explore_data.r#L261)
 
 As illustrated in Fig. S1A, societies increased their complexity on average by 39% within 100 years before the appearance of MGs while the average between-century increase in SC for the preceding 700 years was approximately 7%.
@@ -226,7 +226,7 @@ Revised logistic regression estimates for the presence or absence of moralizing 
 
 Code:
 
-- [Model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L132-L169)
+- [Model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L127-L170)
 - [Table](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_explore_models/explore_models.r#L63-L81)
 
 ### Figure S5 | Posterior predictions for the probability of moralizing gods present by year
@@ -249,9 +249,9 @@ Regression estimates for the presence/absence of moralizing gods under three “
 Code: 
 
 - [Original model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L21-L36)
-- [Alternative model 1](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L38-L83)
-- [Alternative model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L85-L130)
-- [Table](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_explore_models/explore_models.r#L65-L118)
+- [Alternative model 1](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L38-L84)
+- [Alternative model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L86-L125)
+- [Table](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_explore_models/explore_models.r#L22-L61)
 
 ### Figure S6 | Estimated relationship between the probability of moral gods being observed and social complexity
 

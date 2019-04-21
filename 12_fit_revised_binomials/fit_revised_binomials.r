@@ -6,19 +6,23 @@ dir_init("./temp")
 
 ############
 
-# load the data
+print("load the regression data frame")
 
 d <- read.csv("./input/RegrDat.csv", stringsAsFactors = FALSE)
 
 # add centering
 d$Mean_c <- d$Mean - 0.5
 
-# compile the stan models
+
+
+print("compile the stan models")
 
 m1_bin <- stan_model(file = "./stan/original.stan")
 m2_bin <- stan_model(file = "./stan/revised.stan")
 
-# fit the original model, with NA's as 0's
+
+
+print("fit the original model, with NA's as 0's")
 
 dm <- d[, c("MG", "Mean_c", "Lag1", "Lag2", "Phylogeny", "Space")]
 
@@ -35,7 +39,9 @@ m1 <- sampling(m1_bin, data = dm)
 
 save(m1, file = "./temp/m1.rdata")
 
-# re-impute NAs according to 96% rule and fit again
+
+
+print("re-impute NAs at observed rate and fit again")
 
 dm <- d[, c("NGA", "MG", "Mean_c", "Lag1", "Lag2",
   "Phylogeny", "Space", "MG_missing")]
@@ -49,8 +55,8 @@ mg_known <- sum(dm$MG_missing == 0)
 mg_missing <- sum(dm$MG_missing == 1)
 missing_rows <- which(dm$MG_missing == 1)
 
-expect_equal(mg_known_present, 218)
-expect_equal(mg_known, 229)
+expect_equal(mg_known_present, 299)
+expect_equal(mg_known, 311)
 
 imputation_prob <- mg_known_present / mg_known # occurance of 1's in known data
 
@@ -83,7 +89,9 @@ m1_alt1 <- sampling(m1_bin, data = dm)
 
 save(m1_alt1, file = "./temp/m1_alt1.rdata")
 
-# re-impute NAs according to 50/50 rule and fit again
+
+
+print("re-impute NAs using coin flip and fit again")
 
 dm <- d[, c("NGA", "MG", "Mean_c", "Lag1", "Lag2",
   "Phylogeny", "Space", "MG_missing")]
@@ -124,7 +132,9 @@ m1_alt2 <- sampling(m1_bin, data = dm)
 
 save(m1_alt2, file = "./temp/m1_alt2.rdata")
 
-# now analyze complete cases only; drop the NA's!
+
+
+print("analyze complete cases only with revised model")
 
 dm <- d[, c("NGA", "MG", "Mean_c", "Phylogeny", "Space", "MG_missing")]
 
@@ -132,7 +142,7 @@ dm <- d[, c("NGA", "MG", "Mean_c", "Phylogeny", "Space", "MG_missing")]
 drop <- which(dm$MG_missing == 1)
 dm <- dm[-drop, ]
 
-# expect_equal(nrow(dm), 336)
+expect_equal(nrow(dm), 336)
 # 311 cases are left from the 801 originally
 # but 25 more because we don't have to drop Lag1 = NA cases
 
@@ -165,9 +175,30 @@ save(m2, file = "./temp/m2.rdata")
 
 dm <- d[, c("MG", "Mean_c", "Phylogeny", "Space")]
 
-m2_alt <- sampling(m2_bin, data = dm)
 
-save(m2_alt2, file = "./temp/m2_alt1.rdata")
+
+print("fit revised model to original data")
+
+dm <- d[, c("NGA", "MG", "Mean_c", "Lag1", "Lag2", "Phylogeny", "Space")]
+
+drop <- which(is.na(dm$Lag1) | is.na(dm$Lag2))
+if (length(drop) > 0) dm <- dm[-drop, ]
+
+expect_equal(nrow(dm), 801)
+
+NGAs <- sort(unique(dm$NGA))
+dm$nga <- match(dm$NGA, NGAs)
+
+dm <- as.list(dm)
+dm$N <- length(dm$MG)
+dm$N_nga <- length(unique(dm$nga))
+
+expect_equal(length(unique(dm$nga)), 28)
+
+m2_alt1 <- sampling(m2_bin, data = dm)
+
+save(m2_alt1, file = "./temp/m2_alt1.rdata")
+
 
 ############
 

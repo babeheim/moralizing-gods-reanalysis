@@ -238,8 +238,13 @@ m2 <- glm(MG_known ~ Writing, data = dm, family = "binomial")
 
 table(d$MG_known, d$Writing)
 
-pr_read1 <- logistic(coef(m2)[1] + coef(m2)[2]) # 0.77
-pr_read0 <- logistic(coef(m2)[1]) # 0.03
+pr_missing1 <- logistic(coef(m2)[1] + coef(m2)[2]) # 0.77
+pr_missing0 <- logistic(coef(m2)[1]) # 0.03
+
+m3 <- glm(Writing ~ MG_known, data = dm, family = "binomial")
+
+pr_read1 <- logistic(coef(m3)[1] + coef(m3)[2]) # 0.95
+pr_read0 <- logistic(coef(m3)[1]) # 0.17
 
 exp(coef(m2)[2]) # OR: 99
 

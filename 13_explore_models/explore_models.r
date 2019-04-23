@@ -22,6 +22,8 @@ m1_alt2_post <- extract.samples(m1_alt2)
 load("./input/m2.rdata")
 m2_post <- extract.samples(m2)
 
+load("./input/m2_alt1.rdata")
+m2_alt1_post <- extract.samples(m2_alt1)
 
 
 print("make m1 tables")
@@ -35,7 +37,7 @@ dev <- sprintf("%.1f", -2 * mean(m1_post$lp__))
 est <- sprintf("%.2f",  unlist(lapply(m1_post, mean))[parnames])
 se <- sprintf("%.2f", sqrt(unlist(lapply(m1_post, var))[parnames]))
 estse <- paste0(est, " (", se, ")")
-psigns <- c("-", psign(m1_post$b_sc), psign(m1_post$b_l1),
+psigns <- c(psign(m1_post$a), psign(m1_post$b_sc), psign(m1_post$b_l1),
   psign(m1_post$b_l2), psign(m1_post$b_ph), psign(m1_post$b_sp))
 x <- data.frame(m1_est = c(estse, n, dev), m1_psigns = c(psigns, "", ""))
 
@@ -44,7 +46,7 @@ dev <- sprintf("%.1f", -2 * mean(m1_alt1_post$lp__))
 est <- sprintf("%.2f",  unlist(lapply(m1_alt1_post, mean))[parnames])
 se <- sprintf("%.2f", sqrt(unlist(lapply(m1_alt1_post, var))[parnames]))
 estse <- paste0(est, " (", se, ")")
-psigns <- c("-", psign(m1_alt1_post$b_sc), psign(m1_alt1_post$b_l1),
+psigns <- c(psign(m1_alt1_post$a), psign(m1_alt1_post$b_sc), psign(m1_alt1_post$b_l1),
   psign(m1_alt1_post$b_l2), psign(m1_alt1_post$b_ph), psign(m1_alt1_post$b_sp))
 x$alt1_est <- c(estse, n, dev)
 x$alt1_psigns <- c(psigns, "", "")
@@ -54,7 +56,7 @@ dev <- sprintf("%.1f", -2 * mean(m1_alt2_post$lp__))
 est <- sprintf("%.2f",  unlist(lapply(m1_alt2_post, mean))[parnames])
 se <- sprintf("%.2f", sqrt(unlist(lapply(m1_alt2_post, var))[parnames]))
 estse <- paste0(est, " (", se, ")")
-psigns <- c("-", psign(m1_alt2_post$b_sc), psign(m1_alt2_post$b_l1),
+psigns <- c(psign(m1_alt2_post$a), psign(m1_alt2_post$b_sc), psign(m1_alt2_post$b_l1),
   psign(m1_alt2_post$b_l2), psign(m1_alt2_post$b_ph), psign(m1_alt2_post$b_sp))
 x$alt2_est <- c(estse, n, dev)
 x$alt2_psigns <- c(psigns, "", "")
@@ -78,11 +80,21 @@ dev <- sprintf("%.1f", -2 * mean(m2_post$lp__))
 est <- sprintf("%.2f",  unlist(lapply(m2_post, mean))[parnames])
 se <- sprintf("%.2f", sqrt(unlist(lapply(m2_post, var))[parnames]))
 estse <- paste0(est, " (", se, ")")
-psigns <- c("-", psign(m2_post$b_sc), psign(m2_post$b_ph),
+psigns <- c(psign(m2_post$a), psign(m2_post$b_sc), psign(m2_post$b_ph),
   psign(m2_post$b_sp), "-")
 x <- data.frame(m1_est = c(estse, n, dev), m1_psigns = c(psigns, "", ""))
 
-colnames(x) <- c("Est. (SE)", "P(sign)")
+n <- ncol(m2_alt1_post$p)
+dev <- sprintf("%.1f", -2 * mean(m2_alt1_post$lp__))
+est <- sprintf("%.2f",  unlist(lapply(m2_alt1_post, mean))[parnames])
+se <- sprintf("%.2f", sqrt(unlist(lapply(m2_alt1_post, var))[parnames]))
+estse <- paste0(est, " (", se, ")")
+psigns <- c(psign(m2_alt1_post$a), psign(m2_alt1_post$b_sc), psign(m2_alt1_post$b_ph),
+  psign(m2_alt1_post$b_sp), "-")
+x$m2_est <- c(estse, n, dev)
+x$m2_psigns <- c(psigns, "", "")
+
+colnames(x) <- c("Est. (SE)", "P(sign)", "Est. (SE)", "P(sign)")
 rownames(x) <- varnames
 
 writeLines(texttab(x, hlines = c(1, 6)), "./temp/model2.txt")

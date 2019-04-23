@@ -1,11 +1,27 @@
 
-rm(list = ls())
+# Note that comments in the text starting with #??OUR_COMMENT are our new comments.
+# We left all the all comments in the text as well. 
 
-source("../project_support.r")
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+### 1. Load libraries and data ####
 
-dir_init("./temp")
 
+# This section loads data on polities, their social complexity (SC),
+# and the presence moralizing gods (MG).
+
+{
+  rm(list = ls())
+  
+  source("../project_support.r")
+  
+  dir_init("./temp")
+  
 polities <- read.csv("./input/polities.csv", header = TRUE)
+
+#New scripts for automated analysis of rates of change in social complexity pre/post
+# moralising gods/doctrinal mode/writing
+
+#dat <- read.table("PC1_traj_merged.csv", sep=",", header=TRUE) #?? everything is here
 dat <- read.csv("./input/PC1_traj_merged.csv", stringsAsFactors = FALSE)
 
 dat$NGA<-as.character(dat$NGA)
@@ -17,6 +33,7 @@ NGAs <- NGAs[NGAs != "Galilee"]
 # models (they will serve as nesting factors) 
 dat$World.Region <- as.factor(dat$World.Region)
 dat$Family <- as.factor(dat$Family)
+}
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ### 1.1. MG data for +/- 2000 SC analysis ####
@@ -26,7 +43,7 @@ dat$Family <- as.factor(dat$Family)
   NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
             "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
             "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
-  dat.MG <- dat.MG[dat$NGA %in% NGAs,]
+  dat.MG <- dat.MG[dat.MG$NGA %in% NGAs,]
   
   ##?OUR_COMMENT:: turn the absence of evidence into the evidence of absence
   dat.MG$MoralisingGods[is.na(dat.MG$MoralisingGods)] <- 0
@@ -209,7 +226,7 @@ dat.MG <- dat
 NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
           "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
           "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
-dat.MG <- dat.MG[dat$NGA %in% NGAs,]
+dat.MG <- dat.MG[dat.MG$NGA %in% NGAs,]
 
 ##?OUR_COMMENT:: turn the absence of evidence into the evidence of absence
 dat.MG$MoralisingGods[is.na(dat.MG$MoralisingGods)] <- 0
@@ -289,82 +306,6 @@ dat.MG$MoralisingGods[dat.MG$Time>600] <- 1
 dat.MG.700 <- dat.MG
 }
 
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 1.3. Writing data for +/- 700 SC analysis ####
-
-{
-##?OUR_COMMENT:: first, select the 12 NGAs they work with
-dat.W <- dat
-NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
-          "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
-          "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
-dat.W <- dat.W[dat$NGA %in% NGAs,]
-
-dat.W$Writing[is.na(dat.W$Writing)] <- 0
-dat.W$Writing <- as.factor(dat.W$Writing)
-
-
-##?OUR_COMMENT:: Standardize Time for each NGA to start with 0 (no matter whether the dates
-# are BCE or CE)
-
-for(i in 1:length(NGAs)){
-  dt <- dat.W[dat.W$NGA == NGAs[i],]
-  mt <- min(dt$Time)
-  if(mt >= 0){
-    dat.W$Time[dat.W$NGA == NGAs[i]] <- dat.W$Time[dat.W$NGA == NGAs[i]]-mt}
-  else if(mt < 0){ 
-    dat.W$Time[dat.W$NGA == NGAs[i]] <- dat.W$Time[dat.W$NGA == NGAs[i]]+abs(mt)
-  }
-}
-
-dat.W$NGA <- as.factor(dat.W$NGA)
-
-##?OUR_COMMENT::
-# We have to censor the data to the +/- 700 years interval Pre- and Post-Writing.
-
-dat.W$Time[dat.W$NGA == "Deccan" & (dat.W$Time > 3000)] <- 
-  dat.W$Time[dat.W$NGA == "Deccan" & (dat.W$Time > 3000)] - 100
-dat.W$Time[dat.W$NGA == "Deccan" & (dat.W$Time > 3600)] <- 
-  dat.W$Time[dat.W$NGA == "Deccan" & (dat.W$Time > 3600)] - 100
-
-dat.W$Time[dat.W$NGA == "Paris Basin" & (dat.W$Time > 3500)] <- 
-  dat.W$Time[dat.W$NGA == "Paris Basin" & (dat.W$Time > 3500)] - 100
-
-##?OUR_COMMENT:: Ok, we can continue
-censor = 750 ##?OUR_COMMENT:: censor the data to +/- 7 centuries
-
-for(i in 1:length(NGAs)){
-  dt <- dat.W[dat.W$NGA == NGAs[i],]
-  W <-subset(dt,Writing=="1")
-  WAppear<-subset(W, Time==min(Time))
-  t <- WAppear$Time
-  t1 <- t-censor
-  t2 <- t+censor-100
-  if (min(dat.W$Time[dat.W$NGA == NGAs[i]], na.rm = T) < t1){
-    dat.W$Time[dat.W$NGA == NGAs[i] & (dat.W$Time < t1)] <- NA}
-  if (max(dat.W$Time[dat.W$NGA == NGAs[i]], na.rm = T) > t2){ 
-    dat.W$Time[dat.W$NGA == NGAs[i] & (dat.W$Time > t2)] <- NA}
-}
-dat.W <- dat.W[!is.na(dat.W$Time),]
-
-##?OUR_COMMENT:: Make Time series at each NGA to start with 0 and end with 1300
-# (14 centuries of data = +/- 700 years)
-
-for(i in 1:length(NGAs)){
-  dt <- dat.W[dat.W$NGA == NGAs[i],]
-  m <- max(dt$Time, na.rm=T)
-  dat.W$Time[dat.W$NGA == NGAs[i]] <- dat.W$Time[dat.W$NGA == NGAs[i]] - (m+100)
-  dat.W$Time[dat.W$NGA == NGAs[i]] <- dat.W$Time[dat.W$NGA == NGAs[i]] + 1400}
-
-##?OUR_COMMENT:: OK, now all sites acquire MG at year 700, so our data have 7 centuries
-# before and 7 centuries after MG
-
-##?OUR_COMMENT:: Now, let's assume that MGs were present at all sites after their first
-# detection (assumption of the t-test analysis presented in section 1.4)
-
-dat.W$Writing[dat.W$Time>600] <- 1
-
-}
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 ## 2. SC growth plot ####
@@ -377,7 +318,9 @@ dat.W$Writing[dat.W$Time>600] <- 1
 # However, please keep in mind that these are just raw data, not taking into account the
 # various nesting effects. We will explore those below.
 
-ggplot(dat.MG.700, aes(Time, Mean, color=MoralisingGods)) + 
+dat.p <- dat.MG.700
+  
+ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) + 
   stat_summary(fun.data=mean_se, geom="pointrange") + 
   scale_color_manual(values = alpha(c("coral1","aquamarine3"), .8), labels = c("NA", "Present"),
                      name = "Moralizing Gods") + 
@@ -385,10 +328,11 @@ ggplot(dat.MG.700, aes(Time, Mean, color=MoralisingGods)) +
                      breaks = c(0,200,400,600,700,800,1000,1200,1400),
                      labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
   geom_vline(xintercept = 650,
-             color = "grey", size=10, alpha = 0.5) + 
+             color = "grey", size=9, alpha = 0.3) + 
   annotate("text", label = "", x = 650, y = 0.35, size = 4, colour = "black", angle = 90) +
   labs(y="Social Complexity", x="Time (years before/after MG)") + 
   ylim(c(0.1,1)) +
+  ggtitle("") +
   theme_bw() + 
   theme(
     panel.border = element_blank(),
@@ -407,7 +351,7 @@ ggplot(dat.MG.700, aes(Time, Mean, color=MoralisingGods)) +
     plot.margin=unit(c(1,1,1,1),"cm")) 
 
 ##?OUR_COMMENT:: Save the plot if needed
-ggsave("./temp/PrePost_MG.png",width = 6,height = 5.5, dpi = 300)
+ggsave("./hierarchical_models_output/PrePost_MG.png",width = 6,height = 6, dpi = 300)
 
 ##?OUR_COMMENT:: Compute the between-century rate of SC change before MGs
 MG.change <- ((mean(dat.MG.700$Mean[dat.MG.700$Time == (700)], na.rm = T)/
@@ -421,24 +365,29 @@ for(i in 1:6){
 
 cbind(MG.change,mean(change, na.rm = T))
 
-##?OUR_COMMENT:: Let's look also at the appearance of writing and whether it will correspond
-# to the same sudden jump in SC.
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 2.1. SC by writing +/- 700 ####
+### 2.2. Unconcquered SC by MGs +/- 700 ####
 
-ggplot(dat.W, aes(Time, Mean, color=Writing)) + 
-  stat_summary(fun.data=mean_se, geom="pointrange", shape=17) + 
-  scale_color_manual(values = alpha(c("darkviolet","deepskyblue"), .8),
-                     labels = c("Missing", "Present"), name = "Writing") + 
+NGAs.unconq <- c("Kansai", "Konya Plain", "Latium", "Paris Basin", 
+                 "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
+                 "Susiana", "Upper Egypt")
+dat.p <- dat.MG.700[dat.MG.700$NGA %in% NGAs.unconq,]
+
+ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) + 
+  stat_summary(fun.data=mean_se, geom="pointrange", shape=18) + 
+  scale_color_manual(values = alpha(c("coral1","aquamarine3"), .8), labels = c("NA", "Present"),
+                     name = "Moralizing Gods") + 
   scale_x_continuous(limits = c(0,1400),
                      breaks = c(0,200,400,600,700,800,1000,1200,1400),
                      labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
   geom_vline(xintercept = 650,
-             color = "grey", size=10, alpha = 0.5) + 
-  annotate("text", label = "", x = 650, y = 0.35, size = 4, colour = "black", angle = 90) +
-  labs(y="Social Complexity", x="Time (years before/after writing)") + 
+             color = "grey", size=6, alpha = 0.3) + 
+  annotate("text", label = "MGs emerge", x = 650, y = 0.3, size = 4, colour = "black",
+           angle = 90, alpha = 0.7) +
+  labs(y="Social Complexity", x="Time (years before/after MG)") + 
   ylim(c(0.1,1)) +
+  ggtitle("") +
   theme_bw() + 
   theme(
     panel.border = element_blank(),
@@ -446,7 +395,7 @@ ggplot(dat.W, aes(Time, Mean, color=Writing)) +
     panel.grid.minor = element_blank(),
     plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
     axis.line = element_line(colour = "black"),
-    legend.position = c(0.35,0.95),
+    legend.position = "",
     legend.justification = c("right", "top"),
     legend.key.size = unit(0.8, "cm"),
     legend.title = element_text(size = rel(1.5)),
@@ -456,10 +405,56 @@ ggplot(dat.W, aes(Time, Mean, color=Writing)) +
     axis.text.x= element_text(size = rel(1.5)),
     plot.margin=unit(c(1,1,1,1),"cm")) 
 
-##?OUR_COMMENT:: Save if needed
-ggsave("./temp/PrePost_Writing.png",width = 6,height = 5.5, dpi = 300)
+##?OUR_COMMENT:: Save the plot if needed
+ggsave("./hierarchical_models_output/PrePost_MG_unconq.png",width = 5.5,height = 3.7, dpi = 300)
+
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+### 2.3. Concquered SC by MGs +/- 700 ####
+
+NGAs.conq <- c("Deccan","Kachi Plain", 
+              "Sogdiana")
+dat.p <- dat.MG.700[dat.MG.700$NGA %in% NGAs.conq,]
+
+ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) + 
+  stat_summary(fun.data=mean_se, geom="pointrange", shape=17) + 
+  scale_color_manual(values = alpha(c("coral1","aquamarine3"), .8), labels = c("NA", "Present"),
+                     name = "Moralizing Gods") + 
+  scale_x_continuous(limits = c(0,1400),
+                     breaks = c(0,200,400,600,700,800,1000,1200,1400),
+                     labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
+  geom_vline(xintercept = 650,
+             color = "grey", size=6, alpha = 0.3) + 
+  annotate("text", label = "MGs via conquest", x = 650, y = 0.38, size = 4, colour = "black",
+           angle = 90, alpha = 0.3) +
+  labs(y="Social Complexity", x="Time (years before/after MG)") + 
+  ylim(c(0.1,1)) +
+  ggtitle("") +
+  theme_bw() + 
+  theme(
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
+    axis.line = element_line(colour = "black"),
+    legend.position = "",
+    legend.justification = c("right", "top"),
+    legend.key.size = unit(0.8, "cm"),
+    legend.title = element_text(size = rel(1.5)),
+    legend.text = element_text(size = rel(1.2)),
+    axis.title = element_text(size = rel(1.5)),
+    axis.text.y= element_text(size = rel(1.5)),
+    axis.text.x= element_text(size = rel(1.5)),
+    plot.margin=unit(c(1,1,1,1),"cm")) 
+
+##?OUR_COMMENT:: Save the plot if needed
+ggsave("./hierarchical_models_output/PrePost_MG_conq.png",width = 5.5,height = 3.7, dpi = 300)
 
 
+##?OUR_COMMENT:: Calculate SC increases for conquered NGAs
+dat.MG.700$Mean[dat.MG.700$NGA=="Deccan"]
+
+mean(dat.MG.700$Mean[dat.MG.700$Time==700],na.rm = T)/
+  mean(dat.MG.700$Mean[dat.MG.700$Time==600],na.rm = T)
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 ## 3. LMMs of rate of SC change ####
@@ -542,7 +537,7 @@ NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
 
 out.s <- out.s[out.s$NGA %in% NGAs,]
 
-png("./temp/NGA_nesting.png",width = 8,height = 5.5,units = 'in', res = 300)
+png("./hierarchical_models_output/NGA_nesting.png",width = 8,height = 5.5,units = 'in', res = 300)
 pirateplot(formula = Rate ~ NGA,
            data = out.s,
            theme = 0,
@@ -569,10 +564,6 @@ pirateplot(formula = Rate ~ NGA,
 abline(0.0002511869,0.00, )
 dev.off()
 
-ggplot() + 
-  
-  geom_smooth(data = dat.MG.2000, aes(Time, Mean, group = NGA, color = NGA)) +
-  geom_smooth(data = dat.MG.2000, aes(Time, Mean), method = "lm")
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ### 3.3. Linear models of the rate of change ####
@@ -601,11 +592,11 @@ summary(lm3 <- lmer(Rate ~ prepost + (prepost|NGA) + (1|Region),data = out.s))
   # but in combination with the varying effects of pre-post showed a minor influence.
 
 ##?OUR_COMMENT:: Let's check the model fit.
-
+print("For explanation of this warning, see the code")
 simulationOutput = simulateResiduals(lm3)
-png("./temp/qq1.png",width = 8,height = 5, units = 'in', res = 300)
+#png("./hierarchical_models_output/qq1.png",width = 8,height = 5, units = 'in', res = 300)
 plot(simulationOutput)
-dev.off()
+#dev.off()
 testUniformity(simulationOutput = simulationOutput)
 testDispersion(simulationOutput = simulationOutput)
 
@@ -708,6 +699,7 @@ ci <- (cbind(est = (plogis(cf)-0.5), LL = (plogis(cf - 1.96 * se)-0.5),
              UL = (plogis(cf + 1.96 * se)-0.5)))
 ci[1,] <- (ci[1,]+0.5)
 
+print("Beta model for MG = 0 with +/-2000 time-span")
 print(ci)
 ci[2,1]+ci[4,1] ##?OUR_COMMENT:: Post-MG slope
 
@@ -717,10 +709,11 @@ ci[2,1]+ci[4,1] ##?OUR_COMMENT:: Post-MG slope
 summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region),
                           data = dat.MG.2000, family = 'beta'))
 
+print("For explanation of this warning, see the code")
 simulationOutput = simulateResiduals(glm.b3)
-png("./temp/qq3.png",width = 8,height = 5, units = 'in', res = 300)
+#png("./hierarchical_models_output/qq3.png",width = 8,height = 5, units = 'in', res = 300)
 plot(simulationOutput)
-dev.off()
+#dev.off()
 testUniformity(simulationOutput = simulationOutput)
 testDispersion(simulationOutput = simulationOutput)
 
@@ -785,6 +778,7 @@ ci <- (cbind(est = (plogis(cf)-0.5), LL = (plogis(cf - 1.96 * se)-0.5),
              UL = (plogis(cf + 1.96 * se)-0.5)))
 ci[1,] <- (ci[1,]+0.5)
 
+print("Beta model for MG = 0 with +/-700 time-span")
 print(ci)
 
 ##?OUR_COMMENT:: Let's explore goodness-of-fit measures.
@@ -795,6 +789,7 @@ print(ci)
 summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region),
                           data = dat.MG.700, family = 'beta'))
 
+print("For explanation of this warning, see the code")
 simulationOutput = simulateResiduals(glm.b3)
 #png("./temp/qq2.png",width = 7,height = 5, units = 'in', res = 300)
 plot(simulationOutput)
@@ -851,6 +846,8 @@ ci <- (cbind(est = (plogis(cf)-0.5), LL = (plogis(cf - 1.96 * se)-0.5),
              UL = (plogis(cf + 1.96 * se)-0.5)))
 ci[1,] <- (ci[1,]+0.5)
 
+print("Beta model for MG - 100 with +/-2000 time-span")
+print(ci)
 ##?OUR_COMMENT:: Again, we see an opposite trend than reported by Whitehouse et al.
 
 #______________________________________________________________________________________________
@@ -893,6 +890,9 @@ se <- sqrt(diag(vcov(glm.b3)))
 ci <- (cbind(est = (plogis(cf)-0.5), LL = (plogis(cf - 1.96 * se)-0.5),
              UL = (plogis(cf + 1.96 * se)-0.5)))
 ci[1,] <- (ci[1,]+0.5)
+print("Beta model for MG - 300 with +/-2000 time-span")
+print(ci)
+
 
 dir_init("./output")
 

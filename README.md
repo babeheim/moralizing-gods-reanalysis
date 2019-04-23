@@ -149,18 +149,13 @@ Code:
 - [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_explore_data/explore_data.r#L253-L279)
 - [Pearson's r](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_explore_data/explore_data.r#L261)
 
-As illustrated in Fig. S1A, societies increased their complexity on average by 39% within 100 years before the appearance of MGs while the average between-century increase in SC for the preceding 700 years was approximately 7%.
-
-Code:
-
-- Complexity 100 years before appearance of MGs:
-- Between-century increase in SC for the preceding 700 years:
 
 Using the same analytical techniques as in the original paper (which we consider inappropriate, see below), the paired t-test now shows that MGs positively predict the rise in the rate of SC (t = 4.04, df = 201, P < 0.001) -- not a drop in the rate of SC as Whitehouse et. al. find.
 
 Code:
 - [Original paired t-test](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/04_prep_comparisons/prep_comparisons.r#L144)
 - [New paired t-test for MG-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L349-L421)
+
 
 Furthermore, moving the first MGs appearance 300 years back (still a very conservative estimate, see Fig. 1B), the rise in the rate of SC change after the appearance of MGs is even stronger (t = 5.48, df = 199, P < 0.001).
 
@@ -170,64 +165,62 @@ Code:
 
 However, for 11 out of 12 NGAs, MGs were always detected in Seshat during the first century of the polity’s existence, so any random placing of MGs within the polity time-span would always make the first appearance of MG more recent, i.e. only worsening the forward bias.
 
-- [Random placing of MGs within polity ] (https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L301-L319)
+Code:
+- [Random placing of MGs within polity ](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L301-L319)
+
 
 As illustrated in Fig. S2A, societies increased their complexity on average by 39% within the 100 years just before the appearance of MGs while the average between-century increase in SC for the preceding 700 years was approximately 7%.
 
 Code:
-- [Complexity 100 years before appearance of MGs] (https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L416-L417)
-- [Between-century increase in SC for the preceding 700 years] (https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L419-L425)
-
+- [Complexity 100 years before appearance of MGs](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L416-L417)
+- [Between-century increase in SC for the preceding 700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L419-L425)
 
 
 ### Figure S2 | Social complexity before and after the appearance of moralizing gods.
 
 Dots represent mean social complexity (SC) collapsed across NGAs. Bars represent +/- SE. The x-axis represents centered time before/after the presumed appearance of MGs at each NGA. Note that 0 on this axis represents widely disparate times, ranging from 2900 BCE to 1100 CE. A. The plot shows that MGs can be detected in the archaeo-historical records just after a sudden jump in social complexity that represents the smallest temporal unit in Whitehouse, et al.’s analysis (one century). B. The sudden jump in social complexity just before the appearance of MGs may be partially explained by the fact that 3 NGAs (Deccan, Kachi Plain, Sogdiana) were coded as having MGs only after these NGAs were integrated into larger empires with millions of inhabitants that already had MGs (upper figure in Panel B). The remaining NGAs (n = 9) that did not explicitly acquire MGs through the conquest of a larger empire (lower figure in Panel B) show a steady rise in social complexity. 
 
-
 <p align="center">
-  <img src="./output/SC_by_PrePostMG.png" width="750" height="750">
+  <img src="./output/SC_by_PrePostMG.png" width="750" height="450">
 </p>
 
-
 Code:
-
 - [Panel A](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/ fit_hierarchical_models.r#L372-L414)
 - [Panel B](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L431-L509)
+
+
 To test the robustness of Whitehouse et al.’s results, we also performed the same paired t-test analysis on the reduced sample of nine NGAs that did not acquire MGs via conquest. The results revealed that the five-fold higher rates of SC change between Pre- and Post-MGs reported by Whitehouse et al. decreased only to a two-fold higher rate of SC change (t = -5.28, df = 141, P < 0.001).
 
 Code:
-
-
-- [New t-test for unconquered NGAs] (https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L1079-L1135)
-- [Rate of increase change] (https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#1137)
-
+- [New t-test for unconquered NGAs](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L1079-L1135)
+- [Rate of increase change](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#1137)
 
 
 Furthermore, correcting the forward bias by 100 years indicates that this result is no longer significant at the conventional alpha levels (t = -0.68, df = 142, P = 0.498) and the correction for 300 years again reverses Whitehouse et al.’s main claim: the Post-MGs rate of SC change is 1.8 the size of the Pre-MG rate of SC change (t = 4.16, df = 143, P < 0.001).
 
-- [New t-test for unconquered NGAs for MG-100] (https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L1148-L1213)
-- [New t-test for unconquered NGAs for MG-300] (https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#1227-L1293)
+Code:
+- [New t-test for unconquered NGAs for MG-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L1148-L1213)
+- [New t-test for unconquered NGAs for MG-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#1227-L1293)
+
 
 Note that the degrees of freedom for the t-test analyses in this paragraph differ due to differential rates of available data across the nine NGAs outside the original +/- 2000 years interval (see Supplementary R code).  
 
-- [Data for MG=0] (https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L212-213)
-- [Data for MG-100] (https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L429-430)
-- [Data for MG-300] (https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L784-785)
+Code:
+- [Data for MG=0](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L212-213)
+- [Data for MG-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L429-430)
+- [Data for MG-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L784-785)
 
 
 The computed rates of SC change included 400 data points (i.e., 200 Pre-MG time-points and 200 Post-MG time-points), but ignored the fact that these data points are nested within 12 focal NGAs from which some NGAs have more observations than others (ranging from 0 to 13 missing centuries per NGA).
 
 Code:
 - [Number of data points](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L212-213)
-
-- [Missing data across NGAs] (https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L222-227)
-
+- [Missing data across NGAs](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L222-227)
 
 
 This approach severely violates the assumption of independence53 and artificially inflates the degrees of freedom for the t-test. In our view, the data have at least two hierarchical levels corresponding to their nesting within NGAs and their further nesting within world regions. We built a linear mixed model accounting for this nesting structure; however, the goodness-of-fit assessment of this model revealed severe deviation from the normality assumption (see Supplementary R code for diagnostic checks and plots).
 
-
+Code:
 - [Data dependence plot](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/ fit_hierarchical_models.r#L645)
 - [LMM](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/ fit_hierarchical_models.r#L655-L660)
 - [Goodness of fit of LMM](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/ fit_hierarchical_models.r#L655-L660)
@@ -239,18 +232,19 @@ Estimates from beta regressions were back-transformed from the logit link. Time 
 
 Code:
 - [Model MG 0](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L744-745)
-
-- [Model MG -300]:(https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L930-931)
-
-
-However, when running the same model only for the +/- 700 period (analogous to Whitehouse et al. robustness checks), we found that the Post-MG growth was indeed significantly lower [estimated slope difference per century = -0.0002, 95% CI = [-0.0004, -0.00003]), a result that qualitatively corresponds to the paired t-test Whitehouse et al. report.
-
-- [Model for +/-700]:(https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L820-821)
+- [Model MG -300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L930-931)
 
 
-We observed a similar interaction trend for MGs shifted only 100 years back, albeit the 95% CI crosses zero [estimated slope difference per millenium = 0.032, 95% CI = [-0.019, 0.082]).
+However, when running the same model only for the +/- 700 period (analogous to Whitehouse et al. robustness checks), we found that the Post-MG growth was indeed significantly lower (estimated slope difference per century = -0.0002, 95% CI = (-0.0004, -0.00003)), a result that qualitatively corresponds to the paired t-test Whitehouse et al. report.
 
-- [Model MG-100]:(https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L888-889)
+Code:
+- [Model for +/-700](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L820-821)
+
+
+We observed a similar interaction trend for MGs shifted only 100 years back, albeit the 95% CI crosses zero (estimated slope difference per millenium = 0.032, 95% CI = (-0.019, 0.082)).
+
+Code:
+- [Model MG-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_causal_analysis/hierarchical_models.R#L888-889)
 
 
 ### Table S2 | Revised logistic regression estimates for the presence or absence of moralizing gods in the reduced dataset

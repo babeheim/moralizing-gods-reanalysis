@@ -15,8 +15,7 @@
   
   source("../project_support.r")
   
-  dir_init("./temp")
-  
+  dir_init("./forward_bias_output"); dir_init("./temp")
   polities <- read.csv("./input/polities.csv", header = TRUE)
   
   #New scripts for automated analysis of rates of change in social complexity pre/post
@@ -1252,6 +1251,6 @@ out.na %>% group_by(NGA) %>% summarise(length(Difference))
 
 dir_init("./output")
 
-files <- list.files("./temp", full.names = TRUE)
+files <- list.files("./forward_bias_output", full.names = TRUE)
 file.copy(files, "./output")
 

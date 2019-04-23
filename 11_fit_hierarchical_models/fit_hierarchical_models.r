@@ -14,8 +14,7 @@
   
   source("../project_support.r")
   
-  dir_init("./temp")
-  
+  dir_init("./hierarchical_models_output")
 polities <- read.csv("./input/polities.csv", header = TRUE)
 
 #New scripts for automated analysis of rates of change in social complexity pre/post
@@ -896,5 +895,5 @@ print(ci)
 
 dir_init("./output")
 
-files <- list.files("./temp", full.names = TRUE)
+files <- list.files("./hierarchical_models_output", full.names = TRUE)
 file.copy(files, "./output")

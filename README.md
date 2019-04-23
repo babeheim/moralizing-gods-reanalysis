@@ -200,15 +200,15 @@ Furthermore, correcting the forward bias by 100 years indicates that this result
 
 Code:
 - [New t-test for unconquered NGAs for MG-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L1099-L1165)
-- [New t-test for unconquered NGAs for MG-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#1178-L1245)
+- [New t-test for unconquered NGAs for MG-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L1178-L1245)
 
 
 Note that the degrees of freedom for the t-test analyses in this paragraph differ due to differential rates of available data across the nine NGAs outside the original +/- 2000 years interval (see Supplementary R code).  
 
 Code:
-- [Data for MG=0](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L1095-1096)
-- [Data for MG-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L1174-1175)
-- [Data for MG-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L1250-1251)
+- [Data for MG=0](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L1095-L1096)
+- [Data for MG-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L1174-L1175)
+- [Data for MG-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L1250-L1251)
 
 
 The computed rates of SC change included 400 data points (i.e., 200 Pre-MG time-points and 200 Post-MG time-points), but ignored the fact that these data points are nested within 12 focal NGAs from which some NGAs have more observations than others (ranging from 0 to 13 missing centuries per NGA).

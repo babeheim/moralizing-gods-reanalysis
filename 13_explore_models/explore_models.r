@@ -511,7 +511,7 @@ year_appear_50_mean <- mean(nga_dat$m2_year_appear_50, na.rm = TRUE)
 year_appear_50_se <- sd(nga_dat$m2_year_appear_50, na.rm = TRUE) /
   sqrt(sum(!is.na(nga_dat$m2_year_appear_50)))
 
-expect_true(abs(year_appear_50_mean - (-997)) < 50)
+expect_true(abs(year_appear_50_mean - (-950)) < 50)
 expect_true(abs(year_appear_50_se - (200)) < 50)
 
 png("./temp/m2_predictions_fig2_combined.png", res = 300,

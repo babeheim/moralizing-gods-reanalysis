@@ -62,6 +62,7 @@ imputation_prob <- mg_known_present / mg_known # occurance of 1's in known data
 
 # re-impute missing MG data
 
+set.seed(1234)
 dm$MG[missing_rows] <- rbinom(mg_missing, 1, prob = imputation_prob)
 
 # recalculate lag terms accordingly
@@ -105,6 +106,7 @@ imputation_prob <- 0.5 # principle of indifference
 
 # re-impute missing MG data
 
+set.seed(1234)
 dm$MG[missing_rows] <- rbinom(mg_missing, 1, prob = imputation_prob)
 
 # recalculate lag terms accordingly

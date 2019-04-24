@@ -15,7 +15,7 @@
   
   source("../project_support.r")
   
-  dir_init("./forward_bias_output"); dir_init("./temp")
+  dir_init("./temp")
   polities <- read.csv("./input/polities.csv", header = TRUE)
   
   #New scripts for automated analysis of rates of change in social complexity pre/post
@@ -129,7 +129,7 @@ write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
 # pre/post moralizing gods (<750) or # out to use full time-window
 
-write.csv(out, file="./forward_bias_output/EqualRates.csv",  row.names=FALSE)
+write.csv(out, file="./temp/EqualRates.csv",  row.names=FALSE)
 
 ##?OUR_COMMENT:: Here is another problem. Whitehouse et al. claim that all 12 key NGAs have data
   # for the +/- 700 years analysis. Yet, looking into EqualRates.csv revealed that Deccan has
@@ -208,7 +208,7 @@ ggplot() +
 
 
 ##?OUR_COMMENT:: If needed, save the plot
-ggsave("./forward_bias_output/Histogram_MG0.png",width = 4,height = 2.7, dpi = 300)
+ggsave("./temp/Histogram_MG0.png",width = 4,height = 2.7, dpi = 300)
 
 #______________________________________________________________________________________________
 #### 1.4.2 700 years ####
@@ -363,7 +363,7 @@ dat.cor$Time[dat.cor$NGA == "Paris Basin" & (dat.cor$Time > 300)] <-
   
   out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
   #pre/post moralizing gods (<750) or 2050 out to use full time-window
-  write.csv(out, file="./forward_bias_output/EqualRates_FB_100.csv",  row.names=FALSE)
+  write.csv(out, file="./temp/EqualRates_FB_100.csv",  row.names=FALSE)
   
 
 ##?OUR_COMMENT:: Result for +/- 2000 years Pre/Post-MG with MG appearance shifted
@@ -430,7 +430,7 @@ dat.cora<-read.table("./temp/PrePostComparisonFull.csv", sep=",", header=TRUE)
 dat.cora<-as.data.frame(dat.cora)
 dat.cora$Difference<-dat.cora[,2]-dat.cora[,3]
 dat.cora[,2:6]<-dat.cora[,2:6]*1000
-write.csv(dat.cora, file="./forward_bias_output/PrePostComparisonFull.csv",  row.names=FALSE)
+write.csv(dat.cora, file="./temp/PrePostComparisonFull.csv",  row.names=FALSE)
 
 #Full values for matching pre-/post-NGAs
 out <-subset(out, out[,6]<1000) #Removing windows without matching pre-/post-MG rates
@@ -486,7 +486,7 @@ dat.cora<-read.table("./temp/PrePostComparison.csv", sep=",", header=TRUE)
 dat.cora<-as.data.frame(dat.cora)
 dat.cora$Difference<-dat.cora[,2]-dat.cora[,3]
 dat.cora[,c(2:5,16)]<-dat.cora[,c(2:5,16)]*1000
-write.csv(dat.cora, file="./forward_bias_output/PrePostComparison.csv",  row.names=FALSE)
+write.csv(dat.cora, file="./temp/PrePostComparison.csv",  row.names=FALSE)
 
 ######Normalize time-series centered around moralising god appearance
 
@@ -509,10 +509,10 @@ for(i in 1:length(NGAs)){
 }
 
 out$MGUncertainty<-out$End-out$Start
-write.csv(out, file="./forward_bias_output/TimeNorm.csv",  row.names=FALSE) 
+write.csv(out, file="./temp/TimeNorm.csv",  row.names=FALSE) 
 
 #Merge Normalized times
-dat.cor <- read.table("./forward_bias_output/TimeNorm.csv", sep=",", header=TRUE)
+dat.cor <- read.table("./temp/TimeNorm.csv", sep=",", header=TRUE)
 out<-unique(dat.cor$Time.norm)
 
 #library(dplyr) ##Bugs when I load dplyr and plyr (even when only loading dplyr after plyr)!
@@ -527,11 +527,11 @@ MeanPCs<-out[,2:(1+length(NGAs))]
 out$Mean <- apply(MeanPCs,1,mean,na.rm=TRUE)
 out$Lower <- out$Mean - 1.96*apply(MeanPCs,1, std.error,na.rm=TRUE)
 out$Upper <- out$Mean + 1.96*apply(MeanPCs,1, std.error,na.rm=TRUE)
-write.csv(out, file="./forward_bias_output/SCNorm.csv",  row.names=FALSE) 
+write.csv(out, file="./temp/SCNorm.csv",  row.names=FALSE) 
 
 {
   #plot normalized times
-  FullImpdat.cor<-read.csv('./forward_bias_output/SCNorm.csv', header=TRUE)
+  FullImpdat.cor<-read.csv('./temp/SCNorm.csv', header=TRUE)
   
   
   #data <- FullImpdat.cor
@@ -579,7 +579,7 @@ write.csv(out, file="./forward_bias_output/SCNorm.csv",  row.names=FALSE)
   col3<-rgb(24,176,232,max=255,alpha=200)
 }
 
-png("./forward_bias_output/Fig2A_MG100.png",width = 6,height = 5.5,units = 'in', res = 300)
+png("./temp/Fig2A_MG100.png",width = 6,height = 5.5,units = 'in', res = 300)
 
 plot(x, y, ylim=ylim, xlim=xlim, pch=pch, cex=cex, xaxt=xaxt,
      ann=ann, yaxt=yaxt,type=type,xaxs=xaxs,yaxs=yaxs)
@@ -644,7 +644,7 @@ ggplot() +
 
 
 ##?OUR_COMMENT:: If needed, save the plot
-ggsave("./forward_bias_output/Histogram_MG100.png",width = 4,height = 2.7, dpi = 300)
+ggsave("./temp/Histogram_MG100.png",width = 4,height = 2.7, dpi = 300)
 
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -721,7 +721,7 @@ ggsave("./forward_bias_output/Histogram_MG100.png",width = 4,height = 2.7, dpi =
   
   out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
   #pre/post moralizing gods (<750) or 2050 out to use full time-window
-  write.csv(out, file="./forward_bias_output/EqualRates_FB_300.csv",  row.names=FALSE)
+  write.csv(out, file="./temp/EqualRates_FB_300.csv",  row.names=FALSE)
   
   
 ##?OUR_COMMENT:: Result for +/- 2000 years Pre/Post-MG with MG appearance shifted
@@ -785,7 +785,7 @@ dat.cora<-read.table("./temp/PrePostComparisonFull.csv", sep=",", header=TRUE)
 dat.cora<-as.data.frame(dat.cora)
 dat.cora$Difference<-dat.cora[,2]-dat.cora[,3]
 dat.cora[,2:6]<-dat.cora[,2:6]*1000
-write.csv(dat.cora, file="./forward_bias_output/PrePostComparisonFull.csv",  row.names=FALSE)
+write.csv(dat.cora, file="./temp/PrePostComparisonFull.csv",  row.names=FALSE)
 
 #Full values for matching pre-/post-NGAs
 out <-subset(out, out[,6]<1000) #Removing windows without matching pre-/post-MG rates
@@ -841,7 +841,7 @@ dat.cora<-read.table("./temp/PrePostComparison.csv", sep=",", header=TRUE)
 dat.cora<-as.data.frame(dat.cora)
 dat.cora$Difference<-dat.cora[,2]-dat.cora[,3]
 dat.cora[,c(2:5,16)]<-dat.cora[,c(2:5,16)]*1000
-write.csv(dat.cora, file="./forward_bias_output/PrePostComparison.csv",  row.names=FALSE)
+write.csv(dat.cora, file="./temp/PrePostComparison.csv",  row.names=FALSE)
 
 ######Normalize time-series centered around moralising god appearance
 
@@ -864,10 +864,10 @@ for(i in 1:length(NGAs)){
 }
 
 out$MGUncertainty<-out$End-out$Start
-write.csv(out, file="./forward_bias_output/TimeNorm.csv",  row.names=FALSE) 
+write.csv(out, file="./temp/TimeNorm.csv",  row.names=FALSE) 
 
 #Merge Normalized times
-dat.cor <- read.table("./forward_bias_output/TimeNorm.csv", sep=",", header=TRUE)
+dat.cor <- read.table("./temp/TimeNorm.csv", sep=",", header=TRUE)
 out<-unique(dat.cor$Time.norm)
 
 #library(dplyr) ##Bugs when I load dplyr and plyr (even when only loading dplyr after plyr)!
@@ -882,11 +882,11 @@ MeanPCs<-out[,2:(1+length(NGAs))]
 out$Mean <- apply(MeanPCs,1,mean,na.rm=TRUE)
 out$Lower <- out$Mean - 1.96*apply(MeanPCs,1, std.error,na.rm=TRUE)
 out$Upper <- out$Mean + 1.96*apply(MeanPCs,1, std.error,na.rm=TRUE)
-write.csv(out, file="./forward_bias_output/SCNorm.csv",  row.names=FALSE) 
+write.csv(out, file="./temp/SCNorm.csv",  row.names=FALSE) 
 
 {
   #plot normalized times
-  FullImpdat.cor<-read.csv('./forward_bias_output/SCNorm.csv', header=TRUE)
+  FullImpdat.cor<-read.csv('./temp/SCNorm.csv', header=TRUE)
   
   
   #data <- FullImpdat.cor
@@ -932,7 +932,7 @@ write.csv(out, file="./forward_bias_output/SCNorm.csv",  row.names=FALSE)
   col2<-rgb(207,58,58,max=255,alpha=200)
   col3<-rgb(24,176,232,max=255,alpha=200)
 }
-png("./forward_bias_output/Fig2A_MG300.png",width = 6,height = 5.5,units = 'in', res = 300)
+png("./temp/Fig2A_MG300.png",width = 6,height = 5.5,units = 'in', res = 300)
 
 ##?OUR_COMMENT:: Had to take the doctrinal rituals shading out, it coverd the shifted MGs
 
@@ -997,7 +997,7 @@ ggplot() +
 
 
 ##?OUR_COMMENT:: If needed, save the plot
-ggsave("./forward_bias_output/Histogram_MG300.png",width = 4,height = 2.7, dpi = 300)
+ggsave("./temp/Histogram_MG300.png",width = 4,height = 2.7, dpi = 300)
 
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1080,7 +1080,7 @@ write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
 # pre/post moralizing gods (<750) or # out to use full time-window
 
-write.csv(out, file="./forward_bias_output/EqualRates_uncq.csv",  row.names=FALSE)
+write.csv(out, file="./temp/EqualRates_uncq.csv",  row.names=FALSE)
 
 print("Unconquered NGAs t-test for MG = 0 with +/-2000 time-span")
 print(t.test(out[,3], out[,2],paired=TRUE))
@@ -1155,7 +1155,7 @@ out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 
 out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
-write.csv(out, file="./forward_bias_output/EqualRates_uncq_FB_100.csv",  row.names=FALSE)
+write.csv(out, file="./temp/EqualRates_uncq_FB_100.csv",  row.names=FALSE)
 
 
 ##?OUR_COMMENT:: Result for +/- 2000 years Pre/Post-MG with MG appearance shifted
@@ -1235,7 +1235,7 @@ out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 
 out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
-write.csv(out, file="./forward_bias_output/EqualRates_uncq_FB_300.csv",  row.names=FALSE)
+write.csv(out, file="./temp/EqualRates_uncq_FB_300.csv",  row.names=FALSE)
 
 
 ##?OUR_COMMENT:: Result for +/- 2000 years Pre/Post-MG with MG appearance shifted
@@ -1251,6 +1251,6 @@ out.na %>% group_by(NGA) %>% summarise(length(Difference))
 
 dir_init("./output")
 
-files <- list.files("./forward_bias_output", full.names = TRUE)
+files <- list.files("./temp", full.names = TRUE)
 file.copy(files, "./output")
 

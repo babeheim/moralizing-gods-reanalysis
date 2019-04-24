@@ -14,7 +14,7 @@
   
   source("../project_support.r")
   
-  dir_init("./hierarchical_models_output")
+  dir_init("./temp")
 polities <- read.csv("./input/polities.csv", header = TRUE)
 
 #New scripts for automated analysis of rates of change in social complexity pre/post
@@ -350,7 +350,7 @@ ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) +
     plot.margin=unit(c(1,1,1,1),"cm")) 
 
 ##?OUR_COMMENT:: Save the plot if needed
-ggsave("./hierarchical_models_output/PrePost_MG.png",width = 6,height = 6, dpi = 300)
+ggsave("./temp/PrePost_MG.png",width = 6,height = 6, dpi = 300)
 
 ##?OUR_COMMENT:: Compute the between-century rate of SC change before MGs
 MG.change <- ((mean(dat.MG.700$Mean[dat.MG.700$Time == (700)], na.rm = T)/
@@ -405,7 +405,7 @@ ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) +
     plot.margin=unit(c(1,1,1,1),"cm")) 
 
 ##?OUR_COMMENT:: Save the plot if needed
-ggsave("./hierarchical_models_output/PrePost_MG_unconq.png",width = 5.5,height = 3.7, dpi = 300)
+ggsave("./temp/PrePost_MG_unconq.png",width = 5.5,height = 3.7, dpi = 300)
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ### 2.3. Concquered SC by MGs +/- 700 ####
@@ -446,7 +446,7 @@ ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) +
     plot.margin=unit(c(1,1,1,1),"cm")) 
 
 ##?OUR_COMMENT:: Save the plot if needed
-ggsave("./hierarchical_models_output/PrePost_MG_conq.png",width = 5.5,height = 3.7, dpi = 300)
+ggsave("./temp/PrePost_MG_conq.png",width = 5.5,height = 3.7, dpi = 300)
 
 
 ##?OUR_COMMENT:: Calculate SC increases for conquered NGAs
@@ -536,7 +536,7 @@ NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
 
 out.s <- out.s[out.s$NGA %in% NGAs,]
 
-png("./hierarchical_models_output/NGA_nesting.png",width = 8,height = 5.5,units = 'in', res = 300)
+png("./temp/NGA_nesting.png",width = 8,height = 5.5,units = 'in', res = 300)
 pirateplot(formula = Rate ~ NGA,
            data = out.s,
            theme = 0,
@@ -593,7 +593,7 @@ summary(lm3 <- lmer(Rate ~ prepost + (prepost|NGA) + (1|Region),data = out.s))
 ##?OUR_COMMENT:: Let's check the model fit.
 print("For explanation of this warning, see the code")
 simulationOutput = simulateResiduals(lm3)
-#png("./hierarchical_models_output/qq1.png",width = 8,height = 5, units = 'in', res = 300)
+#png("./temp/qq1.png",width = 8,height = 5, units = 'in', res = 300)
 plot(simulationOutput)
 #dev.off()
 testUniformity(simulationOutput = simulationOutput)
@@ -710,7 +710,7 @@ summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Reg
 
 print("For explanation of this warning, see the code")
 simulationOutput = simulateResiduals(glm.b3)
-#png("./hierarchical_models_output/qq3.png",width = 8,height = 5, units = 'in', res = 300)
+#png("./temp/qq3.png",width = 8,height = 5, units = 'in', res = 300)
 plot(simulationOutput)
 #dev.off()
 testUniformity(simulationOutput = simulationOutput)
@@ -895,5 +895,5 @@ print(ci)
 
 dir_init("./output")
 
-files <- list.files("./hierarchical_models_output", full.names = TRUE)
+files <- list.files("./temp", full.names = TRUE)
 file.copy(files, "./output")

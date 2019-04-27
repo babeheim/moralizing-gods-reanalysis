@@ -6,7 +6,6 @@
 ### 1. Original Whitehouse et al. code ####
 
 #### 1.1 Load data ####
-
 # This section loads data on polities, their social complexity (SC),
 # and the presence moralizing gods (MG).
 

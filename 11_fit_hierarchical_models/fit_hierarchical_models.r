@@ -450,10 +450,10 @@ ggsave("./temp/PrePost_MG_conq.png",width = 5.5,height = 3.7, dpi = 300)
 
 
 ##?OUR_COMMENT:: Calculate SC increases for conquered NGAs
-dat.MG.700$Mean[dat.MG.700$NGA=="Deccan"]
+dat.p$Mean[dat.p$NGA=="Kachi Plain"]
 
-mean(dat.MG.700$Mean[dat.MG.700$Time==700],na.rm = T)/
-  mean(dat.MG.700$Mean[dat.MG.700$Time==600],na.rm = T)
+mean(dat.p$Mean[dat.p$Time==700],na.rm = T)/
+  mean(dat.p$Mean[dat.p$Time==600],na.rm = T)
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 ## 3. LMMs of rate of SC change ####

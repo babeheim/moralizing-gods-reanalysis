@@ -1,4 +1,5 @@
 
+
 # Note that comments in the text starting with #??OUR_COMMENT are our new comments.
 # We left all the all comments in the text as well. 
 
@@ -6,6 +7,7 @@
 ### 1. Original Whitehouse et al. code ####
 
 #### 1.1 Load data ####
+
 # This section loads data on polities, their social complexity (SC),
 # and the presence moralizing gods (MG).
 

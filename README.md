@@ -61,7 +61,7 @@ logistic regressions:
 
 ### Table 1 | Moralizing gods across 12 regions in Seshat
 
-![Moralizing gods across 12 regions in Seshat.](./output/missingness_table.png.png)
+![Moralizing gods across 12 regions in Seshat.](./output/missingness_table.png)
 Here, a ‘1’ indicates MGs are known to be present in the century-by-century data, ‘0’ that they are known to be absent. An ‘NA’ refers to missing MG data in the authors’ dataset. Only one of the 30 world regions includes a known absence preceding an MG presence (Middle Yellow River Valley, red), data we dispute as miscoded based on expert-generated data (Supplemental S4). Generally, MGs appear in Seshat simultaneously with or after the appearance of writing (green), contra ethnographic records of MGs in non-literate societies (also see Extended Data Figure 1).
 
 [Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_explore_data/explore_data.r#L125-L160)

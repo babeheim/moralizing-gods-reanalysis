@@ -117,17 +117,10 @@ Code:
 
 ## Key Findings of Reanalysis, Supplementary Material
 
-Of the 22 societies observed over 399 cumulative centuries at an SC < 0.4, only 3 are coded with (records of) MGs, and only Hawaii, in the 19th century, with 99,000 people, is coded as having (records of) MGs during the study window.
-
-Code: 
-
-In a hypothetical village of a few dozen people with an SC score of 0, the reported logistic intercept of -7.9 implies a 0.05% (SE: 0.05%) chance of finding broadly moralistic supernatural punishment per century of observation.
-
-Code:
-
 In observed societies with SC scores less than the median of 0.42, the model estimates moralizing gods will appear in only about 2% of cases (SE: 1%, Fig. 1A) each century.
 
 Code:
+- [Fig. 1A](https://github.com/babeheim/moralizing-gods-reanalysis/blob/3fcaf6f1a95a1d1458cadc2e29dab22a8e02c36d/13_explore_models/explore_models.r#L354-L415)
 
 ### Figure S1 | Social complexity scores for n = 864 observations in the full Seshat dataset plotted against log-population sizes
 
@@ -204,7 +197,7 @@ Code:
 - [Data for MG-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/10_test_forward_bias/test_forward_bias.r#L1249-L1250)
 
 
-The computed rates of SC change included 400 data points (i.e., 200 Pre-MG time-points and 200 Post-MG time-points), but ignored the fact that these data points are nested within 12 focal NGAs from which some NGAs have more observations than others (ranging from 0 to 13 missing centuries per NGA).
+The computed rates of SC change included 400 data points (i.e., 200 Pre-MG time-points and 200 Post-MG time-points), but ignored the fact that these data points are nested within 12 focal NGAs from which some NGAs have more observations than others (ranging from 0 to 13 missing centuries per NGA). 
 
 Code:
 - [Number of data points](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/10_test_forward_bias/test_forward_bias.r#L160)

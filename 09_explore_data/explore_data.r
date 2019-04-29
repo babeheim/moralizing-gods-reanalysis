@@ -76,6 +76,9 @@ ggplot(MGwriting, aes(x = `Writing First Recorded`, y = `Moralizing Gods First R
   geom_abline(slope = 1, intercept = -100, color = 'gray60', linetype = "dashed") +
   geom_point(size = 3) +
   geom_text(aes(x = `Writing First Recorded`, y = `Moralizing Gods First Recorded`, label=ifelse(NGA == "Susiana" | NGA == "Kachi Plain", NGA,'')), vjust = -1.25, inherit.aes = FALSE, size = 4, color = "#0072B2") +
+  labs(color = "Social complexity data available \nboth before and after the appearance \nof MG") +
+  xlab("Writing First Recorded") +
+  ylab("Moralizing Gods First Recorded") +
   scale_color_manual(values=c("#E69F00", "#0072B2")) + 
   scale_y_continuous(limits = c(-4000,2000)) +
   scale_x_continuous(limits = c(-4000,2000)) +

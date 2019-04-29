@@ -257,6 +257,11 @@ m3 <- lm(PolPop ~ Mean, data = dm)
 10^(coef(m1)[1] + coef(m1)[2] * 0.4) # 93k
 10^(coef(m1)[1] + coef(m1)[2] * 0.6) # 323k
 
+length(unique(dm$NGA[which(dm$Mean < 0.4)])) # 22
+
+sum(dm$MG_known == 1 & dm$Mean < 0.4) # 8 rows
+
+sum(dm$MG[dm$MG_known == 1 & dm$Mean < 0.4]) # 3 rows
 
 
 print("make a population vs social complexity figure with missigness shading")

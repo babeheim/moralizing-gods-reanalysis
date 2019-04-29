@@ -573,6 +573,14 @@ text(-1800, 0.9, "B", cex = 2)
 
 dev.off()
 
+print("make some calculations")
+
+logistic(mean(m1_post$a + m1_post$b_sc * (-0.5))) # an SC of 0
+
+logistic(mean(m1_post$a + m1_post$b_sc * (-0.1))) # an SC of 0.4
+
+logistic(mean(m2_post$a + m2_post$b_sc * (-0.1))) # an SC of 0.4, revised model
+
 #########
 
 dir_init("./output")

@@ -18,7 +18,7 @@ The code was developed on R v3.5.3 with the following packages:
 - maps (3.3.0)
 - plotrix (3.7-4)
 - dplyr (0.8.0.1)
-- plry (1.8.4)
+- plyr (1.8.4)
 - testthat (2.0.1)
 - viridis (0.5.1)
 - rstan (2.18.2)

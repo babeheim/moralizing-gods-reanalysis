@@ -13,7 +13,7 @@ Steps 1 to 8 are the original analysis code with some minor reorganization, whil
 
 ## Setup
 
-The code was developed on R v3.5.3 with the following packages:
+The code was developed on R v3.5.3 with the following CRAN packages:
 
 - maps (3.3.0)
 - plotrix (3.7-4)
@@ -21,10 +21,7 @@ The code was developed on R v3.5.3 with the following packages:
 - plyr (1.8.4)
 - testthat (2.0.1)
 - viridis (0.5.1)
-- rstan (2.18.2)
 - ggplot (3.1.0)
-- rethinking (1.88) - installation instructions at http://xcelab.net/rm/software/
-- glmmADMB (0.8.5) - installation instructions at https://github.com/bbolker/glmmadmb
 - glmmTMB (0.2.3)
 - lme4 (1.1-21)
 - DHARMa (0.2.4)
@@ -32,12 +29,31 @@ The code was developed on R v3.5.3 with the following packages:
 - reshape (0.8.8)
 - yarrr (0.1.5)
 
-To run the primary analyses:
+Each package can be installed using the `install.packages` command in R.
 
-1. Set the working directory to "moralizing-gods-reanalysis"
-2. In R, type `source("run_project.r")`.
+This code also uses the Stan MCMC engine via the `rstan` package, which requires a C++ compiler.
+
+- rstan (2.18.2) - installation instructions at https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started
+
+There are two additional packages used which are not on CRAN:
+
+- rethinking (1.88) - installation instructions at http://xcelab.net/rm/software/
+- glmmADMB (0.8.5) - installation instructions at https://github.com/bbolker/glmmadmb
+
+Each can be installed by using the `devtools` library, following the installation instructions above. For example, to install rethinking, one might type `devtools::install_github("rmcelreath/rethinking")`.
+
+## Running analysis code
+
+To run the primary analyses
+
+1. In R, set the working directory to this folder (e.g. "moralizing-gods-reanalysis") containing the README.md and run_project.r.
+2. Type `source("run_project.r")` and hit enter.
+
+If the required packages are installed, the code will run through each module and return the output figures to the `output/` folder. The code is designed to run in sequence, but individual portions can be inspected by the glossary below. Please also note that this script must be run on a computer with administrator access because it creates intermediate subfolders within each step of execution. 
 
 ## Reproduction of Whitehouse, et al. Findings
+
+Here the code for specific calculations is highlighted for inspection. Note that to evaluate individual lines in R, one must run all lines up to that particular point. Running lines of script out of order may produce incorrect results.
 
 All project data files are found in `data/`. Seshat database file "exportdat.csv" was scraped on 10 January 2018. Steps 1 to 3 reshape this data and apply a multiple-imputation algorithm to fill in missing predictor values, resulting in `PC1_traj_merged.csv`. This file serves as the primary data source for steps 4 (preparing the t-tests) and 6 (preparing the logistic regression).
 
@@ -52,6 +68,8 @@ logistic regressions:
 
 
 ## Key Findings of Reanalysis, Main Text
+
+Here the code for specific calculations is highlighted for inspection. Note that to evaluate individual lines in R, one must run all lines up to that particular point. Running lines of script out of order may produce incorrect results.
 
 ### Missing outcome data replaced with known 0's
 

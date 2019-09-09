@@ -25,6 +25,8 @@ m2_post <- extract.samples(m2)
 load("./input/m2_alt1.rdata")
 m2_alt1_post <- extract.samples(m2_alt1)
 
+load("./input/m2_alt2.rdata")
+m2_alt2_post <- extract.samples(m2_alt2)
 
 print("make m1 tables")
 
@@ -82,7 +84,7 @@ se <- sprintf("%.2f", sqrt(unlist(lapply(m2_post, var))[parnames]))
 estse <- paste0(est, " (", se, ")")
 psigns <- c(psign(m2_post$a), psign(m2_post$b_sc), psign(m2_post$b_ph),
   psign(m2_post$b_sp), "-")
-x <- data.frame(m1_est = c(estse, n, dev), m1_psigns = c(psigns, "", ""))
+x <- data.frame(m2_est = c(estse, n, dev), m2_psigns = c(psigns, "", ""))
 
 n <- ncol(m2_alt1_post$p)
 dev <- sprintf("%.1f", -2 * mean(m2_alt1_post$lp__))
@@ -91,10 +93,20 @@ se <- sprintf("%.2f", sqrt(unlist(lapply(m2_alt1_post, var))[parnames]))
 estse <- paste0(est, " (", se, ")")
 psigns <- c(psign(m2_alt1_post$a), psign(m2_alt1_post$b_sc), psign(m2_alt1_post$b_ph),
   psign(m2_alt1_post$b_sp), "-")
-x$m2_est <- c(estse, n, dev)
-x$m2_psigns <- c(psigns, "", "")
+x$m2_alt1_est <- c(estse, n, dev)
+x$m2_alt1_psigns <- c(psigns, "", "")
 
-colnames(x) <- c("Est. (SE)", "P(sign)", "Est. (SE)", "P(sign)")
+n <- ncol(m2_alt2_post$p)
+dev <- sprintf("%.1f", -2 * mean(m2_alt2_post$lp__))
+est <- sprintf("%.2f",  unlist(lapply(m2_alt2_post, mean))[parnames])
+se <- sprintf("%.2f", sqrt(unlist(lapply(m2_alt2_post, var))[parnames]))
+estse <- paste0(est, " (", se, ")")
+psigns <- c(psign(m2_alt2_post$a), psign(m2_alt2_post$b_sc), psign(m2_alt2_post$b_ph),
+  psign(m2_alt2_post$b_sp), "-")
+x$m2_alt2_est <- c(estse, n, dev)
+x$m2_alt2_psigns <- c(psigns, "", "")
+
+colnames(x) <- c("Est. (SE)", "P(sign)", "Est. (SE)", "P(sign)", "Est. (SE)", "P(sign)")
 rownames(x) <- varnames
 
 writeLines(texttab(x, hlines = c(1, 6)), "./temp/model2.txt")
@@ -567,6 +579,165 @@ polygon(
 abline(v = year_appear_50_mean, col = "firebrick")
 
 text(year_appear_50_mean, 0.7, "predicted MG\nemergence", srt = 90)
+text(80, 0.3, "MG first recorded", srt = 90)
+
+text(-1800, 0.9, "B", cex = 2)
+
+dev.off()
+
+
+
+print("aggregate first appearance estimates for revised fig2, using Savage, et al.'s suggested dataset")
+
+NGAs_m2_alt2 <- c(
+  "Big Island Hawaii",          "Cambodian Basin",
+  "Central Java",               "Chuuk Islands",
+  "Cuzco",                      "Deccan",
+  "Garo Hills",                 "Ghanaian Coast",
+  "Iceland",                    "Kachi Plain",
+  "Kansai",                     "Kapuasi Basin",
+  "Konya Plain",                "Latium",
+  "Lena River Valley",          "Lowland Andes",
+  "Middle Yellow River Valley", "Niger Inland Delta",
+  "North Colombia",             "Orkhon Valley",
+  "Oro PNG",                    "Paris Basin",
+  "Sogdiana",                   "Susiana",
+  "Upper Egypt",                "Yemeni Coastal Plain",
+  "Valley of Oaxaca"
+)
+
+d$m2_alt2_pr_mg_mean <- NA
+d$m2_alt2_pr_mg_sd <- NA
+d$m2_alt2_pr_mg_lb <- NA
+d$m2_alt2_pr_mg_ub <- NA
+d$m2_alt2_hit50 <- NA
+
+for (i in 1:nrow(d)) {
+  if (d$NGA[i] %in% NGAs_m2_alt2) {
+    nga <- match(d$NGA[i], NGAs_m2_alt2)
+    nga_offset <- m2_alt2_post$a_nga[, nga]
+  } else {
+    nga_offset <- rnorm(length(m2_alt2_post$a_sigma), 0, m2_alt2_post$a_sigma)
+  }
+  pr_mg <- logistic(
+    m2_alt2_post$a +
+    nga_offset +
+    m2_alt2_post$b_sc * d$Mean_c[i] +
+    m2_alt2_post$b_sp * d$Space[i] +
+    m2_alt2_post$b_ph * d$Phylogeny[i]
+  )
+  d$m2_alt2_pr_mg_mean[i] <- mean(pr_mg)
+  d$m2_alt2_pr_mg_sd[i] <- sd(pr_mg)
+  d$m2_alt2_pr_mg_lb[i] <- HPDI(pr_mg)[1]
+  d$m2_alt2_pr_mg_ub[i] <- HPDI(pr_mg)[2]
+  d$m2_alt2_hit50[i] <- mean(pr_mg > 0.5) > density_threshold
+}
+
+counter$m2_alt2_pr_mg_mean <- NA
+counter$m2_alt2_pr_mg_sd <- NA
+counter$m2_alt2_pr_mg_lb <- NA
+counter$m2_alt2_pr_mg_ub <- NA
+
+for (i in 1:nrow(counter)) {
+  logit_p <- m2_alt2_post$a +
+    m2_alt2_post$b_sc * counter$Mean_c[i] +
+    m2_alt2_post$b_sp * counter$Space[i] +
+    m2_alt2_post$b_ph * counter$Phylogeny[i]
+  pr_mg <- logistic(logit_p)
+  counter$m2_alt2_pr_mg_mean[i] <- mean(pr_mg)
+  counter$m2_alt2_pr_mg_sd[i] <- sd(pr_mg)
+  counter$m2_alt2_pr_mg_lb[i] <- HPDI(pr_mg)[1]
+  counter$m2_alt2_pr_mg_ub[i] <- HPDI(pr_mg)[2]
+}
+
+# define the evidence threshold for "first appearance" analysis
+
+nga_dat$m2_alt2_year_appear_50 <- NA
+
+for (i in 1:nrow(nga_dat)) {
+  dn <- d[which(d$NGA == nga_dat$NGA[i] & d$time_to_first_obs < 0), ]
+  if (any(dn$m2_alt2_hit50 == 1)) {
+    nga_dat$m2_alt2_year_appear_50[i] <- min(dn$time_to_first_obs[dn$m2_alt2_hit50 == 1])
+  }
+}
+
+
+SCNorm <- read.csv("./input/SCNorm.csv", stringsAsFactors = FALSE)
+data <- read.csv("./input/PrePostComparison.csv", stringsAsFactors = FALSE)
+
+year_appear_50_alt2_mean <- mean(nga_dat$m2_alt2_year_appear_50, na.rm = TRUE)
+year_appear_50_alt2_se <- sd(nga_dat$m2_alt2_year_appear_50, na.rm = TRUE) /
+  sqrt(sum(!is.na(nga_dat$m2_alt2_year_appear_50)))
+
+expect_true(abs(year_appear_50_alt2_mean - (-266)) < 50)
+expect_true(abs(year_appear_50_alt2_se - (120)) < 50)
+
+png("./temp/m2_alt2_predictions_fig2_combined.png", res = 300,
+  height = 5, width = 10, units = "in")
+
+par(mfrow = c(1, 2))
+
+plot(counter$Mean_c, counter$m2_alt2_pr_mg_mean, ylim = c(0, 1), type = "l",
+  ylab = "pr(moralizing gods)", xlab = "social complexity",
+  main = "", xaxt = "n")
+polygon(c(counter$Mean_c, rev(counter$Mean_c)),
+  c(counter$m2_alt2_pr_mg_ub, rev(counter$m2_alt2_pr_mg_lb)),
+  border = NA, col = col.alpha("dodgerblue", 0.2))
+
+axis(1, at = seq(0, 1, by = 0.2) - 0.5, labels = seq(0, 1, by = 0.2))
+
+tar <- which(d$MG_missing == 1)
+
+points(d$Mean_c[tar], d$m2_alt2_pr_mg_mean[tar], pch = 16,
+  col = col_alpha(d$nga_col[tar], 0.8), cex = 0.6)
+
+points(d$Mean_c[tar], d$m1_pr_mg_mean[tar], pch = 16,
+  col = col_alpha("gray", 0.8), cex = 0.6)
+
+points(counter$Mean_c, counter$m2_pr_mg_mean,
+  col = gray(0.45), type = "l", lty = 2)
+text(-0.3, 0.5, "no 'NA'", col = gray(0.45), srt = 55)
+
+points(counter$Mean_c, counter$m1_pr_mg_mean,
+  col = gray(0.45), type = "l", lty = 2)
+text(0.4, 0.5, "all 'NA' to 0", col = gray(0.45), srt = 63)
+
+text(-0.48, 0.93, "A", cex = 2)
+
+col1 <- rgb(0, 0, 0, max = 255, alpha = 50)
+
+plot(SCNorm$x, SCNorm$Mean, type = "n", ylim = c(0, 1),
+  xlim = c(-2000, 2000), xaxs = "i", yaxs = "i",
+  xlab = "years from first MG observation", ylab = "social complexity")
+
+# 'MG observed' period
+rect(0, 0, 0 + mean(data$RangeMGAppear), 1,
+  border = NA, col = col1)
+
+lines(SCNorm$x, SCNorm$Mean, type = "l")
+lines(SCNorm$x, SCNorm$Upper, type = "l", lty = "dotted")
+lines(SCNorm$x, SCNorm$Lower, type = "l", lty = "dotted")
+
+polygon(
+  c(year_appear_50_mean + c(-1.96, 1.96) * year_appear_50_se,
+  year_appear_50_mean + c(1.96, -1.96) * year_appear_50_se),
+  c(0, 0, 1, 1),
+  border = NA,
+  col = col.alpha("firebrick", 0.3)
+)
+abline(v = year_appear_50_mean, col = "firebrick")
+
+polygon(
+  c(year_appear_50_alt2_mean + c(-1.96, 1.96) * year_appear_50_alt2_se,
+  year_appear_50_alt2_mean + c(1.96, -1.96) * year_appear_50_alt2_se),
+  c(0, 0, 1, 1),
+  border = NA,
+  col = col.alpha("aquamarine2", 0.3)
+)
+abline(v = year_appear_50_alt2_mean, col = "aquamarine2")
+
+text(year_appear_50_mean, 0.7, "predicted MG\nemergence", srt = 90)
+text(year_appear_50_alt2_mean, 0.7, "predicted MG\nliterate NA-to-0", srt = 90)
 text(80, 0.3, "MG first recorded", srt = 90)
 
 text(-1800, 0.9, "B", cex = 2)

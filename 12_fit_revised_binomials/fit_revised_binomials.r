@@ -202,6 +202,46 @@ m2_alt1 <- sampling(m2_bin, data = dm)
 save(m2_alt1, file = "./temp/m2_alt1.rdata")
 
 
+
+print("fit revised model to writing-only data per Savage, et al.'s reply")
+
+dm <- d[, c("NGA", "MG", "Mean_c", "Phylogeny", "Space", "Writing", "MG_missing")]
+
+# drop all "unknown" outcomes - but only for populations without writing
+drop <- which(dm$MG_missing == 1 & dm$Writing == 0)
+dm <- dm[-drop, ]
+
+expect_equal(nrow(dm), 422)
+
+# 27 NGAs in the reduced set - now including Valley of Oaxaca
+NGAs <- c(
+  "Big Island Hawaii",          "Cambodian Basin",
+  "Central Java",               "Chuuk Islands",
+  "Cuzco",                      "Deccan",
+  "Garo Hills",                 "Ghanaian Coast",
+  "Iceland",                    "Kachi Plain",
+  "Kansai",                     "Kapuasi Basin",
+  "Konya Plain",                "Latium",
+  "Lena River Valley",          "Lowland Andes",
+  "Middle Yellow River Valley", "Niger Inland Delta",
+  "North Colombia",             "Orkhon Valley",
+  "Oro PNG",                    "Paris Basin",
+  "Sogdiana",                   "Susiana",
+  "Upper Egypt",                "Yemeni Coastal Plain",
+  "Valley of Oaxaca"
+)
+
+dm$nga <- match(dm$NGA, NGAs)
+
+dm <- as.list(dm)
+dm$N <- length(dm$MG)
+dm$N_nga <- length(unique(dm$nga))
+
+m2_alt2 <- sampling(m2_bin, data = dm)
+
+save(m2_alt2, file = "./temp/m2_alt2.rdata")
+
+
 ############
 
 dir_init("./output")

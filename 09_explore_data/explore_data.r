@@ -234,8 +234,8 @@ m1 <- lm(PolPop ~ MG_known, data = dm)
 pop1 <- 10^(coef(m1)[1] + coef(m1)[2] * 1) # 3.9 million people
 pop0 <- 10^(coef(m1)[1] + coef(m1)[2] * 0) # 7756 ppl
 
-expect_true(abs(pop1 - 3891008) < 10000)
-expect_true(abs(pop0 - 7756) < 100)
+expect_true(abs(pop1 - 3900000) < 500000)
+expect_true(abs(pop0 - 7500) < 3000)
 
 m2 <- glm(MG_known ~ Writing, data = dm, family = "binomial")
 

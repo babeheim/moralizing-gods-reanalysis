@@ -31,8 +31,8 @@ if(length(LogistRegrDat[1,])>2){reslt <- glm(Y ~ ., data = X, family=binomial(li
 print(summary(reslt))
 
 expect_true(abs(as.numeric(logLik(reslt)) - (-79)) < 1)
-expect_true(abs(coef(reslt)[1] - (-7.9)) < 0.15)
-expect_true(abs(coef(reslt)[2] - (9.9)) < 0.1)
+expect_true(abs(coef(reslt)[1] - (-8.5)) < 1)
+expect_true(abs(coef(reslt)[2] - (9.9)) < 1)
 
 
 

@@ -21,13 +21,15 @@ The code was developed on R v3.5.3 with the following CRAN packages:
 - plyr (1.8.4)
 - testthat (2.0.1)
 - viridis (0.5.1)
-- ggplot (3.1.0)
+- ggplot2 (3.1.1)
 - glmmTMB (0.2.3)
 - lme4 (1.1-21)
 - DHARMa (0.2.4)
 - bbmle (1.0.20)
 - reshape (0.8.8)
 - yarrr (0.1.5)
+- effects (4.1-4)
+- ggpubr (0.2.2)
 
 Each package can be installed using the `install.packages` command in R.
 
@@ -117,20 +119,6 @@ Before the regression analysis, the authors re-coded the 490 “unknown” cases
 </p>
 
 [Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/09_explore_data/explore_data.r#L174-L221)
-
-### Extended Data Figure 3 | Effect of small corrections to forward bias
-
-Panel (A) Social complexity (SC) before and after the appearance of moralizing gods. Zero on the x-axis represents a standardized appearance of moralizing gods at each NGA per original Whitehouse et al. paper. The grey column illustrates that moralizing gods arrived just after the main rise of SC while the red column illustrates that shifting the arrival of moralizing gods just 100 years (the smallest time unit possible in their coding) earlier would imply that moralizing gods preceded the main SC increase. The blue column displays the first appearance of moralizing gods shifted 300 years earlier. Column width illustrates uncertainty around the time of MG appearance and corresponds to the mean duration of the polity in which MG appeared (after correcting for forward bias). Panel (B) Histograms of the differences in the rates of change in SC Pre-MG minus Post-MG (multiplied by 1000). Y-axes are the number of centuries with a specific rate of SC change (collapsed across the 12 NGAs). The grey histogram is from the original Whitehouse et al. data, while the red and blue histograms shift the first appearance of moralizing gods 100 and 300 years earlier, leading to more positive change in SC after MGs appearance.
-
-<p align="center">
-  <img src="./output/forward_bias.png" height="450">
-</p>
-
-Code:
-- [Panel A for t-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/10_test_forward_bias/test_forward_bias.r#L537-L608)
-- [Panel A for t-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/10_test_forward_bias/test_forward_bias.r#L893-L960)
-- [Panel B for t-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L612-L648)
-- [Panel B for t-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L964-L1001)
 
 
 ## Key Findings of Reanalysis, Supplementary Material

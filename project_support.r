@@ -15,6 +15,8 @@ library(DHARMa)
 library(bbmle)
 library(reshape)
 library(yarrr)
+library(ggpubr)
+library(effects)
 
 library(rmarkdown)
 

@@ -142,17 +142,32 @@ Code:
 - [Pearson's r](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/09_explore_data/explore_data.r#L267)
 
 
-Using the same analytical techniques as in the original paper (which we consider inappropriate, see below), the paired t-test now shows that MGs positively predict the rise in the rate of SC (t = 4.04, df = 201, P < 0.001) -- not a drop in the rate of SC as Whitehouse et. al. find.
+To test the robustness of Whitehouse, et al.’s results, we performed the same paired t-test analysis as they report in the original text (which we consider inappropriate, see below) but excluded the three NGAs that acquired MGs via conquest.
 
 Code:
 - [Original paired t-test](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/04_prep_comparisons/prep_comparisons.r#L144)
-- [New paired t-test for MG-100](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L301-L373)
+- [New paired t-test for unconquered NGAs](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L277-L445)
 
 
-Furthermore, moving the first MGs appearance 300 years back (still a very conservative estimate, see Fig. 1B), the rise in the rate of SC change after the appearance of MGs is even stronger (t = 5.48, df = 199, P < 0.001).
+Conducting the paired t-test analysis only for the six regions where NGAs emerged spontaneously (i.e., excluding 3 conquered and 3 missionized NGAs) revealed results congruent with the analysis of the sample comprising all 12 NGAs, but only for the longest timespan of these six regions (t = -4.50, df = 120, P < 0.001); when we analyzed the 700 years timespan Pre- and Post-MGs where all NGAs have data (analogous to Whitehouse et al. robustness checks), the results were much weaker (t = -2.00, df = 48, P = 0.051). 
 
 Code:
-- [New paired t-test for MG-300](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L659-L731)
+- [New paired t-test for 6 NGAs where MGs emerged for +/2000 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L449-L543)
+- [New paired t-test for 6 NGAs where MGs emerged for +/700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L705-L799)
+
+
+To examine the effects of possible forward bias, we moved the first appearance of MG at each of the six NGAs where MGs emerged 100 years back, the smallest possible correction given the resolution of the original data.
+
+Code:
+- [100 years forward bias check for +/2000 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L546-L624)
+- [100 years forward bias check for +/700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L802-L880)
+
+Moreover, moving MGs appearance 300 years back (still a very conservative estimate, see Fig. 1B) reverses the results reported by Whitehouse et al.: MGs positively predict the rise in the rate of SC both for the longest timespan of the data (t = 4.20, df = 121, P < 0.001) and also for the 700-year timespan (t = 2.74, df = 41, P = 0.009).
+
+Code:
+- [100 years forward bias check for +/2000 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L627-L701)
+- [100 years forward bias check for +/700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L883-L957)
+
 
 
 However, for 11 out of 12 NGAs, MGs were always detected in Seshat during the first century of the polity’s existence, so any random placing of MGs within the polity time-span would always make the first appearance of MG more recent, i.e. only worsening the forward bias.

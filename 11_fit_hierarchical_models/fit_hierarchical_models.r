@@ -757,7 +757,7 @@ print(ci)
   # We have to use the glmmTMB package because glmmADMB is not compatible with DHARMa.
 
 summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region),
-                          data = dat.MG1, family = 'beta'))
+                          data = dat.MG1, family = 'beta_family'))
 
 print("For explanation of this warning, see the code")
 simulationOutput = simulateResiduals(glm.b3)
@@ -778,10 +778,10 @@ testDispersion(simulationOutput = simulationOutput)
 
 ##?OUR_COMMENT:: refit the final model
 summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region),
-                          data = dat.MG1, family = 'beta'))
+                          data = dat.MG1, family = 'beta_family'))
 
 ##?OUR_COMMENT:: extract predicted values with 95% CI
-rez1 <- allEffects(glm.b3, xlevels=list(Time=seq(0, 1900, 100)))
+rez1 <- allEffects(glm.b3, xlevels=list(Time=seq(0, 19, 1)))
 rez1 <- rez1$`Time:MoralisingGods`
 
 print("Estimated values from beta model for MG = 0 with +/-2000 time-span")
@@ -938,7 +938,7 @@ summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA),
                           data = dat.MG2, family = 'beta_family'))
 
 ##?OUR_COMMENT:: extract predicted values with 95% CI
-rez1 <- allEffects(glm.b3, xlevels=list(Time=seq(0, 600, 100)))
+rez1 <- allEffects(glm.b3, xlevels=list(Time=seq(0, 6, 1)))
 rez1 <- rez1$`Time:MoralisingGods`
 
 print("Estimated values from beta model for MG = 0 with +/-700 time-span")

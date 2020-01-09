@@ -318,9 +318,10 @@ dat.MG.700 <- dat.MG
 # However, please keep in mind that these are just raw data, not taking into account the
 # various nesting effects. We will explore those below.
 
+{
 dat.p <- dat.MG.700
   
-ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) + 
+g1 <- ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) + 
   stat_summary(fun.data=mean_se, geom="pointrange") + 
   scale_color_manual(values = alpha(c("coral1","aquamarine3"), .8), labels = c("NA", "Present"),
                      name = "Moralizing Gods") + 
@@ -330,28 +331,28 @@ ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) +
   geom_vline(xintercept = 650,
              color = "grey", size=9, alpha = 0.3) + 
   annotate("text", label = "", x = 650, y = 0.35, size = 4, colour = "black", angle = 90) +
-  labs(y="Social Complexity", x="Time (years before/after MG)") + 
+  labs(y="", x="") + 
   ylim(c(0.1,1)) +
   ggtitle("") +
   theme_bw() + 
-  theme(
-    panel.border = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
-    axis.line = element_line(colour = "black"),
-    legend.position = c(0.4,0.95),
-    legend.justification = c("right", "top"),
-    legend.key.size = unit(0.8, "cm"),
-    legend.title = element_text(size = rel(1.5)),
-    legend.text = element_text(size = rel(1.2)),
-    axis.title = element_text(size = rel(1.5)),
-    axis.text.y= element_text(size = rel(1.5)),
-    axis.text.x= element_text(size = rel(1.5)),
-    plot.margin=unit(c(1,1,1,1),"cm")) 
-
+    theme(
+      #panel.border = element_blank(),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      plot.title = element_text(hjust = 0.5, size = rel(1)),
+      axis.line = element_line(colour = "black"),
+      legend.position = c(0.35,0.95),
+      legend.justification = c("right", "top"),
+      legend.text = element_text(size = rel(1)),
+      legend.title = element_text(size = rel(1)),
+      legend.key.size = unit(0.8, "cm"),
+      axis.title = element_text(size = rel(1.5)),
+      axis.text= element_text(size = rel(1)),
+      plot.margin=unit(c(0.1,0.1,0.1,0.1),"cm"),
+      strip.text.x = element_text(size = rel(1)))
+    
 ##?OUR_COMMENT:: Save the plot if needed
-ggsave("./temp/PrePost_MG.png",width = 6,height = 6, dpi = 300)
+#ggsave("./temp/PrePost_MG.png",width = 6,height = 6, dpi = 300)
 
 ##?OUR_COMMENT:: Compute the between-century rate of SC change before MGs
 MG.change <- ((mean(dat.MG.700$Mean[dat.MG.700$Time == (700)], na.rm = T)/
@@ -360,21 +361,20 @@ MG.change <- ((mean(dat.MG.700$Mean[dat.MG.700$Time == (700)], na.rm = T)/
 change <- matrix(NA,6,1)
 for(i in 1:6){
   change[i] <- ((mean(dat.MG.700$Mean[dat.MG.700$Time == (700-i*100)], na.rm = T)/
-                   mean(dat.MG.700$Mean[dat.MG.700$Time == (600-i*100)],na.rm = T))-1)*100
-}
+                   mean(dat.MG.700$Mean[dat.MG.700$Time == (600-i*100)],na.rm = T))-1)*100}
 
 cbind(MG.change,mean(change, na.rm = T))
 
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 2.2. Unconcquered SC by MGs +/- 700 ####
+### 2.2. Emerge SC by MGs +/- 700 ####
 
-NGAs.unconq <- c("Kansai", "Konya Plain", "Latium", "Paris Basin", 
-                 "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
+NGAs.emerge <- c("Konya Plain", "Latium", "Paris Basin", 
+                 "Middle Yellow River Valley", "Orkhon Valley",
                  "Susiana", "Upper Egypt")
-dat.p <- dat.MG.700[dat.MG.700$NGA %in% NGAs.unconq,]
+dat.p <- dat.MG.700[dat.MG.700$NGA %in% NGAs.emerge,]
 
-ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) + 
+g2 <- ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) + 
   stat_summary(fun.data=mean_se, geom="pointrange", shape=18) + 
   scale_color_manual(values = alpha(c("coral1","aquamarine3"), .8), labels = c("NA", "Present"),
                      name = "Moralizing Gods") + 
@@ -382,31 +382,31 @@ ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) +
                      breaks = c(0,200,400,600,700,800,1000,1200,1400),
                      labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
   geom_vline(xintercept = 650,
-             color = "grey", size=6, alpha = 0.3) + 
+             color = "grey", size=9, alpha = 0.3) + 
   annotate("text", label = "MGs emerge", x = 650, y = 0.3, size = 4, colour = "black",
            angle = 90, alpha = 0.7) +
-  labs(y="Social Complexity", x="Time (years before/after MG)") + 
+  labs(y="", x="") + 
   ylim(c(0.1,1)) +
   ggtitle("") +
   theme_bw() + 
   theme(
-    panel.border = element_blank(),
+    #panel.border = element_blank(),
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
-    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
+    plot.title = element_text(hjust = 0.5, size = rel(1)),
     axis.line = element_line(colour = "black"),
     legend.position = "",
     legend.justification = c("right", "top"),
+    legend.text = element_text(size = rel(1)),
+    legend.title = element_text(size = rel(1)),
     legend.key.size = unit(0.8, "cm"),
-    legend.title = element_text(size = rel(1.5)),
-    legend.text = element_text(size = rel(1.2)),
-    axis.title = element_text(size = rel(1.5)),
-    axis.text.y= element_text(size = rel(1.5)),
-    axis.text.x= element_text(size = rel(1.5)),
-    plot.margin=unit(c(1,1,1,1),"cm")) 
+    axis.title = element_text(size = rel(1)),
+    axis.text= element_text(size = rel(1)),
+    plot.margin=unit(c(0.1,0.1,0.1,0.1),"cm"),
+    strip.text.x = element_text(size = rel(1)))
 
 ##?OUR_COMMENT:: Save the plot if needed
-ggsave("./temp/PrePost_MG_unconq.png",width = 5.5,height = 3.7, dpi = 300)
+#ggsave("./temp/PrePost_MG_emerge.png",width = 5.5,height = 3.7, dpi = 300)
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ### 2.3. Concquered SC by MGs +/- 700 ####
@@ -415,7 +415,7 @@ NGAs.conq <- c("Deccan","Kachi Plain",
               "Sogdiana")
 dat.p <- dat.MG.700[dat.MG.700$NGA %in% NGAs.conq,]
 
-ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) + 
+g3 <- ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) + 
   stat_summary(fun.data=mean_se, geom="pointrange", shape=17) + 
   scale_color_manual(values = alpha(c("coral1","aquamarine3"), .8), labels = c("NA", "Present"),
                      name = "Moralizing Gods") + 
@@ -423,38 +423,84 @@ ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) +
                      breaks = c(0,200,400,600,700,800,1000,1200,1400),
                      labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
   geom_vline(xintercept = 650,
-             color = "grey", size=6, alpha = 0.3) + 
+             color = "grey", size=9, alpha = 0.3) + 
   annotate("text", label = "MGs via conquest", x = 650, y = 0.38, size = 4, colour = "black",
-           angle = 90, alpha = 0.3) +
-  labs(y="Social Complexity", x="Time (years before/after MG)") + 
+           angle = 90, alpha = 0.7) +
+  labs(y="", x="") + 
   ylim(c(0.1,1)) +
   ggtitle("") +
   theme_bw() + 
   theme(
-    panel.border = element_blank(),
+    #panel.border = element_blank(),
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
-    plot.title = element_text(hjust = 0.5, size = rel(1.5)),        
+    plot.title = element_text(hjust = 0.5, size = rel(1)),
     axis.line = element_line(colour = "black"),
     legend.position = "",
     legend.justification = c("right", "top"),
+    legend.text = element_text(size = rel(1)),
+    legend.title = element_text(size = rel(1)),
     legend.key.size = unit(0.8, "cm"),
-    legend.title = element_text(size = rel(1.5)),
-    legend.text = element_text(size = rel(1.2)),
-    axis.title = element_text(size = rel(1.5)),
-    axis.text.y= element_text(size = rel(1.5)),
-    axis.text.x= element_text(size = rel(1.5)),
-    plot.margin=unit(c(1,1,1,1),"cm")) 
+    axis.title = element_text(size = rel(1)),
+    axis.text= element_text(size = rel(1)),
+    plot.margin=unit(c(0.1,0.1,0.1,0.1),"cm"),
+    strip.text.x = element_text(size = rel(1)))
+
 
 ##?OUR_COMMENT:: Save the plot if needed
-ggsave("./temp/PrePost_MG_conq.png",width = 5.5,height = 3.7, dpi = 300)
+#ggsave("./temp/PrePost_MG_conq.png",width = 5.5,height = 3.7, dpi = 300)
 
 
-##?OUR_COMMENT:: Calculate SC increases for conquered NGAs
-dat.p$Mean[dat.p$NGA=="Kachi Plain"]
 
-mean(dat.p$Mean[dat.p$Time==700],na.rm = T)/
-  mean(dat.p$Mean[dat.p$Time==600],na.rm = T)
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+### 2.4. Missionized SC by MGs +/- 700 ####
+
+NGAs.mission <- c("Kansai","Niger Inland Delta")
+dat.p <- dat.MG.700[dat.MG.700$NGA %in% NGAs.mission,]
+
+g4 <- ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) + 
+  stat_summary(fun.data=mean_se, geom="pointrange", shape=15) + 
+  scale_color_manual(values = alpha(c("coral1","aquamarine3"), .8), labels = c("NA", "Present"),
+                     name = "Moralizing Gods") + 
+  scale_x_continuous(limits = c(0,1400),
+                     breaks = c(0,200,400,600,700,800,1000,1200,1400),
+                     labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
+  geom_vline(xintercept = 650,
+             color = "grey", size=9, alpha = 0.3) + 
+  annotate("text", label = "MGs via mission", x = 650, y = 0.38, size = 4, colour = "black",
+           angle = 90, alpha = 0.7) +
+  labs(y="", x="") + 
+  ylim(c(0.1,1)) +
+  ggtitle("") +
+  theme_bw() + 
+  theme(
+    #panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1)),
+    axis.line = element_line(colour = "black"),
+    legend.position = "",
+    legend.justification = c("right", "top"),
+    legend.text = element_text(size = rel(1)),
+    legend.title = element_text(size = rel(1)),
+    legend.key.size = unit(0.8, "cm"),
+    axis.title = element_text(size = rel(1.5)),
+    axis.text= element_text(size = rel(1)),
+    plot.margin=unit(c(0.1,0.1,0.1,0.1),"cm"),
+    strip.text.x = element_text(size = rel(1)))
+
+##?OUR_COMMENT:: Save the plot if needed
+#ggsave("./temp/PrePost_MG_mission.png",width = 5.5,height = 3.7, dpi = 300)
+}
+
+##?OUR_COMMENT::  put all plots together
+gx <- ggpubr::ggarrange(g1, g3, g4, g2, ncol=2, nrow = 2, labels = c('A', 'B', 'C', 'D'))
+gx <- annotate_figure(gx,
+                left = text_grob("Social Complexity", size = 14, rot = 90, face = "bold"),
+                bottom = text_grob("Time (years before/after MG)", size = 14, face = "bold"))
+ggsave("./temp/raw_data_plots.png", plot = gx, width = 10, height = 8, dpi = 600)
+
+
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 ## 3. LMMs of rate of SC change ####
@@ -666,6 +712,8 @@ colnames(t) <- c("dAIC","df")
 rownames(t) <- c("lm1","glm.b1")
 t
 
+
+
 #______________________________________________________________________________________________
 #### 4.1.2. Beta models ####
 
@@ -673,9 +721,15 @@ t
   # work with and delete NAs manually
 dat.MG1 <- na.omit(subset(dat.MG.2000, select = c(Mean, Time, MoralisingGods, NGA, World.Region)))
 
-##?OUR_COMMENT:: The coeficients for Time will be very small, let's transform them to look
-  # at average change per millenium rather than century
-dat.MG1$Time <- dat.MG1$Time/1000
+##?OUR_COMMENT:: now equal the time values for pre- and post-MG SC to get a correct intercept
+#                of the post-MG regression line
+
+dat.MG1$Time[dat.MG1$MoralisingGods == 1] <- dat.MG1$Time[dat.MG1$MoralisingGods == 1] - 2000
+
+##?OUR_COMMENT:: The coeficients for Time will be very small,
+# let's transform them to look at average change per century
+dat.MG1$Time <- dat.MG1$Time/100
+
 
 summary(glm.b1 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.MG1, family = 'beta'))
 
@@ -692,22 +746,18 @@ colnames(t) <- c("dAIC","df")
 rownames(t) <- c("glm.b3","glm.b2","glm.b1")
 t
 
-##?OUR_COMMENT:: Transform coefficients and compute 95%CI
 cf <- summary(glm.b3)$coefficients[,1]
 se <- sqrt(diag(vcov(glm.b3)))
-ci <- (cbind(est = (plogis(cf)-0.5), LL = (plogis(cf - 1.96 * se)-0.5),
-             UL = (plogis(cf + 1.96 * se)-0.5)))
-ci[1,] <- (ci[1,]+0.5)
-
-print("Beta model for MG = 0 with +/-2000 time-span")
+ci <- cbind(est = cf, LL = cf - 1.96 * se,
+             UL = cf + 1.96 * se)
 print(ci)
-ci[2,1]+ci[4,1] ##?OUR_COMMENT:: Post-MG slope
+
 
 ##?OUR_COMMENT:: Assess goodness of fit. 
   # We have to use the glmmTMB package because glmmADMB is not compatible with DHARMa.
 
 summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region),
-                          data = dat.MG.2000, family = 'beta'))
+                          data = dat.MG1, family = 'beta'))
 
 print("For explanation of this warning, see the code")
 simulationOutput = simulateResiduals(glm.b3)
@@ -722,6 +772,73 @@ testDispersion(simulationOutput = simulationOutput)
   # appropriate statistical approach, the original t-test result presented by Whitehouse et al.
   # does not hold anymore. While the SC growth after MG appearance is more negative compared
   # to the SC growth before MG, this difference is negligible.
+
+#______________________________________________________________________________________________
+#### 4.1.3. Plot estimates ####
+
+##?OUR_COMMENT:: refit the final model
+summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region),
+                          data = dat.MG1, family = 'beta'))
+
+##?OUR_COMMENT:: extract predicted values with 95% CI
+rez1 <- allEffects(glm.b3, xlevels=list(Time=seq(0, 1900, 100)))
+rez1 <- rez1$`Time:MoralisingGods`
+
+print("Estimated values from beta model for MG = 0 with +/-2000 time-span")
+print(rez1)
+
+v1 <- as.numeric(summary(rez1)$effect[,1])
+v2 <- as.numeric(summary(rez1)$effect[,2])
+v3 <- as.numeric(summary(rez1)$lower[,1])
+v4 <- as.numeric(summary(rez1)$lower[,2])
+v5 <- as.numeric(summary(rez1)$upper[,1])
+v6 <- as.numeric(summary(rez1)$upper[,2])
+##?OUR_COMMENT:: a data set with extracted values for ggplot
+d <- as.data.frame(cbind(v1,v2,v3,v4,v5,v6))
+##?OUR_COMMENT:: define plot label
+d$lab <- "LABEL"
+labs <- c("LABEL" = "+-2000 years")
+
+##?OUR_COMMENT:: create a data set to be used for scatterplot
+#                 note that we need to revert the original timing of each data point
+d2 <- subset(dat.MG1, select = c(Mean, Time, MoralisingGods))
+d2$MoralisingGods <- factor(d2$MoralisingGods)
+d2$Time[d2$MoralisingGods == 1] <- d2$Time[d2$MoralisingGods == 1] + 2000
+
+##?OUR_COMMENT:: plot model estimates with 95% CI over scatterplot
+g1 <- ggplot(d) +
+  geom_point(data = d2, aes(x = Time, y = Mean, shape = MoralisingGods),alpha = 0.2, size = 1) +
+  geom_ribbon(aes(x=seq(0, 1900, 100),
+                  ymin = v3, ymax = v5), fill = "coral1", alpha = 0.25) +
+  geom_ribbon(aes(x=seq(2000, 3900, 100),
+                  ymin = v4, ymax = v6), fill = "aquamarine3", alpha = 0.25) +
+  geom_line(aes(y = v1, x=seq(0, 1900, 100), color = "aquamarine3"), size = 1) +
+  geom_line(aes(y = v2, x=seq(2000, 3900, 100),color = "coral1"), size = 1) +
+  ylab("") + xlab("") +
+  scale_y_continuous(limits = c(0,1)) +
+  scale_x_continuous(breaks = seq(0,4000,1000), limits = c(0,4000),
+                     labels = c("-2000", "-1000", "0", "1000", "2000")) + 
+  scale_color_manual(values = c("coral1","aquamarine3","coral1","aquamarine3"),
+                     breaks = c("aquamarine3","coral1","aquamarine3","coral1"), name = "MGs",
+                     labels = c("N/A","Present", "N/A","Present")) +
+  scale_shape_manual(name = "MGs", values = c(15,17),breaks = c("0","1"),
+                     label = c("N/A","Present")) +
+  facet_wrap(~lab, nrow=1, labeller = as_labeller(labs)) +
+  theme_bw() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1)),
+    axis.line = element_line(colour = "black"),
+    legend.position = "",
+    legend.justification = c("right", "top"),
+    legend.text = element_text(size = rel(1)),
+    legend.title = element_text(size = rel(1)),
+    legend.key.size = unit(0.8, "cm"),
+    axis.title = element_text(size = rel(1)),
+    axis.text= element_text(size = rel(1)),
+    plot.margin=unit(c(0.1,0.1,0.1,0.1),"cm"),
+    strip.text.x = element_text(size = rel(1)))
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ### 4.2 +/- 700 years analysis ####
@@ -754,40 +871,50 @@ t
 # However, this would venture too far beyond the original assumptions of
 # Whitehouse et al.'s paper.
 
+##?OUR_COMMENT:: glmmadmb doesn't handle NAs well, let's select the variables we will
+# work with and delete NAs manually
+dat.MG2 <- na.omit(subset(dat.MG.700, select = c(Mean, Time, MoralisingGods, NGA, World.Region)))
 
-summary(glm.b1 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.MG.700, family = 'beta'))
+##?OUR_COMMENT:: now equal the time values for pre- and post-MG SC to get a correct intercept
+#                of the post-MG regression line
+
+dat.MG2$Time[dat.MG2$MoralisingGods == 1] <- dat.MG2$Time[dat.MG2$MoralisingGods == 1] - 700
+
+##?OUR_COMMENT:: The coeficients for Time will be very small,
+# let's transform them to look at average change per century
+dat.MG2$Time <- dat.MG2$Time/100
+
+
+summary(glm.b1 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.MG2,
+                           family = 'beta'))
 
 summary(glm.b2 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA) + (1|World.Region),
-                           data = dat.MG.700, family = 'beta'))
+                           data = dat.MG2, family = 'beta'))
 
 summary(glm.b3 <- glmmadmb(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region),
-                           data = dat.MG.700, family = 'beta'))
+                           data = dat.MG2, family = 'beta'))
 
 a <- AICtab(glm.b3,glm.b2,glm.b1, sort = F)
 t <- matrix(c(a$dAIC[1],a$dAIC[2],a$dAIC[3],a$df[1],a$df[2],a$df[3]),ncol=2,byrow=F)
 colnames(t) <- c("dAIC","df")
 rownames(t) <- c("glm.b3","glm.b2","glm.b1")
 t
-
 ##?OUR_COMMENT:: The third model fits the data best. 
 
-##?OUR_COMMENT:: Transform coefficients and compute 95%CI
 cf <- summary(glm.b3)$coefficients[,1]
 se <- sqrt(diag(vcov(glm.b3)))
-ci <- (cbind(est = (plogis(cf)-0.5), LL = (plogis(cf - 1.96 * se)-0.5),
-             UL = (plogis(cf + 1.96 * se)-0.5)))
-ci[1,] <- (ci[1,]+0.5)
-
-print("Beta model for MG = 0 with +/-700 time-span")
+ci <- cbind(est = cf, LL = cf - 1.96 * se,
+            UL = cf + 1.96 * se)
 print(ci)
+
 
 ##?OUR_COMMENT:: Let's explore goodness-of-fit measures.
 
-##?OUR_COMMENT:: We have to use the glmmTMB package because glmmADMV is not compatible with
+##?OUR_COMMENT:: We have to use the glmmTMB package because glmmADMB is not compatible with
 # DHARMa
 
-summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region),
-                          data = dat.MG.700, family = 'beta'))
+summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA),
+                          data = dat.MG2, family = 'beta_family'))
 
 print("For explanation of this warning, see the code")
 simulationOutput = simulateResiduals(glm.b3)
@@ -803,79 +930,125 @@ testDispersion(simulationOutput = simulationOutput)
 # Note that DHARMa can't yet handle random effects in GLMM in the residual vs. predicted plot).
 
 
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-### 5. Beta models with forward bias correction ####
+#______________________________________________________________________________________________
+#### 4.2.3. Plot estimates ####
 
-#### 5.1. Shift MGs 100 years back ####
+##?OUR_COMMENT:: refit the final model
+summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA),
+                          data = dat.MG2, family = 'beta_family'))
 
-##?OUR_COMMENT:: In this final set of analyses, we combine our modeling approach with
-  #the correction for forward bias.
+##?OUR_COMMENT:: extract predicted values with 95% CI
+rez1 <- allEffects(glm.b3, xlevels=list(Time=seq(0, 600, 100)))
+rez1 <- rez1$`Time:MoralisingGods`
 
-##?OUR_COMMENT:: Here we shift MG 100 years back; i.e., on the time line from 0 to 3900 years
-  # where MGs appear in the middle (2000), we now say appear in year 1900
-dat.FB1 <- dat.MG.2000
+print("Estimated values from beta model for MG = 0 with +/-700 time-span")
+print(rez1)
 
-dat.FB1$MoralisingGods[dat.FB1$Time>1800] <- 1 
+v1 <- as.numeric(summary(rez1)$effect[,1])
+v2 <- as.numeric(summary(rez1)$effect[,2])
+v3 <- as.numeric(summary(rez1)$lower[,1])
+v4 <- as.numeric(summary(rez1)$lower[,2])
+v5 <- as.numeric(summary(rez1)$upper[,1])
+v6 <- as.numeric(summary(rez1)$upper[,2])
+##?OUR_COMMENT:: a data set with extracted values for ggplot
+d <- as.data.frame(cbind(v1,v2,v3,v4,v5,v6))
+##?OUR_COMMENT:: define plot label
+d$lab <- "LABEL"
+labs <- c("LABEL" = "+-700 years")
 
-dat.FB1$NGA <- as.factor(dat.FB1$NGA)
+##?OUR_COMMENT:: create a data set to be used for scatterplot
+#                 note that we need to revert the original timing of each data point
+d2 <- subset(dat.MG2, select = c(Mean, Time, MoralisingGods))
+d2$MoralisingGods <- factor(d2$MoralisingGods)
+d2$Time[d2$MoralisingGods == 1] <- d2$Time[d2$MoralisingGods == 1] + 700
 
-dat.FB1 <- na.omit(subset(dat.FB1, select = c(Mean, Time, MoralisingGods, NGA, World.Region)))
+##?OUR_COMMENT:: plot model estimates with 95% CI over scatterplot
+g2 <- ggplot(d) +
+  geom_point(data = d2, aes(x = Time, y = Mean, shape = MoralisingGods),alpha = 0.2, size = 1) +
+  geom_ribbon(aes(x=seq(0, 600, 100),
+                  ymin = v3, ymax = v5), fill = "coral1", alpha = 0.25) +
+  geom_ribbon(aes(x=seq(700, 1300, 100),
+                  ymin = v4, ymax = v6), fill = "aquamarine3", alpha = 0.25) +
+  geom_line(aes(y = v1, x=seq(0, 600, 100), color = "aquamarine3"), size = 1) +
+  geom_line(aes(y = v2, x=seq(700, 1300, 100),color = "coral1"), size = 1) +
+    theme_bw() +
+    ylab("") + xlab("") +
+    scale_y_continuous(limits = c(0,1)) +
+    scale_x_continuous(breaks = c(0,300, 650, 1000, 1300), limits = c(0,1300),
+                       labels = c("-700", "-400", "0", "400", "700")) + 
+    scale_color_manual(values = c("coral1","aquamarine3","coral1","aquamarine3"),
+                       breaks = c("aquamarine3","coral1","aquamarine3","coral1"), name = "MGs",
+                       labels = c("N/A","Present", "N/A","Present")) +
+    scale_shape_manual(name = "MGs", values = c(15,17),breaks = c("0","1"),
+                       label = c("N/A","Present")) +
+    facet_wrap(~lab, nrow=1, labeller = as_labeller(labs)) +
+    theme(
+      #panel.border = element_blank(),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      plot.title = element_text(hjust = 0.5, size = rel(1)),
+      axis.line = element_line(colour = "black"),
+      legend.position = c(0.99,0.35),
+      legend.justification = c("right", "top"),
+      legend.text = element_text(size = rel(1)),
+      legend.title = element_text(size = rel(1)),
+      legend.key.size = unit(0.8, "cm"),
+      axis.title = element_text(size = rel(1)),
+      axis.text= element_text(size = rel(1)),
+      plot.margin=unit(c(0.1,0.1,0.1,0.1),"cm"),
+      strip.text.x = element_text(size = rel(1))) +
+      guides(colour = guide_legend(override.aes = list(alpha = 1)))
+    
 
-##?OUR_COMMENT:: The coeficients for Time will be very small,
-  # let's transform them to look at average change per millenium rather than century
-dat.FB1$Time <- dat.FB1$Time/1000
+##?OUR_COMMENT::  put all plots together
+gx <- ggpubr::ggarrange(g1, g2, ncol=2, nrow = 1, labels = c('A', 'B'))
+gx <- annotate_figure(gx,
+                left = text_grob("Social Complexity", size = 14, rot = 90, face = "bold"),
+                bottom = text_grob("Time (years before/after MG)", size = 14, face = "bold"))
+ggsave("./temp/growth_plots.png", plot = gx, width = 9, height = 4, dpi = 600)
 
-summary(glm.b1 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.FB1, family = 'beta'))
-
-summary(glm.b2 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA) + (1|World.Region),
-                           data = dat.FB1, family = 'beta'))
-
-summary(glm.b3 <- glmmadmb(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region),
-                           data = dat.FB1, family = 'beta'))
-
-a <- AICtab(glm.b3,glm.b2,glm.b1, sort = F)
-t <- matrix(c(a$dAIC[1],a$dAIC[2],a$dAIC[3],a$df[1],a$df[2],a$df[3]),ncol=2,byrow=F)
-colnames(t) <- c("dAIC","df")
-rownames(t) <- c("glm.b3","glm.b2","glm.b1")
-t
-
-##?OUR_COMMENT:: Transform coefficients and compute 95%CI
-cf <- summary(glm.b3)$coefficients[,1]
-se <- sqrt(diag(vcov(glm.b3)))
-ci <- (cbind(est = (plogis(cf)-0.5), LL = (plogis(cf - 1.96 * se)-0.5),
-             UL = (plogis(cf + 1.96 * se)-0.5)))
-ci[1,] <- (ci[1,]+0.5)
-
-print("Beta model for MG - 100 with +/-2000 time-span")
-print(ci)
-##?OUR_COMMENT:: Again, we see an opposite trend than reported by Whitehouse et al.
 
 #______________________________________________________________________________________________
-#### 5.2. Shift MGs 300 years back ####
+#### 4.2.2. Beta models ####
 
-##?OUR_COMMENT:: Now shift MGs 300 years back.
+##?OUR_COMMENT:: This is the main multi-level growth curve analysis assuming a beta distribution
+# of residuals. We fit three models, analogically to the hierarchical models presented in
+# section 3 (see that section for the rationale of our modeling building procedure). 
 
-##?OUR_COMMENT:: Here we shift MG 300 years back; i.e., on the time line from 0 to 4000 years
-  # where MGs appear in the middle (2000), we now say appear in year 1700
-dat.FB3 <- dat.FB1
+# Note that it would be possible to also add a quadratic effect of time or to compare the
+# shape of the growth curve (linear vs. quadratic) between conditions.
+# However, this would venture too far beyond the original assumptions of
+# Whitehouse et al.'s paper.
 
-dat.FB3$MoralisingGods[dat.FB3$Time>1600] <- 1 
+##?OUR_COMMENT:: glmmadmb doesn't handle NAs well, let's select the variables we will
+# work with and delete NAs manually
+dat.MG2 <- na.omit(subset(dat.MG.2000, select = c(Mean, Time, MoralisingGods, NGA, World.Region)))
 
-dat.FB3$NGA <- as.factor(dat.FB3$NGA)
+dat.MG2$MoralisingGods[dat.MG2$Time>1600] <- 1 
 
-dat.FB3 <- na.omit(subset(dat.FB3, select = c(Mean, Time, MoralisingGods, NGA, World.Region)))
+##?OUR_COMMENT:: now equal the time values for pre- and post-MG SC to get a correct intercept
+#                of the post-MG regression line
+
+dat.MG2$Time[dat.MG2$MoralisingGods == 1] <- dat.MG2$Time[dat.MG2$MoralisingGods == 1] - 1600
 
 ##?OUR_COMMENT:: The coeficients for Time will be very small,
-  #let's transform them to look at average change per millenium rather than century
-dat.FB3$Time <- dat.FB3$Time/1000
+# let's transform them to look at average change per century
+dat.MG2$Time <- dat.MG2$Time/100
 
-summary(glm.b1 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.FB3, family = 'beta'))
+NGAs.unconq <- c("Konya Plain", "Latium", "Paris Basin", 
+                 "Middle Yellow River Valley", 
+                 "Susiana", "Upper Egypt")
+dat.MG2 <- dat.MG2[dat.MG2$NGA %in% NGAs.unconq,]
+
+
+summary(glm.b1 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.MG2,
+                           family = 'beta'))
 
 summary(glm.b2 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA) + (1|World.Region),
-                           data = dat.FB3, family = 'beta'))
+                           data = dat.MG2, family = 'beta'))
 
 summary(glm.b3 <- glmmadmb(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region),
-                           data = dat.FB3, family = 'beta'))
+                           data = dat.MG2, family = 'beta'))
 
 
 a <- AICtab(glm.b3,glm.b2,glm.b1, sort = F)
@@ -883,15 +1056,37 @@ t <- matrix(c(a$dAIC[1],a$dAIC[2],a$dAIC[3],a$df[1],a$df[2],a$df[3]),ncol=2,byro
 colnames(t) <- c("dAIC","df")
 rownames(t) <- c("glm.b3","glm.b2","glm.b1")
 t
+##?OUR_COMMENT:: The third model fits the data best. 
 
-##?OUR_COMMENT:: Transform coefficients and compute 95%CI
 cf <- summary(glm.b3)$coefficients[,1]
 se <- sqrt(diag(vcov(glm.b3)))
-ci <- (cbind(est = (plogis(cf)-0.5), LL = (plogis(cf - 1.96 * se)-0.5),
-             UL = (plogis(cf + 1.96 * se)-0.5)))
-ci[1,] <- (ci[1,]+0.5)
-print("Beta model for MG - 300 with +/-2000 time-span")
+ci <- cbind(est = cf, LL = cf - 1.96 * se,
+            UL = cf + 1.96 * se)
 print(ci)
+
+
+##?OUR_COMMENT:: Let's explore goodness-of-fit measures.
+
+##?OUR_COMMENT:: We have to use the glmmTMB package because glmmADMB is not compatible with
+# DHARMa
+
+summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA),
+                          data = dat.MG2, family = 'beta_family'))
+
+print("For explanation of this warning, see the code")
+simulationOutput = simulateResiduals(glm.b3)
+#png("./temp/qq2.png",width = 7,height = 5, units = 'in', res = 300)
+plot(simulationOutput)
+#dev.off()
+testUniformity(simulationOutput = simulationOutput)
+testDispersion(simulationOutput = simulationOutput)
+
+
+##?OUR_COMMENT:: The glm.b3 model appears to be a pretty good fit based on the DHARMa estimation,
+# although we are still missing something and the data seem to be underdispersed. 
+# Note that DHARMa can't yet handle random effects in GLMM in the residual vs. predicted plot).
+
+
 
 
 dir_init("./output")

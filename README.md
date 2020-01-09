@@ -158,7 +158,7 @@ Dots represent mean social complexity (SC) collapsed across NGAs. Bars represent
 </p>
 
 Code:
-- [Figure 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L311-L501)
+- [Figure S2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L311-L501)
 
 
 However, for 11 out of 12 NGAs, MGs were always detected in Seshat during the first century of the polity’s existence, so any random placing of MGs within the polity time-span would always make the first appearance of MG more recent, i.e. only worsening the forward bias.
@@ -221,6 +221,21 @@ Code:
 Transforming the beta estimates from the logit link revealed that in Model 1, the average estimated rate of SC change per century Pre-MG was 0.01 and Post-MG was 0.006; and in Model 2, the average estimated rate of SC change Pre-MG was 0.03 and Post-MG was 0.007.
 - [Model 1](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L784)
 - [Model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L941)
+
+
+### Figure S3 | Estimated regression lines with 95% CI from models in Tab. S2 plotted over scatterplots of raw data.
+
+The two plots differ by the timespan of analyzed data (either 2000 or 700 years Pre- and Post-MGs). Note that 0 on this axis represents widely disparate times, ranging from 2900 BCE to 1100 CE. Also note the sudden jump between Pre- and Post-MG regression lines produced by the way Whitehouse et al. treat conquered NGAs (section S2.1).
+
+<p align="center">
+  <img src="./output/Growth_curve_estimates.png" height="600">
+</p>
+
+Code:
+- [Figure S3A](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L777-L841)
+- [Figure S3B](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L934-L1008)
+
+
 
 
 ### Table S2 | Revised logistic regression estimates for the presence or absence of moralizing gods in the reduced dataset

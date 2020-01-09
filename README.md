@@ -219,8 +219,11 @@ Code:
 - [Model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L894-L895)
 
 Transforming the beta estimates from the logit link revealed that in Model 1, the average estimated rate of SC change per century Pre-MG was 0.01 and Post-MG was 0.006; and in Model 2, the average estimated rate of SC change Pre-MG was 0.03 and Post-MG was 0.007.
+
+Code:
 - [Model 1](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L784)
 - [Model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L941)
+
 
 
 ### Figure S3 | Estimated regression lines with 95% CI from models in Tab. S2 plotted over scatterplots of raw data.
@@ -228,7 +231,7 @@ Transforming the beta estimates from the logit link revealed that in Model 1, th
 The two plots differ by the timespan of analyzed data (either 2000 or 700 years Pre- and Post-MGs). Note that 0 on this axis represents widely disparate times, ranging from 2900 BCE to 1100 CE. Also note the sudden jump between Pre- and Post-MG regression lines produced by the way Whitehouse et al. treat conquered NGAs (section S2.1).
 
 <p align="center">
-  <img src="./output/Growth_curve_estimates.png" height="600">
+  <img src="./output/Growth_curve_estimates.png" height="350">
 </p>
 
 Code:

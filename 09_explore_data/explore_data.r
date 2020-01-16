@@ -194,6 +194,14 @@ expect_equal(n_unknown, 490)
 
 expect_true(abs(cor(dm$MG_known, dm$MG) - 0.97) < 0.01)
 
+# missingness in small scale societies (<1,000,000)
+dm$PopPopVal <- 10^dm$PolPop 
+
+n_small_pop_unknown <- sum(dm$PopPopVal < 1000000 & dm$MG_known == 0) 
+
+expect_equal(n_small_pop_unknown, 460)
+
+
 png("./temp/barbell.png", res = 300, units = "in", height = 5, width = 6)
 
 plot(1, 1, type = "n", xlim = c(0.5, 3.5), ylim = c(0, 1),

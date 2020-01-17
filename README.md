@@ -79,6 +79,8 @@ Here the code for specific calculations is highlighted for inspection. Note that
 
 - [Confirmation of 490 "NA to 0" missing outcome points in regression dataframe, out of 502 "0"s and 801 total observations](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_explore_data/explore_data.r#L185-L187)
 
+-[These 61% missing data were primarily among small populations below one million (94% of this missing data)](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_explore_data/explore_data.r#L197-L202)
+
 ### Table 1 | Moralizing gods across 12 regions in Seshat
 
 ![Moralizing gods across 12 regions in Seshat.](./output/missingness_table.png)

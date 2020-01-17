@@ -79,8 +79,6 @@ Here the code for specific calculations is highlighted for inspection. Note that
 
 - [Confirmation of 490 "NA to 0" missing outcome points in regression dataframe, out of 502 "0"s and 801 total observations](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_explore_data/explore_data.r#L185-L187)
 
--[These 61% missing data were primarily among small populations below one million (94% of this missing data)](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/09_explore_data/explore_data.r#L197-L202)
-
 ### Table 1 | Moralizing gods across 12 regions in Seshat
 
 ![Moralizing gods across 12 regions in Seshat.](./output/missingness_table.png)
@@ -166,7 +164,7 @@ Code:
 However, for 11 out of 12 NGAs, MGs were always detected in Seshat during the first century of the polity’s existence, so any random placing of MGs within the polity time-span would always make the first appearance of MG more recent, i.e. only worsening the forward bias.
 
 Code:
-- [Random placing of MGs within polity ](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L253-L271)
+- [Random placing of MGs within polity ](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L254-L273)
 
 
 To test the robustness of Whitehouse, et al.’s results, we performed the same paired t-test analysis as they report in the original text (which we consider inappropriate, see below) but excluded the three NGAs that acquired MGs via conquest.
@@ -200,7 +198,7 @@ Code:
 The computed rates of SC change included 400 data points (i.e., 200 Pre-MG time-points and 200 Post-MG time-points), but ignored the fact that these data points are nested within 12 focal NGAs from which some NGAs have more observations than others (ranging from 0 to 13 missing centuries per NGA). 
 
 Code:
-- [Number of data points](https://github.com/babeheim/moralizing-gods-reanalysis/blob/10_test_forward_bias/test_forward_bias.r#L162)
+- [Number of data points](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L162)
 - [Missing data across NGAs](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L169-L180)
 
 
@@ -208,7 +206,7 @@ This approach severely violates the assumption of independence and artificially 
 
 Code:
 - [Data dependence plot](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L576-L611)
-- [LMM](https://github.com/babeheim/moralizing-gods-reanalysis/blob/11_fit_hierarchical_models/fit_hierarchical_models.r#L632)
+- [LMM](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L632)
 - [Goodness of fit of LMM](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L640-L647)
 
 

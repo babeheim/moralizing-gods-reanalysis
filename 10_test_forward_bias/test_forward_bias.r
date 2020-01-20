@@ -698,7 +698,7 @@ out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 
 out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
-write.csv(out, file="./temp/EqualRates_uncq_FB_100.csv",  row.names=FALSE)
+write.csv(out, file="./temp/EqualRates_FB_100.csv",  row.names=FALSE)
 
 
 ##?OUR_COMMENT:: Result for Pre/Post-MG with MG appearance shifted
@@ -718,6 +718,7 @@ out.na %>% group_by(NGA) %>% summarise(length(Difference))
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ### 4.2 Full sample - MG t-300 ####
+
 NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
           "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
           "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
@@ -778,7 +779,7 @@ out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 
 out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
-write.csv(out, file="./temp/EqualRates_uncq_FB_300.csv",  row.names=FALSE)
+write.csv(out, file="./temp/EqualRates_FB_300.csv",  row.names=FALSE)
 
 
 ##?OUR_COMMENT:: Result for Pre/Post-MG with MG appearance shifted

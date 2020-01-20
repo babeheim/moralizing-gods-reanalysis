@@ -157,7 +157,7 @@ print(t.test(out[,3], out[,2],paired=TRUE))
 
 print("SC rate of change Pre/Post-MG")
 print(mean(out[,2], na.rm = T)/mean(out[,3],na.rm = T))
-
+print("########################################################################")
 ##?OUR_COMMENT:: How many rows of Pre-/Post-MG data?
 NROW(out[(!is.na(out[,2]+out[,3])),])
 
@@ -245,7 +245,7 @@ print(t.test(out[,3], out[,2],paired=TRUE))
 
 print("SC rate of change Pre/Post-MG")
 print(mean(out[,2], na.rm = T)/mean(out[,3],na.rm = T))
-
+print("########################################################################")
 ##?OUR_COMMENT:: How many Pre-/Post-MG data per NGA? Note the problem with Deccan and Paris Basin
 out.na <- out[!is.na(out$Difference),]
 out.na %>% group_by(NGA) %>% summarise(length(Difference))
@@ -365,7 +365,7 @@ print(t.test(out[,3], out[,2],paired=TRUE))
 
 print("SC rate of change Pre/Post-MG")
 print(mean(out[,2], na.rm = T)/mean(out[,3],na.rm = T))
-
+print("########################################################################")
 ##?OUR_COMMENT:: How many rows of Pre-/Post-MG data?
 NROW(out[(!is.na(out[,2]+out[,3])),])
 
@@ -436,7 +436,7 @@ print(t.test(out[,3], out[,2],paired=TRUE))
 
 print("SC rate of change Pre/Post-MG")
 print(mean(out[,2], na.rm = T)/mean(out[,3],na.rm = T))
-
+print("########################################################################")
 ##?OUR_COMMENT:: How many rows of Pre-/Post-MG data?
 NROW(out[(!is.na(out[,2]+out[,3])),])
 
@@ -446,13 +446,7 @@ out.na %>% group_by(NGA) %>% summarise(length(Difference))
 
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-## 3. Forward-bias correction for +- 2000 years ####
-
-##?OUR_COMMENT:: In this section, we will try to correct for forward bias,
-# i.e., the fact that if we take the first known occurrence of MGs, it is very unlikely
-# that it is actually the oldest occurrence. To do so, we need to exclude NGAs 
-# that acquired MGs trhough conquest by larger empires (Deccan, Kachi Plain,
-# Sogdiana) or through mission (Kansai and Niger Inland Delta).
+## 3. Excluding NGAs with mission and conquest ####
 
 ##?OUR_COMMENT:: First, correct for missing centuries at Deccan and Paris Basin
 
@@ -472,7 +466,7 @@ dat.cor$Time[dat.cor$NGA == "Paris Basin" & (dat.cor$Time > 300)] <-
 
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 3.1 MG emerge at t = 0 ####
+### 3.1 +- 2000 years ####
 
 NGAs <- c("Kansai", "Konya Plain", "Latium", "Paris Basin", 
                  "Middle Yellow River Valley",
@@ -529,12 +523,12 @@ out <-subset(out, out[,5]<750) #Change this to modify time-window restriction fr
 
 write.csv(out, file="./temp/EqualRates_uncq.csv",  row.names=FALSE)
 
-print("t-test for NGAs where MG emerge at t = 0 for time span +-700 years")
+print("t-test for 6 NGAs where MG emerge at t = 0 for time span +-700 years")
 print(t.test(out[,3], out[,2],paired=TRUE))
 
 print("SC rate of change Pre/Post-MG")
 print(mean(out[,2], na.rm = T)/mean(out[,3],na.rm = T))
-
+print("########################################################################")
 ##?OUR_COMMENT:: How many rows of Pre-/Post-MG data?
 NROW(out[(!is.na(out[,2]+out[,3])),])
 
@@ -542,12 +536,112 @@ NROW(out[(!is.na(out[,2]+out[,3])),])
 out.na <- out[!is.na(out$Difference),]
 out.na %>% group_by(NGA) %>% summarise(length(Difference))
 
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 3.2 MG emerge at t-100 ####
 
-NGAs <- c("Konya Plain", "Latium", "Paris Basin", 
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+### 3.2 +- 700 years ####
+
+NGAs <- c("Kansai", "Konya Plain", "Latium", "Paris Basin", 
           "Middle Yellow River Valley",
           "Susiana", "Upper Egypt")
+
+out <- matrix(NA, nrow=0, ncol=5)
+for(i in 1:length(NGAs)){
+  dt <- dat.cor[dat.cor$NGA == NGAs[i],]
+  MG<-subset(dt,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" 
+  #or "Writing" to do these analyses
+  #library(dplyr)
+  #MG<-as.data.frame(MG %>% group_by(PolID) %>% sample_n(size = 1)) 
+  #randomly samples so there is only one century per polity
+  MGAppear<-subset(MG, Time==min(Time))
+  for(j in 1: 100){
+    Earliest<-subset(dt, Time==MGAppear$Time-j*100) ##?OUR_COMMENT:: Potentially confusing label,
+    # it's not earliest, this is just the number of centuries before MG
+    Latest<-subset(dt, Time==MGAppear$Time+j*100) ##?OUR_COMMENT:: Same as above
+    rates<-cbind(as.character(MGAppear$NGA),
+                 ifelse(class(Earliest$Time)=="NULL","NA",
+                        (MGAppear$Mean-Earliest$Mean)/(MGAppear$Time-Earliest$Time)),
+                 ifelse(class(Latest$Time)=="NULL","NA",
+                        ((Latest$Mean-MGAppear$Mean)/(Latest$Time-MGAppear$Time))),
+                 (MGAppear$End-MGAppear$Start),j*100)
+    out <- rbind(out,rates)
+  }
+  out <- rbind(out,rates)
+}
+colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
+
+#mean(out$MGUncertainty) #Use this while replacing "MoralisingGods" as above to get uncertainty
+# values for time-series
+
+write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to
+# read as numeric (there is probably a more elegant way to do this)
+
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+
+out$Difference<-out[,3]-out[,2]
+
+for(i in 1:length(out[,5])){
+  ##?OUR_COMMENT:: First, fix the deleted first row discussed on lines 163:170
+  if(i == 1){
+    out[i,7]<- -9900
+  }
+  else if(i >1){
+    out[i,7]<-out[i,5]-out[i-1,5]}}
+out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in each NGA
+
+write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
+
+out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
+# pre/post moralizing gods (<750) or # out to use full time-window
+
+write.csv(out, file="./temp/EqualRates_uncq.csv",  row.names=FALSE)
+
+print("t-test for 6 NGAs where MG emerge at t = 0 for time span +-2000 years")
+print(t.test(out[,3], out[,2],paired=TRUE))
+
+print("SC rate of change Pre/Post-MG")
+print(mean(out[,2], na.rm = T)/mean(out[,3],na.rm = T))
+print("########################################################################")
+##?OUR_COMMENT:: How many rows of Pre-/Post-MG data?
+NROW(out[(!is.na(out[,2]+out[,3])),])
+
+##?OUR_COMMENT:: How many Pre-/Post-MG data per NGA?
+out.na <- out[!is.na(out$Difference),]
+out.na %>% group_by(NGA) %>% summarise(length(Difference))
+
+
+
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+## 4. Forward-bias correction for +- 2000 years ####
+
+##?OUR_COMMENT:: In this section, we will try to correct for forward bias,
+# i.e., the fact that if we take the first known occurrence of MGs, it is very unlikely
+# that it is actually the oldest occurrence. To do so, we need to exclude NGAs 
+# that acquired MGs trhough conquest by larger empires (Deccan, Kachi Plain,
+# Sogdiana) or through mission (Kansai and Niger Inland Delta).
+
+##?OUR_COMMENT:: First, correct for missing centuries at Deccan and Paris Basin
+
+dat.cor <- dat
+NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
+          "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
+          "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
+dat.cor <- dat.cor[dat.cor$NGA %in% NGAs,]
+
+dat.cor$Time[dat.cor$NGA == "Deccan" & (dat.cor$Time > 300)] <- 
+  dat.cor$Time[dat.cor$NGA == "Deccan" & (dat.cor$Time > 300)] - 100
+dat.cor$Time[dat.cor$NGA == "Deccan" & (dat.cor$Time > 900)] <- 
+  dat.cor$Time[dat.cor$NGA == "Deccan" & (dat.cor$Time > 900)] - 100
+
+dat.cor$Time[dat.cor$NGA == "Paris Basin" & (dat.cor$Time > 300)] <- 
+  dat.cor$Time[dat.cor$NGA == "Paris Basin" & (dat.cor$Time > 300)] - 100
+
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+### 4.1 Full sample - MG t-100 ####
+
+NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
+          "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
+          "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
 
 FB <- 100 ##?OUR_COMMENT:: this is Forward Bias in years - we will subtract this number from
 #MG appearence times. # Can be changed to e.g. 300
@@ -602,20 +696,19 @@ write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
 out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 
-out <-subset(out, out[,5]<750) #Change this to modify time-window restriction from 700 years
+out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
 write.csv(out, file="./temp/EqualRates_uncq_FB_100.csv",  row.names=FALSE)
 
 
 ##?OUR_COMMENT:: Result for Pre/Post-MG with MG appearance shifted
 #  100 years back in time.
-print("t-test for NGAs where MG emerge at t - 100 for time span +-700 years")
+print("t-test for 12 NGAs shifting MG 't - 100' for time span +-2000 years")
 print(t.test(out[,3], out[,2],paired=TRUE))
-
 
 print("SC rate of change Pre/Post-MG")
 print(mean(out[,2], na.rm = T)/mean(out[,3],na.rm = T))
-
+print("########################################################################")
 ##?OUR_COMMENT:: How many rows of Pre-/Post-MG data?
 NROW(out[(!is.na(out[,2]+out[,3])),])
 
@@ -624,13 +717,13 @@ out.na <- out[!is.na(out$Difference),]
 out.na %>% group_by(NGA) %>% summarise(length(Difference))
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 3.3 MG emerge at t-300 ####
-NGAs <- c("Konya Plain", "Latium", "Paris Basin", 
-          "Middle Yellow River Valley",
-          "Susiana", "Upper Egypt")
+### 4.2 Full sample - MG t-300 ####
+NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
+          "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
+          "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
 
 FB <- 300 ##?OUR_COMMENT:: this is Forward Bias in years - we will subtract this number from
-#MG appearence times. # Can be changed to e.g. 300
+#MG appearence times.
 
 ##?OUR_COMMENT:: Adapting the original script...
 out <- matrix(NA, nrow=0, ncol=5)
@@ -683,123 +776,27 @@ write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
 out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 
-out <-subset(out, out[,5]<750) #Change this to modify time-window restriction from 700 years
+out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
 write.csv(out, file="./temp/EqualRates_uncq_FB_300.csv",  row.names=FALSE)
 
 
 ##?OUR_COMMENT:: Result for Pre/Post-MG with MG appearance shifted
 #  300 years back in time.
-print("t-test for NGAs where MG emerge at t - 300 for time span +-700 years")
+print("t-test for 12 NGAs shifting MG 't - 300' for time span +-2000 years")
 print(t.test(out[,3], out[,2],paired=TRUE))
 
 print("SC rate of change Pre/Post-MG")
 print(mean(out[,2], na.rm = T)/mean(out[,3],na.rm = T))
-
+print("########################################################################")
 ##?OUR_COMMENT:: How many Pre-/Post-MG data per NGA?
 out.na <- out[!is.na(out$Difference),]
 out.na %>% group_by(NGA) %>% summarise(length(Difference))
 
 
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-## 4. Forward-bias correction for +- 2000 years ####
-
-##?OUR_COMMENT:: In this section, we will try to correct for forward bias,
-# i.e., the fact that if we take the first known occurrence of MGs, it is very unlikely
-# that it is actually the oldest occurrence. To do so, we need to exclude NGAs 
-# that acquired MGs trhough conquest by larger empires (Deccan, Kachi Plain,
-# Sogdiana) or through mission (Kansai and Niger Inland Delta).
-
-##?OUR_COMMENT:: First, correct for missing centuries at Deccan and Paris Basin
-
-dat.cor <- dat
-NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
-          "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
-          "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
-dat.cor <- dat.cor[dat.cor$NGA %in% NGAs,]
-
-dat.cor$Time[dat.cor$NGA == "Deccan" & (dat.cor$Time > 300)] <- 
-  dat.cor$Time[dat.cor$NGA == "Deccan" & (dat.cor$Time > 300)] - 100
-dat.cor$Time[dat.cor$NGA == "Deccan" & (dat.cor$Time > 900)] <- 
-  dat.cor$Time[dat.cor$NGA == "Deccan" & (dat.cor$Time > 900)] - 100
-
-dat.cor$Time[dat.cor$NGA == "Paris Basin" & (dat.cor$Time > 300)] <- 
-  dat.cor$Time[dat.cor$NGA == "Paris Basin" & (dat.cor$Time > 300)] - 100
-
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 4.1 MG emerge at t = 0 ####
-
-NGAs <- c("Kansai", "Konya Plain", "Latium", "Paris Basin", 
-                 "Middle Yellow River Valley",
-                 "Susiana", "Upper Egypt")
-
-out <- matrix(NA, nrow=0, ncol=5)
-for(i in 1:length(NGAs)){
-  dt <- dat.cor[dat.cor$NGA == NGAs[i],]
-  MG<-subset(dt,MoralisingGods=="1") #Replace "MoralisingGods" with "DoctrinalMode" 
-  #or "Writing" to do these analyses
-  #library(dplyr)
-  #MG<-as.data.frame(MG %>% group_by(PolID) %>% sample_n(size = 1)) 
-  #randomly samples so there is only one century per polity
-  MGAppear<-subset(MG, Time==min(Time))
-  for(j in 1: 100){
-    Earliest<-subset(dt, Time==MGAppear$Time-j*100) ##?OUR_COMMENT:: Potentially confusing label,
-    # it's not earliest, this is just the number of centuries before MG
-    Latest<-subset(dt, Time==MGAppear$Time+j*100) ##?OUR_COMMENT:: Same as above
-    rates<-cbind(as.character(MGAppear$NGA),
-                 ifelse(class(Earliest$Time)=="NULL","NA",
-                        (MGAppear$Mean-Earliest$Mean)/(MGAppear$Time-Earliest$Time)),
-                 ifelse(class(Latest$Time)=="NULL","NA",
-                        ((Latest$Mean-MGAppear$Mean)/(Latest$Time-MGAppear$Time))),
-                 (MGAppear$End-MGAppear$Start),j*100)
-    out <- rbind(out,rates)
-  }
-  out <- rbind(out,rates)
-}
-colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
-
-#mean(out$MGUncertainty) #Use this while replacing "MoralisingGods" as above to get uncertainty
-# values for time-series
-
-write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to
-# read as numeric (there is probably a more elegant way to do this)
-
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
-
-out$Difference<-out[,3]-out[,2]
-
-for(i in 1:length(out[,5])){
-  ##?OUR_COMMENT:: First, fix the deleted first row discussed on lines 163:170
-  if(i == 1){
-    out[i,7]<- -9900
-  }
-  else if(i >1){
-    out[i,7]<-out[i,5]-out[i-1,5]}}
-out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in each NGA
-
-write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
-
-out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
-# pre/post moralizing gods (<750) or # out to use full time-window
-
-write.csv(out, file="./temp/EqualRates_uncq.csv",  row.names=FALSE)
-
-print("t-test for NGAs where MG emerge at t = 0 for time span +-2000 years")
-print(t.test(out[,3], out[,2],paired=TRUE))
-
-print("SC rate of change Pre/Post-MG")
-print(mean(out[,2], na.rm = T)/mean(out[,3],na.rm = T))
-
-##?OUR_COMMENT:: How many rows of Pre-/Post-MG data?
-NROW(out[(!is.na(out[,2]+out[,3])),])
-
-##?OUR_COMMENT:: How many Pre-/Post-MG data per NGA?
-out.na <- out[!is.na(out$Difference),]
-out.na %>% group_by(NGA) %>% summarise(length(Difference))
-
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 4.2 MG emerge at t-100 ####
+### 4.3 Half sample - MG t-100 ####
 
 NGAs <- c("Konya Plain", "Latium", "Paris Basin", 
           "Middle Yellow River Valley", 
@@ -865,13 +862,13 @@ write.csv(out, file="./temp/EqualRates_uncq_FB_100.csv",  row.names=FALSE)
 
 ##?OUR_COMMENT:: Result for Pre/Post-MG with MG appearance shifted
 #  100 years back in time.
-print("t-test for NGAs where MG emerge at t - 100 for time span +-2000 years")
+print("t-test for 6 NGAs where MG emerge at t - 100 for time span +-2000 years")
 print(t.test(out[,3], out[,2],paired=TRUE))
 
 
 print("SC rate of change Pre/Post-MG")
 print(mean(out[,2], na.rm = T)/mean(out[,3],na.rm = T))
-
+print("########################################################################")
 ##?OUR_COMMENT:: How many rows of Pre-/Post-MG data?
 NROW(out[(!is.na(out[,2]+out[,3])),])
 
@@ -880,7 +877,7 @@ out.na <- out[!is.na(out$Difference),]
 out.na %>% group_by(NGA) %>% summarise(length(Difference))
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 4.3 MG emerge at t-300 ####
+### 4.4 Half sample - MG t-300 ####
 NGAs <- c("Konya Plain", "Latium", "Paris Basin", 
           "Middle Yellow River Valley",  "Niger Inland Delta",
           "Susiana", "Upper Egypt")
@@ -946,15 +943,339 @@ write.csv(out, file="./temp/EqualRates_uncq_FB_300.csv",  row.names=FALSE)
 
 ##?OUR_COMMENT:: Result for Pre/Post-MG with MG appearance shifted
 #  300 years back in time.
-print("t-test for NGAs where MG emerge at t - 300  for time span +-2000 years")
+print("t-test for 6 NGAs where MG emerge at t - 300  for time span +-2000 years")
 print(t.test(out[,3], out[,2],paired=TRUE))
 
 print("SC rate of change Pre/Post-MG")
 print(mean(out[,2], na.rm = T)/mean(out[,3],na.rm = T))
+print("########################################################################")
+##?OUR_COMMENT:: How many Pre-/Post-MG data per NGA?
+out.na <- out[!is.na(out$Difference),]
+out.na %>% group_by(NGA) %>% summarise(length(Difference))
+
+
+
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+## 5. Forward-bias for +- 700 years ####
+
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+### 5.1 Full sample - MG t-100 ####
+
+NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
+          "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
+          "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
+
+FB <- 100 ##?OUR_COMMENT:: this is Forward Bias in years - we will subtract this number from
+#MG appearence times. # Can be changed to e.g. 300
+
+##?OUR_COMMENT:: Adapting the original script...
+out <- matrix(NA, nrow=0, ncol=5)
+for(i in 1:length(NGAs)){
+  dt <- dat.cor[dat.cor$NGA == NGAs[i],]
+  MG<-subset(dt,MoralisingGods=="1")
+  ##?OUR_COMMENT:: This is our addition - we have to create a new subset MGAppear.FB,
+  # which will contain Mean SC for the time of MG's first appearance minus forward bias(FB)
+  MGAppear<-subset(MG, Time==min(Time))
+  t <- min(MG$Time)-FB
+  MGAppear.FB<-subset(dt, Time==t)
+  ##?OUR_COMMENT:: Now calculate the rate of SC change for the time-shifted data
+  for(j in 1: 100){
+    Earliest<-subset(dt, Time==MGAppear.FB$Time-j*100) 
+    Latest<-subset(dt, Time==MGAppear.FB$Time+j*100)
+    rates<-cbind(as.character(MGAppear$NGA), ##?OUR_COMMENT:: had to add 'as.character()' here
+                 ifelse(class(Earliest$Time)=="NULL","NA",
+                        (MGAppear.FB$Mean-Earliest$Mean)/(MGAppear.FB$Time-Earliest$Time)),
+                 ifelse(class(Latest$Time)=="NULL","NA",
+                        ((Latest$Mean-MGAppear.FB$Mean)/(Latest$Time-MGAppear.FB$Time))),
+                 (MGAppear.FB$End-MGAppear.FB$Start),
+                 j*100)
+    out <- rbind(out,rates)
+  }
+  out <- rbind(out,rates) ##?OUR_COMMENT:: This line is responsible for the "bug" described
+  # a few lines below. It could be removed, but let's stick with
+  # the original script.
+}
+colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
+
+write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to read
+#as numeric (there is probably a more
+#elegant way to do this)
+
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+
+out$Difference<-out[,3]-out[,2]
+
+for(i in 1:length(out[,5])){
+  ##?OUR_COMMENT:: First, fix the deleted first row discussed on lines 163:170
+  if(i == 1){
+    out[i,7]<- -9900
+  }
+  else if(i >1){
+    out[i,7]<-out[i,5]-out[i-1,5]}}
+out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in each NGA
+
+write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
+
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+
+out <-subset(out, out[,5]<750) #Change this to modify time-window restriction from 700 years
+#pre/post moralizing gods (<750) or 2050 out to use full time-window
+write.csv(out, file="./temp/EqualRates_uncq_FB_100.csv",  row.names=FALSE)
+
+
+##?OUR_COMMENT:: Result for Pre/Post-MG with MG appearance shifted
+#  100 years back in time.
+print("t-test for 12 NGAs shifting MG 't - 100' for time span +-700 years")
+print(t.test(out[,3], out[,2],paired=TRUE))
+
+
+print("SC rate of change Pre/Post-MG")
+print(mean(out[,2], na.rm = T)/mean(out[,3],na.rm = T))
+print("########################################################################")
+##?OUR_COMMENT:: How many rows of Pre-/Post-MG data?
+NROW(out[(!is.na(out[,2]+out[,3])),])
 
 ##?OUR_COMMENT:: How many Pre-/Post-MG data per NGA?
 out.na <- out[!is.na(out$Difference),]
 out.na %>% group_by(NGA) %>% summarise(length(Difference))
+
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+### 5.2 Full sample - MG t-300 ####
+NGAs <- c("Deccan", "Kachi Plain", "Kansai", "Konya Plain", "Latium",
+          "Middle Yellow River Valley", "Niger Inland Delta", "Orkhon Valley",
+          "Paris Basin", "Sogdiana", "Susiana", "Upper Egypt")
+
+FB <- 300 ##?OUR_COMMENT:: this is Forward Bias in years - we will subtract this number from
+#MG appearence times. # Can be changed to e.g. 300
+
+##?OUR_COMMENT:: Adapting the original script...
+out <- matrix(NA, nrow=0, ncol=5)
+for(i in 1:length(NGAs)){
+  dt <- dat.cor[dat.cor$NGA == NGAs[i],]
+  MG<-subset(dt,MoralisingGods=="1")
+  ##?OUR_COMMENT:: This is our addition - we have to create a new subset MGAppear.FB,
+  # which will contain Mean SC for the time of MG's first appearance minus forward bias(FB)
+  MGAppear<-subset(MG, Time==min(Time))
+  t <- min(MG$Time)-FB
+  MGAppear.FB<-subset(dt, Time==t)
+  ##?OUR_COMMENT:: Now calculate the rate of SC change for the time-shifted data
+  for(j in 1: 100){
+    Earliest<-subset(dt, Time==MGAppear.FB$Time-j*100) 
+    Latest<-subset(dt, Time==MGAppear.FB$Time+j*100)
+    rates<-cbind(as.character(MGAppear$NGA), ##?OUR_COMMENT:: had to add 'as.character()' here
+                 ifelse(class(Earliest$Time)=="NULL","NA",
+                        (MGAppear.FB$Mean-Earliest$Mean)/(MGAppear.FB$Time-Earliest$Time)),
+                 ifelse(class(Latest$Time)=="NULL","NA",
+                        ((Latest$Mean-MGAppear.FB$Mean)/(Latest$Time-MGAppear.FB$Time))),
+                 (MGAppear.FB$End-MGAppear.FB$Start),
+                 j*100)
+    out <- rbind(out,rates)
+  }
+  out <- rbind(out,rates) ##?OUR_COMMENT:: This line is responsible for the "bug" described
+  # a few lines below. It could be removed, but let's stick with
+  # the original script.
+}
+colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
+
+write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to read
+#as numeric (there is probably a more
+#elegant way to do this)
+
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+
+out$Difference<-out[,3]-out[,2]
+
+
+for(i in 1:length(out[,5])){
+  ##?OUR_COMMENT:: First, fix the deleted first row discussed on lines 163:170
+  if(i == 1){
+    out[i,7]<- -9900
+  }
+  else if(i >1){
+    out[i,7]<-out[i,5]-out[i-1,5]}}
+out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in each NGA
+
+write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
+
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+
+out <-subset(out, out[,5]<750) #Change this to modify time-window restriction from 700 years
+#pre/post moralizing gods (<750) or 2050 out to use full time-window
+write.csv(out, file="./temp/EqualRates_uncq_FB_300.csv",  row.names=FALSE)
+
+
+##?OUR_COMMENT:: Result for Pre/Post-MG with MG appearance shifted
+#  300 years back in time.
+print("t-test for 12 NGAs shifting MG 't - 300' for time span +-700 years")
+print(t.test(out[,3], out[,2],paired=TRUE))
+
+print("SC rate of change Pre/Post-MG")
+print(mean(out[,2], na.rm = T)/mean(out[,3],na.rm = T))
+print("########################################################################")
+##?OUR_COMMENT:: How many Pre-/Post-MG data per NGA?
+out.na <- out[!is.na(out$Difference),]
+out.na %>% group_by(NGA) %>% summarise(length(Difference))
+
+
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+### 5.3 Half sample - MG t-100 ####
+
+NGAs <- c("Konya Plain", "Latium", "Paris Basin", 
+          "Middle Yellow River Valley",
+          "Susiana", "Upper Egypt")
+
+FB <- 100 ##?OUR_COMMENT:: this is Forward Bias in years - we will subtract this number from
+#MG appearence times. # Can be changed to e.g. 300
+
+##?OUR_COMMENT:: Adapting the original script...
+out <- matrix(NA, nrow=0, ncol=5)
+for(i in 1:length(NGAs)){
+  dt <- dat.cor[dat.cor$NGA == NGAs[i],]
+  MG<-subset(dt,MoralisingGods=="1")
+  ##?OUR_COMMENT:: This is our addition - we have to create a new subset MGAppear.FB,
+  # which will contain Mean SC for the time of MG's first appearance minus forward bias(FB)
+  MGAppear<-subset(MG, Time==min(Time))
+  t <- min(MG$Time)-FB
+  MGAppear.FB<-subset(dt, Time==t)
+  ##?OUR_COMMENT:: Now calculate the rate of SC change for the time-shifted data
+  for(j in 1: 100){
+    Earliest<-subset(dt, Time==MGAppear.FB$Time-j*100) 
+    Latest<-subset(dt, Time==MGAppear.FB$Time+j*100)
+    rates<-cbind(as.character(MGAppear$NGA), ##?OUR_COMMENT:: had to add 'as.character()' here
+                 ifelse(class(Earliest$Time)=="NULL","NA",
+                        (MGAppear.FB$Mean-Earliest$Mean)/(MGAppear.FB$Time-Earliest$Time)),
+                 ifelse(class(Latest$Time)=="NULL","NA",
+                        ((Latest$Mean-MGAppear.FB$Mean)/(Latest$Time-MGAppear.FB$Time))),
+                 (MGAppear.FB$End-MGAppear.FB$Start),
+                 j*100)
+    out <- rbind(out,rates)
+  }
+  out <- rbind(out,rates) ##?OUR_COMMENT:: This line is responsible for the "bug" described
+  # a few lines below. It could be removed, but let's stick with
+  # the original script.
+}
+colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
+
+write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to read
+#as numeric (there is probably a more
+#elegant way to do this)
+
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+
+out$Difference<-out[,3]-out[,2]
+
+for(i in 1:length(out[,5])){
+  ##?OUR_COMMENT:: First, fix the deleted first row discussed on lines 163:170
+  if(i == 1){
+    out[i,7]<- -9900
+  }
+  else if(i >1){
+    out[i,7]<-out[i,5]-out[i-1,5]}}
+out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in each NGA
+
+write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
+
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+
+out <-subset(out, out[,5]<750) #Change this to modify time-window restriction from 700 years
+#pre/post moralizing gods (<750) or 2050 out to use full time-window
+write.csv(out, file="./temp/EqualRates_uncq_FB_100.csv",  row.names=FALSE)
+
+
+##?OUR_COMMENT:: Result for Pre/Post-MG with MG appearance shifted
+#  100 years back in time.
+print("t-test for 6 NGAs where MG emerge at t - 100 for time span +-700 years")
+print(t.test(out[,3], out[,2],paired=TRUE))
+
+
+print("SC rate of change Pre/Post-MG")
+print(mean(out[,2], na.rm = T)/mean(out[,3],na.rm = T))
+print("########################################################################")
+##?OUR_COMMENT:: How many rows of Pre-/Post-MG data?
+NROW(out[(!is.na(out[,2]+out[,3])),])
+
+##?OUR_COMMENT:: How many Pre-/Post-MG data per NGA?
+out.na <- out[!is.na(out$Difference),]
+out.na %>% group_by(NGA) %>% summarise(length(Difference))
+
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+### 5.4 Half sample - MG t-300 ####
+NGAs <- c("Konya Plain", "Latium", "Paris Basin", 
+          "Middle Yellow River Valley",
+          "Susiana", "Upper Egypt")
+
+FB <- 300 ##?OUR_COMMENT:: this is Forward Bias in years - we will subtract this number from
+#MG appearence times. # Can be changed to e.g. 300
+
+##?OUR_COMMENT:: Adapting the original script...
+out <- matrix(NA, nrow=0, ncol=5)
+for(i in 1:length(NGAs)){
+  dt <- dat.cor[dat.cor$NGA == NGAs[i],]
+  MG<-subset(dt,MoralisingGods=="1")
+  ##?OUR_COMMENT:: This is our addition - we have to create a new subset MGAppear.FB,
+  # which will contain Mean SC for the time of MG's first appearance minus forward bias(FB)
+  MGAppear<-subset(MG, Time==min(Time))
+  t <- min(MG$Time)-FB
+  MGAppear.FB<-subset(dt, Time==t)
+  ##?OUR_COMMENT:: Now calculate the rate of SC change for the time-shifted data
+  for(j in 1: 100){
+    Earliest<-subset(dt, Time==MGAppear.FB$Time-j*100) 
+    Latest<-subset(dt, Time==MGAppear.FB$Time+j*100)
+    rates<-cbind(as.character(MGAppear$NGA), ##?OUR_COMMENT:: had to add 'as.character()' here
+                 ifelse(class(Earliest$Time)=="NULL","NA",
+                        (MGAppear.FB$Mean-Earliest$Mean)/(MGAppear.FB$Time-Earliest$Time)),
+                 ifelse(class(Latest$Time)=="NULL","NA",
+                        ((Latest$Mean-MGAppear.FB$Mean)/(Latest$Time-MGAppear.FB$Time))),
+                 (MGAppear.FB$End-MGAppear.FB$Start),
+                 j*100)
+    out <- rbind(out,rates)
+  }
+  out <- rbind(out,rates) ##?OUR_COMMENT:: This line is responsible for the "bug" described
+  # a few lines below. It could be removed, but let's stick with
+  # the original script.
+}
+colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
+
+write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to read
+#as numeric (there is probably a more
+#elegant way to do this)
+
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+
+out$Difference<-out[,3]-out[,2]
+
+
+for(i in 1:length(out[,5])){
+  ##?OUR_COMMENT:: First, fix the deleted first row discussed on lines 163:170
+  if(i == 1){
+    out[i,7]<- -9900
+  }
+  else if(i >1){
+    out[i,7]<-out[i,5]-out[i-1,5]}}
+out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in each NGA
+
+write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
+
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+
+out <-subset(out, out[,5]<750) #Change this to modify time-window restriction from 700 years
+#pre/post moralizing gods (<750) or 2050 out to use full time-window
+write.csv(out, file="./temp/EqualRates_uncq_FB_300.csv",  row.names=FALSE)
+
+
+##?OUR_COMMENT:: Result for Pre/Post-MG with MG appearance shifted
+#  300 years back in time.
+print("t-test for 6 NGAs where MG emerge at t - 300 for time span +-700 years")
+print(t.test(out[,3], out[,2],paired=TRUE))
+
+print("SC rate of change Pre/Post-MG")
+print(mean(out[,2], na.rm = T)/mean(out[,3],na.rm = T))
+print("########################################################################")
+##?OUR_COMMENT:: How many Pre-/Post-MG data per NGA?
+out.na <- out[!is.na(out$Difference),]
+out.na %>% group_by(NGA) %>% summarise(length(Difference))
+
 dir_init("./output")
 
 files <- list.files("./temp", full.names = TRUE)

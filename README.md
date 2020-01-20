@@ -176,22 +176,25 @@ Code:
 Conducting the paired t-test analysis only for the six regions where NGAs emerged spontaneously (i.e., excluding 3 conquered and 3 missionized NGAs) revealed results congruent with the analysis of the sample comprising all 12 NGAs, but only for the longest timespan of these six regions (t = -4.50, df = 120, P < 0.001); when we analyzed the 700 years timespan Pre- and Post-MGs where all NGAs have data (analogous to Whitehouse et al. robustness checks), the results were much weaker (t = -2.00, df = 48, P = 0.051). 
 
 Code:
-- [New paired t-test for 6 NGAs where MGs emerged for +/2000 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L449-L543)
-- [New paired t-test for 6 NGAs where MGs emerged for +/700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L705-L799)
+- [New paired t-test for 6 NGAs where MGs emerged for +/2000 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L449-L537)
+- [New paired t-test for 6 NGAs where MGs emerged for +/700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L541-L609)
 
-
-To examine the effects of possible forward bias, we moved the first appearance of MG at each of the six NGAs where MGs emerged 100 years back, the smallest possible correction given the resolution of the original data.
-
-Code:
-- [100 years forward bias check for +/2000 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L546-L624)
-- [100 years forward bias check for +/700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L802-L880)
-
-Moreover, moving MGs appearance 300 years back (still a very conservative estimate, see Fig. 1B) reverses the results reported by Whitehouse et al.: MGs positively predict the rise in the rate of SC both for the longest timespan of the data (t = 4.20, df = 121, P < 0.001) and also for the 700-year timespan (t = 2.74, df = 41, P = 0.009).
+To examine the effects of possible forward bias, we moved the first appearance of MG at each of the 12 NGAs 100 years back, the smallest possible correction given the resolution of the original data. Using the same analytical techniques as in the original paper, the results of the paired t-test for the longest time span of the data (+/- 2000 years) now shows that MGs positively predict the rise in the rate of social complexity (t = 4.04, df = 201, P < 0.001) -- not a drop in the rate of social complexity as Whitehouse et al. find. Furthermore, moving the first MGs appearance 300 years back (still a very conservative estimate, see Fig. 1B), the rise in the rate of social complexity change after the appearance of MGs is even stronger (t = 6.18, df =203, P < 0.001). Qualitatively similar results can be reached by using the shorter time span of the data (+/- 700 years; see Table S1), 
 
 Code:
-- [100 years forward bias check for +/2000 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L627-L701)
-- [100 years forward bias check for +/700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L883-L957)
+- [100 years forward bias check for +/2000 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L615-L717)
+- [300 years forward bias check for +/2000 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L720-L794)
+- [100 years forward bias check for +/700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L963-L1041)
+- [300 years forward bias check for +/700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L1045-L1128)
 
+
+We therefore performed the same forward bias analysis, but limited the number of NGAs only to the six NGAs where moralizing gods were not recorded through conquest or mission. 
+
+Code:
+- [100 years forward bias check for +/2000 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L799-L877)
+- [300 years forward bias check for +/2000 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L880-L954)
+- [100 years forward bias check for +/700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L1122-L1200)
+- [300 years forward bias check for +/700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L1203-L1277)
 
 
 The computed rates of SC change included 400 data points (i.e., 200 Pre-MG time-points and 200 Post-MG time-points), but ignored the fact that these data points are nested within 12 focal NGAs from which some NGAs have more observations than others (ranging from 0 to 13 missing centuries per NGA). 

@@ -88,20 +88,20 @@ Here, a ‘1’ indicates MGs are known to be present in the century-by-century 
 
 ### Figure 1 | Comparison of Whitehouse et. al.’s model, where missing outcome data (‘NA’) was coded as known absent (‘0’) and a reanalysis removing unknown outcomes
 
-Panel (A) Estimated relationship between the probability of MGs being observed and social complexity, held at average distance and language similarity, fit on original dataset (‘NA’s recoded as ‘0’s; grey dashed line) and reduced dataset that removed missing values (black line with blue 89% HPDI shading). Mean probabilities of “moralizing gods present” for the 490 historical observations with “unknown” outcome values are given as points: from the original model (grey) and grouped by NGA in revised model (each NGA is assigned a different colour). Panel (B) Recreation of Whitehouse, et al.’s Fig. 2a, estimating forward bias only from known (non-’NA’) observations, now showing mean and 95% confidence interval for the predicted first emergence of moralizing gods, approximately 958 (SE: 210) years prior to their first observations in the Seshat database.
+Panel (A) Estimated relationship between the probability of moralizing gods being observed and social complexity, held at average distance and language similarity, fit on original dataset (NA’s recoded as ‘0’s; grey line) and reduced dataset that removed missing values (black line with blue 89% HPDI shading). Mean probabilities of “moralizing gods present” for the 490 historical observations with “unknown” outcome values are given as points: from the original model (grey) and grouped by NGA in revised model (each NGA is assigned a different color). Marked points indicate the “megasociety threshold” outcome probability in both models. Panel (B) Recreation of Whitehouse, et al.’s Fig. 2a, estimating forward bias only from known (non-NA) observations, now showing mean and 95% confidence interval for the predicted first emergence of moralizing gods, approximately 958 (SE: 210) years prior to their first observations in the Seshat database.
 
-![Comparison of Whitehouse et. al.’s model, where missing outcome data (‘NA’) was coded as known absent (‘0’) and a reanalysis removing unknown outcomes](./output/m2_predictions_fig2_combined.png)
+![Comparison of Whitehouse, et al.’s logistic regression model, where missing outcome data was coded as “moralizing gods absent”, and a reanalysis removing unknown outcomes.](./output/m2_predictions_fig2_combined.png)
 
 Code: 
 - [Data for A](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_explore_models/explore_models.r#L116-L189)
-- [Data for B](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/13_explore_models/explore_models.r#L419-449)
+- [Data for B](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/13_explore_models/explore_models.r#L507)
 - [Original model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L25-L40) ([stan code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/stan/original.stan))
 - [Revised model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/fit_revised_binomials.r#L139-L178) ([stan code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/stan/revised.stan))
 - [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/13_explore_models/explore_models.r#L517-L574)
 
 ### Extended Data Figure 1 | The first appearance of writing and moralizing gods across NGAs
 
-The solid line indicates when writing and moralizing gods are first recorded in the same century, and the dashed lines show when writing appeared 100 years before moralizing gods and when moralizing gods appeared 100 years before writing. NGAs are colored by whether social complexity data are available both before and after the appearance of moralizing gods or not. Only NGAs with social complexity data available both before and after the appearance of moralizing gods were included in the analysis (and only these NGAs are shown in Table 1). It must be noted that while writing first appears at 2500 BCE in the Kachi Plain, it is absent for the subsequent two polities in the dataset, and does not reappear until 300 BCE - the same time as the first appearance of moralizing gods. 
+The solid line indicates when writing and moralizing gods are first recorded in the same century, and the dashed lines show when writing appeared 100 years before moralizing gods and when moralizing gods appeared 100 years before writing. NGAs are colored by whether social complexity data are available both before and after the appearance of moralizing gods or not. Only NGAs with social complexity data available both before and after the appearance of moralizing gods were included in the analysis (and only these NGAs are shown in Table 1). It must be noted that while writing first appears at 2500 BCE in the Kachi Plain, it is absent for the subsequent two polities in the dataset, and does not reappear until 300 BCE - the same time as the first appearance of moralizing gods.
 
 <p align="center">
   <img src="./output/WritingMG.png" height="450">
@@ -109,10 +109,9 @@ The solid line indicates when writing and moralizing gods are first recorded in 
 
 [Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/09_explore_data/explore_data.r#L15-L97)
 
-### Extended Data Figure 2 | Boxplots & distributions of “social complexity” score for N = 801 observations, by ‘moralizing gods’ outcome status
+### Extended Data Figure 2 | Boxplots (center line, median; box limits, upper and lower quartiles; whiskers, 1.5x interquartile range) & distributions (data points) of “social complexity” score for N = 801 observations, by ‘moralizing gods’ outcome status.
 
-Before the regression analysis, the authors re-coded the 490 “unknown” cases as “absent” without explicitly documenting this decision. Because societies with “known” and “unknown” outcome data differ dramatically in social complexity, population size and the presence of writing, this choice is responsible for their key findings.
-
+Before statistical analyses were performed in Whitehouse, et al., all “unknown” cases were treated as moralizing gods absent without explicit description in the manuscript.
 
 <p align="center">
   <img src="./output/barbell.png" height="600">
@@ -130,7 +129,7 @@ Code:
 
 ### Figure S1 | Social complexity scores for n = 864 observations in the full Seshat dataset plotted against log-population sizes
 
-Social complexity scores for n = 864 observations in the full Seshat dataset plotted against log-population sizes, with best-fit line (Pearson’s r = 0.94) and shading indicating whether the MG outcome variable has known or missing values.
+Social complexity scores for n = 864 observations in the full Seshat dataset plotted against log-population sizes, with best-fit line (Pearson’s *r* = 0.94) and shading indicating whether the MG outcome variable has known or missing values.
 
 <p align="center">
   <img src="./output/sc_pop.png" width="600">
@@ -252,7 +251,7 @@ Code:
 
 ### Figure S4 | Posterior predictions for the probability of moralizing gods present by year
 
-Posterior predictions for the probability of moralizing gods present by year for Whitehouse, et al.’s main 12 NGAs in their analysis, drawn from the model described in Fig. 1A and Table S3 measured in years before their first documented appearance in the Seshat database. Posterior mean probability (black line) accompanied by 89% HPDI (red shading) indicates a high chance of MG present in every site centuries before recorded first appearance. Dashed lines indicate the first year at which 80% of posterior mass is above a probability of 0.5 (coin flip), used as a rough estimate of the “first emergence” of moralizing gods in Fig. 2B.
+Posterior predictions for the probability of moralizing gods present by year for Whitehouse, et al.’s main 12 NGAs in their analysis, drawn from the model described in Fig. 1A and Table S3 measured in years before their first documented appearance in the Seshat database. Posterior mean probability (black line) accompanied by 89% HPDI (red shading) indicates a high chance of MG presence in every site several centuries before recorded first appearance. Dashed lines indicate the first year at which 80% of posterior mass is above a probability of 0.5 (coin flip), used as a rough estimate of the “first emergence” of moralizing gods in Fig. 1B.
 
 ![Posterior predictions for the probability of moralizing gods present by year](./output/revised_EDfig1_m2.png)
 

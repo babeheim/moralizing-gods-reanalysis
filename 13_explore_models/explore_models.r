@@ -549,12 +549,45 @@ points(d$Mean_c[tar], d$m1_pr_mg_mean[tar], pch = 16,
   col = col_alpha("gray", 0.8), cex = 0.6)
 
 points(counter$Mean_c, counter$m1_pr_mg_mean,
-  col = gray(0.45), type = "l", lty = 2)
-text(0.4, 0.5, "original model", col = gray(0.45), srt = 63)
+  col = gray(0.45), type = "l", lty = 1)
+text(0.35, 0.46, "original model", col = gray(0.45), srt = 63)
 
-text(-0.48, 0.93, "A", cex = 2)
+text(-0.46, 0.93, "A", cex = 2)
 
 col1 <- rgb(0, 0, 0, max = 255, alpha = 50)
+
+# add lines to show outcome probability estimate at 'megasociety threshold' of 0.6
+
+Mean_c <- seq(0, 1, by = 0.01) - 0.5
+Lag1 <- 0
+Lag2 <- 0
+Phylogeny <- mean(d$Phylogeny[d$MG_missing == 1])
+Space <- mean(d$Space[d$MG_missing == 1])
+
+logit_p <- m1_post$a +
+  m1_post$b_sc * (0.6 - 0.5) +
+  m1_post$b_l1 * Lag1 +
+  m1_post$b_l2 * Lag2 +
+  m1_post$b_ph * Phylogeny +
+  m1_post$b_sp * Space
+
+pr_megasociety_threshold <- logistic(logit_p)
+
+lines(c(0.6, 0.6) - 0.5, c(0, 1), lty = 2, col = gray(0.45))
+lines(c(0.0, 0.0) - 0.5, c(0, 1), lty = 2, col = "black")
+
+arrows(
+  x0 = 0.6 - 0.5,
+  x1 = 0.02 - 0.5,
+  y0 = mean(pr_megasociety_threshold),
+  y1 = mean(pr_megasociety_threshold),
+  lty = 1, col = col.alpha("black", 0.8),
+  angle = 25
+)
+points(0.0 - 0.5, mean(pr_megasociety_threshold), pch = 21, col = "white", bg = "black")
+points(0.6 - 0.5, mean(pr_megasociety_threshold), pch = 21, col = "white", bg = gray(0.45))
+text(0.1, 0.7, labels = "\"megasociety threshold\"",
+  pos = 2, cex = 0.8, srt = 90, col = gray(0.45))
 
 plot(SCNorm$x, SCNorm$Mean, type = "n", ylim = c(0, 1),
   xlim = c(-2000, 2000), xaxs = "i", yaxs = "i",
@@ -702,7 +735,7 @@ points(counter$Mean_c, counter$m1_pr_mg_mean,
   col = gray(0.45), type = "l", lty = 2)
 text(0.4, 0.5, "all 'NA' to 0", col = gray(0.45), srt = 63)
 
-text(-0.48, 0.93, "A", cex = 2)
+text(-0.46, 0.93, "A", cex = 2)
 
 col1 <- rgb(0, 0, 0, max = 255, alpha = 50)
 

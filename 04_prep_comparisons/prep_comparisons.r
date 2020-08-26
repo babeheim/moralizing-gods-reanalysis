@@ -7,11 +7,11 @@ dir_init("./temp")
 
 # Create a pre/post comparison table
 
-polities <- read.csv('./input/polities.csv', header=TRUE)
+polities <- read.csv('./input/polities.csv', header=TRUE, stringsAsFactors = TRUE)
 
 #New scripts for automated analysis of rates of change in social complexity pre/post moralising gods/doctrinal mode/writing
 
-dat <- read.table("./input/PC1_traj_merged.csv", sep=",", header=TRUE)
+dat <- read.table("./input/PC1_traj_merged.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 all(dim(dat) == c(864, 49))
 
@@ -53,7 +53,7 @@ colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty")
 
 #Exporting/importing to force it to read as numeric (there is probably a more elegant way to do this)
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 # calculate the difference between the Pre- and Post- Rates
 out$Difference<-out[,2]-out[,3]
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
@@ -98,7 +98,7 @@ colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 #Exporting/importing to force it to read as numeric (there is probably a more elegant way to do this)
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 # calculate the difference between the Pre- and Post- Rates
 out$Difference<-out[,3]-out[,2]
 
@@ -155,7 +155,7 @@ write.csv(out, file="./temp/EqualRates.csv",  row.names=FALSE)
 
 # Calculate PrePostComparison
 
-out <- read.table("./temp/EqualRates.csv", sep=",", header=TRUE)
+out <- read.table("./temp/EqualRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 NGAs <- levels(out$NGA)
 
 all(dim(out) == c(200, 7))
@@ -218,7 +218,7 @@ for(i in 1:length(NGAs)){
 }
 colnames(data)<-c("NGA","PostRate","PreRate","PostConfInt","PreConfInt","p","df","n","t","PreMGRitual","PreMGWriting","RangeMGAppear","RangeDMAppear","RangeWRAppear","MGAppear")
 write.csv(data, file="./temp/PrePostComparison.csv",  row.names=FALSE)
-data<-read.table("./temp/PrePostComparison.csv", sep=",", header=TRUE)
+data<-read.table("./temp/PrePostComparison.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 data<-as.data.frame(data)
 # calculate the difference between Pre- and Post-rates
 data$Difference<-data[,2]-data[,3]

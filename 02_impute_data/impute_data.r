@@ -12,7 +12,7 @@ Vars <- Vars[Vars[,6]==Section1 | Vars[,6]==Section2 | Vars[,6]==Section3,] # Re
 Vars[,1] <- paste(Vars[,2],Vars[,1])
 
 # Filter polities to remove polities that are not being studied
-polities <- read.csv('./input/polities.csv', header=TRUE)
+polities <- read.csv('./input/polities.csv', header=TRUE, stringsAsFactors = TRUE)
 #### Remove new NGAs
 polities <- polities[polities$NGA != "Crete",]
 polities <- polities[polities$NGA != "Galilee",]
@@ -32,7 +32,7 @@ polities <- polities[polities$PolID != "UsIroqL",]
 expect_equal(dim(polities), c(335, 11))
 
 write.csv(polities, file="./temp/polities.csv",  row.names=FALSE)
-polities <- read.csv('./temp/polities.csv', header=TRUE)
+polities <- read.csv('./temp/polities.csv', header=TRUE, stringsAsFactors = TRUE)
 # Extract Natural Geographic Areas (NGAs)
 NGAs <- levels(polities$NGA)
 
@@ -63,7 +63,7 @@ expect_equal(dim(ImpDatRepl), c(417 * nrep, 33))
 
 ####### Remove polity-dates that didn't yield 20 repl #and post-colonial polities that couldn't be removed from multiple imputation due to bugs with only 1 polity/NGA
 
-polities <- read.csv('./temp/polities.csv', header=TRUE)
+polities <- read.csv('./temp/polities.csv', header=TRUE, stringsAsFactors = TRUE)
 polities <- polities[polities$PolID != "InGaroL",] #removing here because it caused bugs earlier
 write.csv(polities, file="./temp/polities.csv",  row.names=FALSE) 
 polities <- polities[polities$PolID != "CnHChin",] #removing here because it caused bugs earlier

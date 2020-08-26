@@ -17,13 +17,13 @@
   source("../project_support.r")
   
   dir_init("./temp")
-  polities <- read.csv("./input/polities.csv", header = TRUE)
+  polities <- read.csv("./input/polities.csv", header = TRUE, stringsAsFactors = TRUE)
   
   #New scripts for automated analysis of rates of change in social complexity pre/post
   # moralising gods/doctrinal mode/writing
   
-  #dat <- read.table("PC1_traj_merged.csv", sep=",", header=TRUE) #?? everything is here
-  dat <- read.csv("./input/PC1_traj_merged.csv", header = TRUE)
+  #dat <- read.table("PC1_traj_merged.csv", sep=",", header=TRUE, stringsAsFactors = TRUE) #?? everything is here
+  dat <- read.csv("./input/PC1_traj_merged.csv", header = TRUE, stringsAsFactors = TRUE)
   
   dat$NGA<-as.character(dat$NGA)
   NGAs <- levels(polities$NGA)
@@ -57,7 +57,7 @@ colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty")
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to read
 #as numeric (there is probably a more elegant way to do this)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out$Difference<-out[,2]-out[,3]
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
@@ -101,7 +101,7 @@ write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importi
 #### 1.4 Testing Pre-Post MG ####
 
 #### 1.4.1 2000 years ####
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out$Difference<-out[,3]-out[,2]
 
@@ -216,7 +216,7 @@ ggsave("./temp/Histogram_MG0.png",width = 4,height = 2.7, dpi = 300)
 #### 1.4.2 700 years ####
 ##?OUR_COMMENT:: The same analysis for +/- 700 years
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out$Difference<-out[,3]-out[,2]
 
@@ -340,7 +340,7 @@ colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to
 # read as numeric (there is probably a more elegant way to do this)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out$Difference<-out[,3]-out[,2]
 
@@ -411,7 +411,7 @@ colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to
 # read as numeric (there is probably a more elegant way to do this)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out$Difference<-out[,3]-out[,2]
 
@@ -503,7 +503,7 @@ colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to
 # read as numeric (there is probably a more elegant way to do this)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out$Difference<-out[,3]-out[,2]
 
@@ -575,7 +575,7 @@ colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importing to force it to
 # read as numeric (there is probably a more elegant way to do this)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out$Difference<-out[,3]-out[,2]
 
@@ -679,7 +679,7 @@ write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importi
 #as numeric (there is probably a more
 #elegant way to do this)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out$Difference<-out[,3]-out[,2]
 
@@ -694,7 +694,7 @@ out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in 
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
@@ -759,7 +759,7 @@ write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importi
 #as numeric (there is probably a more
 #elegant way to do this)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out$Difference<-out[,3]-out[,2]
 
@@ -775,7 +775,7 @@ out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in 
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
@@ -839,7 +839,7 @@ write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importi
 #as numeric (there is probably a more
 #elegant way to do this)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out$Difference<-out[,3]-out[,2]
 
@@ -854,7 +854,7 @@ out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in 
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
@@ -919,7 +919,7 @@ write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importi
 #as numeric (there is probably a more
 #elegant way to do this)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out$Difference<-out[,3]-out[,2]
 
@@ -935,7 +935,7 @@ out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in 
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
@@ -1003,7 +1003,7 @@ write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importi
 #as numeric (there is probably a more
 #elegant way to do this)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out$Difference<-out[,3]-out[,2]
 
@@ -1018,7 +1018,7 @@ out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in 
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out <-subset(out, out[,5]<750) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
@@ -1083,7 +1083,7 @@ write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importi
 #as numeric (there is probably a more
 #elegant way to do this)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out$Difference<-out[,3]-out[,2]
 
@@ -1099,7 +1099,7 @@ out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in 
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out <-subset(out, out[,5]<750) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
@@ -1162,7 +1162,7 @@ write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importi
 #as numeric (there is probably a more
 #elegant way to do this)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out$Difference<-out[,3]-out[,2]
 
@@ -1177,7 +1177,7 @@ out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in 
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out <-subset(out, out[,5]<750) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
@@ -1242,7 +1242,7 @@ write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE) #Exporting/importi
 #as numeric (there is probably a more
 #elegant way to do this)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out$Difference<-out[,3]-out[,2]
 
@@ -1258,7 +1258,7 @@ out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in 
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
 
 out <-subset(out, out[,5]<750) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window

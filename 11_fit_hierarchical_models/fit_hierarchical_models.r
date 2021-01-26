@@ -803,6 +803,7 @@ labs <- c("LABEL" = "+-2000 years")
 #                 note that we need to revert the original timing of each data point
 d2 <- subset(dat.MG1, select = c(Mean, Time, MoralisingGods))
 d2$MoralisingGods <- factor(d2$MoralisingGods)
+d2$Time <- d2$Time*100
 d2$Time[d2$MoralisingGods == 1] <- d2$Time[d2$MoralisingGods == 1] + 2000
 
 ##?OUR_COMMENT:: plot model estimates with 95% CI over scatterplot
@@ -960,6 +961,7 @@ labs <- c("LABEL" = "+-700 years")
 #                 note that we need to revert the original timing of each data point
 d2 <- subset(dat.MG2, select = c(Mean, Time, MoralisingGods))
 d2$MoralisingGods <- factor(d2$MoralisingGods)
+d2$Time <- d2$Time*100
 d2$Time[d2$MoralisingGods == 1] <- d2$Time[d2$MoralisingGods == 1] + 700
 
 ##?OUR_COMMENT:: plot model estimates with 95% CI over scatterplot

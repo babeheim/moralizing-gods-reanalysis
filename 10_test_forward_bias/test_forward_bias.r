@@ -111,9 +111,9 @@ d0 <- out$Difference*1000
 
 ##?OUR_COMMENT:: It is strange that this loop starts with "2:length" rather than "1:length".
   # It practically deletes the first row of data from the data set and there is no obvious
-  # rationale for this step. Probaly, this is to avoid "NA" results for i == 1, which would give
+  # rationale for this step. Probably, this is to avoid "NA" results for i == 1, which would give
   # out[1,5]-out[0,5] and produce an error. Note that this is random and does not depend on
-  # a specfic NGA. Likewise, it does not delete the first row for each NGA, only for the one that
+  # a specific NGA. Likewise, it does not delete the first row for each NGA, only for the one that
   # happens to be first in the data set.
   # We will keep it here to reproduce the original analysis but fix
   # it in our subsequent analyses.
@@ -130,15 +130,15 @@ out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction f
 
 write.csv(out, file="./temp/EqualRates.csv",  row.names=FALSE)
 
-##?OUR_COMMENT:: Here is another problem. Whitehouse et al. claim that all 12 key NGAs have data
+##?OUR_COMMENT:: Whitehouse et al. wrote that all 12 key NGAs have data
   # for the +/- 700 years analysis. Yet, looking into EqualRates.csv revealed that Deccan has
   # 'NA' for the Post-MG rate of SC change at TimeWindow = 700. Also, Paris Basin has Post-MG
   # rate of SC change 'NA' at TimeWindow = 500. Inspection of the main source file 'PC1_traj_merged.csv'
-  # explained the problem - Deccan and Paris Basin have missing rows. For instance, there is no
+  # revealed the issue - Deccan and Paris Basin have missing rows. For instance, there is no
   # year 400 in the Time column for the Deccan NGA. This looks like an error because if there would
   # be missing data for this century, the row should be there containing all "NA" rather than missing.
-  # Again, for the sake of reproducing the original analysis, we will not correct the mistake
-  # here but do it in our own analyses.
+  # Again, for the sake of reproducing the original analysis, we will not fix the issue
+  # here but do it in our subsequent analyses.
 
 #bar chart paired
 my.values<-mean(1000*out[,6],na.rm=TRUE)
@@ -150,7 +150,7 @@ abline(h=0)
 
 
 ##?OUR_COMMENT:: Here are the main results, that is +/- 2000 years Pre-/Post-MG.
-# Note the DoF - 199, coming from only 12 NGAs with multiple timepoints (the time points are
+# Note the DoF - 199, coming from only 12 NGAs with multiple timepoints (the timepoints are
 # dependent).
 print("Original t-test for MG at t = 0 with +/-2000 time-span")
 print(t.test(out[,3], out[,2],paired=TRUE))
@@ -277,11 +277,11 @@ cbind(matched,unmatched)
 ## 2. Excluding NGAs with conquest ####
 
 ##?OUR_COMMENT:: From now on, we present our own re-analysis of the original script.
-# We will keep up with the t-test, but also fix the errors mentioned in Section 1.
+# We will keep up with the t-test, but also fix the issues mentioned in Section 1.
 
 
 ##?OUR_COMMENT:: In this section, we will check the robustness of Whitehouse et al. results
-# by excluding NGAs that acquired MGs trhough conquest by larger empires (Deccan, Kachi Plain,
+# by excluding NGAs that acquired MGs through conquest by larger empires (Deccan, Kachi Plain,
 # Sogdiana) 
 
 
@@ -466,9 +466,9 @@ dat.cor$Time[dat.cor$NGA == "Paris Basin" & (dat.cor$Time > 300)] <-
 
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 3.1 +- 2000 years ####
+### 3.1 +- 700 years ####
 
-NGAs <- c("Kansai", "Konya Plain", "Latium", "Paris Basin", 
+NGAs <- c("Konya Plain", "Latium", "Paris Basin", 
                  "Middle Yellow River Valley",
                  "Susiana", "Upper Egypt")
 
@@ -538,9 +538,9 @@ out.na %>% group_by(NGA) %>% summarise(length(Difference))
 
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 3.2 +- 700 years ####
+### 3.2 +- 2000 years ####
 
-NGAs <- c("Kansai", "Konya Plain", "Latium", "Paris Basin", 
+NGAs <- c("Konya Plain", "Latium", "Paris Basin", 
           "Middle Yellow River Valley",
           "Susiana", "Upper Egypt")
 
@@ -617,8 +617,9 @@ out.na %>% group_by(NGA) %>% summarise(length(Difference))
 ##?OUR_COMMENT:: In this section, we will try to correct for forward bias,
 # i.e., the fact that if we take the first known occurrence of MGs, it is very unlikely
 # that it is actually the oldest occurrence. To do so, we need to exclude NGAs 
-# that acquired MGs trhough conquest by larger empires (Deccan, Kachi Plain,
-# Sogdiana) or through mission (Kansai and Niger Inland Delta).
+# that acquired MGs through conquest by larger empires (Deccan, Kachi Plain,
+# Sogdiana) or through mission (Kansai, Orkhon Valley, and Niger Inland Delta), but first, conduct the
+# analysis on the full sample.
 
 ##?OUR_COMMENT:: First, correct for missing centuries at Deccan and Paris Basin
 
@@ -670,8 +671,8 @@ for(i in 1:length(NGAs)){
     out <- rbind(out,rates)
   }
   out <- rbind(out,rates) ##?OUR_COMMENT:: This line is responsible for the "bug" described
-  # a few lines below. It could be removed, but let's stick with
-  # the original script.
+  # a few lines below. It could be removed, but the aim here is to follow the original script as closely
+  # as possible.
 }
 colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
 
@@ -694,7 +695,7 @@ out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in 
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 
 out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
@@ -750,8 +751,8 @@ for(i in 1:length(NGAs)){
     out <- rbind(out,rates)
   }
   out <- rbind(out,rates) ##?OUR_COMMENT:: This line is responsible for the "bug" described
-  # a few lines below. It could be removed, but let's stick with
-  # the original script.
+  # a few lines below. It could be removed, but the aim here is to follow the original script as closely
+  # as possible.
 }
 colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
 
@@ -775,7 +776,7 @@ out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in 
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 
 out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
@@ -830,8 +831,8 @@ for(i in 1:length(NGAs)){
     out <- rbind(out,rates)
   }
   out <- rbind(out,rates) ##?OUR_COMMENT:: This line is responsible for the "bug" described
-  # a few lines below. It could be removed, but let's stick with
-  # the original script.
+  # a few lines below. It could be removed, but the aim here is to follow the original script as closely
+  # as possible.
 }
 colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
 
@@ -854,7 +855,7 @@ out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in 
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 
 out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
@@ -880,7 +881,7 @@ out.na %>% group_by(NGA) %>% summarise(length(Difference))
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ### 4.4 Half sample - MG t-300 ####
 NGAs <- c("Konya Plain", "Latium", "Paris Basin", 
-          "Middle Yellow River Valley",  "Niger Inland Delta",
+          "Middle Yellow River Valley", 
           "Susiana", "Upper Egypt")
 
 FB <- 300 ##?OUR_COMMENT:: this is Forward Bias in years - we will subtract this number from
@@ -910,8 +911,8 @@ for(i in 1:length(NGAs)){
     out <- rbind(out,rates)
   }
   out <- rbind(out,rates) ##?OUR_COMMENT:: This line is responsible for the "bug" described
-  # a few lines below. It could be removed, but let's stick with
-  # the original script.
+  # a few lines below. It could be removed, but the aim here is to follow the original script as closely
+  # as possible.
 }
 colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
 
@@ -935,7 +936,7 @@ out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in 
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 
 out <-subset(out, out[,5]<2050) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
@@ -994,8 +995,8 @@ for(i in 1:length(NGAs)){
     out <- rbind(out,rates)
   }
   out <- rbind(out,rates) ##?OUR_COMMENT:: This line is responsible for the "bug" described
-  # a few lines below. It could be removed, but let's stick with
-  # the original script.
+  # a few lines below. It could be removed, but the aim here is to follow the original script as closely
+  # as possible.
 }
 colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
 
@@ -1018,7 +1019,7 @@ out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in 
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 
 out <-subset(out, out[,5]<750) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
@@ -1074,8 +1075,8 @@ for(i in 1:length(NGAs)){
     out <- rbind(out,rates)
   }
   out <- rbind(out,rates) ##?OUR_COMMENT:: This line is responsible for the "bug" described
-  # a few lines below. It could be removed, but let's stick with
-  # the original script.
+  # a few lines below. It could be removed, but the aim here is to follow the original script as closely
+  # as possible.
 }
 colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
 
@@ -1099,7 +1100,7 @@ out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in 
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 
 out <-subset(out, out[,5]<750) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
@@ -1153,8 +1154,8 @@ for(i in 1:length(NGAs)){
     out <- rbind(out,rates)
   }
   out <- rbind(out,rates) ##?OUR_COMMENT:: This line is responsible for the "bug" described
-  # a few lines below. It could be removed, but let's stick with
-  # the original script.
+  # a few lines below. It could be removed, but the aim here is to follow the original script as closely
+  # as possible.
 }
 colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
 
@@ -1177,7 +1178,7 @@ out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in 
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 
 out <-subset(out, out[,5]<750) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window
@@ -1233,8 +1234,8 @@ for(i in 1:length(NGAs)){
     out <- rbind(out,rates)
   }
   out <- rbind(out,rates) ##?OUR_COMMENT:: This line is responsible for the "bug" described
-  # a few lines below. It could be removed, but let's stick with
-  # the original script.
+  # a few lines below. It could be removed, but the aim here is to follow the original script as closely
+  # as possible.
 }
 colnames(out)<-c("NGA","PreRate","PostRate","MGUncertainty","TimeWindow")
 
@@ -1258,7 +1259,7 @@ out <-subset(out, out[,7]!=0) #getting rid of bug when the final row repeats in 
 
 write.csv(out, file="./temp/FullRates.csv",  row.names=FALSE)
 
-out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE, stringsAsFactors = TRUE)
+out<-read.table("./temp/FullRates.csv", sep=",", header=TRUE)
 
 out <-subset(out, out[,5]<750) #Change this to modify time-window restriction from 700 years
 #pre/post moralizing gods (<750) or 2050 out to use full time-window

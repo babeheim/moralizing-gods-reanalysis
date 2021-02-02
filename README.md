@@ -152,13 +152,11 @@ Code:
 - [Pearson's r](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/09_explore_data/explore_data.r#L267)
 
 
-As illustrated in Fig. S2A, societies increased their complexity on average by 39% within the 100 years just before the appearance of MGs while the average between-century increase in SC for the preceding 700 years was approximately 7%.
+As illustrated in Extended Data Figure3A, societies increased their complexity on average by 40% within the 100 years just before the appearance of MGs while the average between-century increase in SC for the preceding 700 years was approximately 8%.
 
 Code:
-- [Complexity 100 years before appearance of MGs](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/11_fit_hierarchical_models/fit_hierarchical_models.r#L356-L357)
-- [Between-century increase in SC for the preceding 700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/11_fit_hierarchical_models/fit_hierarchical_models.r#L359-L365)
-
-
+- [Complexity 100 years before appearance of MGs](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/11_fit_hierarchical_models/fit_hierarchical_models.r#L311-L312)
+- [Between-century increase in SC for the preceding 700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/11_fit_hierarchical_models/fit_hierarchical_models.r#L314-L319)
 
 
 However, for 11 out of 12 NGAs, MGs were always detected in Seshat during the first century of the polity’s existence, so any random placing of MGs within the polity time-span would always make the first appearance of MG more recent, i.e. only worsening the forward bias.
@@ -167,20 +165,20 @@ Code:
 - [Random placing of MGs within polity ](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L254-L273)
 
 
-To test the robustness of Whitehouse, et al.’s results, we performed the same paired t-test analysis as they report in the original text (which we consider inappropriate, see below) but excluded the three NGAs that acquired MGs via conquest.
+To test the robustness of Whitehouse, et al.1’s results, we performed the same paired t-test analysis as they report in the original text (which we consider inappropriate, see below section S2.2 ‘Growth curve models of social complexity’) but excluded the three NGAs with increases in social complexity due to conquest. For the longest time-span of their data (2000 years Pre and Post-MGs), the results revealed that the five-fold higher rates of social complexity change between Pre- and Post-MGs reported by Whitehouse, et al.1 decreased only to a two-fold higher rate of social complexity change (t = -5.98, df = 141, P < 0.001).
 
 Code:
 - [Original paired t-test](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/04_prep_comparisons/prep_comparisons.r#L144)
 - [New paired t-test for unconquered NGAs](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L277-L445)
 
 
-Conducting the paired t-test analysis only for the six regions where NGAs emerged spontaneously (i.e., excluding 3 conquered and 3 missionized NGAs) revealed results congruent with the analysis of the sample comprising all 12 NGAs, but only for the longest timespan of these six regions (t = -4.50, df = 120, P < 0.001); when we analyzed the 700 years timespan Pre- and Post-MGs where all NGAs have data (analogous to Whitehouse et al. robustness checks), the results were much weaker (t = -2.00, df = 48, P = 0.051). 
+Conducting the paired t-test analysis only for the six regions without conquest or mission revealed results congruent with the analysis of the sample comprising all 12 NGAs, but only for the longest time span of these six regions (t = -4.21, df = 111, P < 0.001); when we analyzed the 700 years timespan Pre- and Post-MGs where all NGAs have data (analogous to Whitehouse, et al.1 robustness checks), the results were much weaker (t = -1.34, df = 41, P = 0.188).
 
 Code:
 - [New paired t-test for 6 NGAs where MGs emerged for +/2000 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L449-L537)
 - [New paired t-test for 6 NGAs where MGs emerged for +/700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L541-L609)
 
-To examine the effects of possible forward bias, we moved the first appearance of MG at each of the 12 NGAs 100 years back, the smallest possible correction given the resolution of the original data. Using the same analytical techniques as in the original paper, the results of the paired t-test for the longest time span of the data (+/- 2000 years) now shows that MGs positively predict the rise in the rate of social complexity (t = 4.04, df = 201, P < 0.001) -- not a drop in the rate of social complexity as Whitehouse et al. find. Furthermore, moving the first MGs appearance 300 years back (still a very conservative estimate, see Fig. 1B), the rise in the rate of social complexity change after the appearance of MGs is even stronger (t = 6.18, df =203, P < 0.001). Qualitatively similar results can be reached by using the shorter time span of the data (+/- 700 years; see Table S1), 
+To examine the effects of possible forward bias, we moved the first appearance of MG at each of the 12 NGAs 100 years back, the smallest possible correction given the resolution of the original data. Using the same analytical techniques as in the original paper, the results of the paired t-test for the longest time span of the data (+/- 2000 years) now shows that MGs positively predict the rise in the rate of social complexity (t = 3.80, df = 201, P < 0.001) -- not a drop in the rate of social complexity as Whitehouse et al.1 find and similar results can be obtained obtained by moving the first MGs appearance 300 years back (t = 6.51, df =203, P < 0.001) and by using the shorter time span of the data (+/- 700 years; see Table S1), indicating that the conclusion about the role of MGs in social complexity increase reached by Whitehouse et al.1 is sensitive to small changes.
 
 Code:
 - [100 years forward bias check for +/2000 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L615-L717)
@@ -189,7 +187,7 @@ Code:
 - [300 years forward bias check for +/700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L1045-L1128)
 
 
-We therefore performed the same forward bias analysis, but limited the number of NGAs only to the six NGAs where moralizing gods were not recorded through conquest or mission. 
+We therefore performed the same forward bias analysis, but limited the number of NGAs only to the six NGAs where moralizing gods were not recorded through conquest or mission. The results of the forward bias analysis for these 6 NGAs again document the fragility of Whitehouse et al.1’s main conclusion: moving MG appearance 100 years back for the longest time span of the data shows much weaker results (t = -2.73, df = 111, P = 0.007) and these results are no longer significant at conventional levels (P < 0.05) for the 700-year timespan of the data (t = -0.46, df = 41, P = 0.647). Moreover, moving MGs appearance 300 years back again reverses the results reported by Whitehouse et al.1: MGs positively predict the rise in the rate of social complexity both for the longest time span of the data (t = 3.21, df = 111, P = 0.002) and also for the 700-year timespan (t = 2.71, df = 41, P = 0.010). 
 
 Code:
 - [100 years forward bias check for +/2000 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L799-L877)
@@ -205,17 +203,17 @@ Code:
 - [Missing data across NGAs](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/10_test_forward_bias/test_forward_bias.r#L169-L180)
 
 
-This approach severely violates the assumption of independence and artificially inflates the degrees of freedom for the t-test. In our view, the data have at least two hierarchical levels corresponding to their nesting within NGAs and their further nesting within world regions. We built a linear mixed model accounting for this nesting structure; however, the goodness-of-fit assessment of this model revealed severe deviation from the normality assumption (see Supplementary R code for diagnostic checks and plots).
+This approach violates the assumption of independence (see p.45) and artificially inflates the degrees of freedom for the t-test. In our view, the data have at least two hierarchical levels corresponding to their nesting within NGAs and their further nesting within world regions. We built a linear mixed model accounting for this nesting structure; however, the goodness-of-fit assessment of this model revealed severe deviation from the normality assumption (see Supplementary R code file 11, lines 744-751 for diagnostic checks and plots, https://github.com/babeheim/moralizing-gods-reanalysis).
 
 Code:
 - [Data dependence plot](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L576-L611)
-- [LMM](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L632)
-- [Goodness of fit of LMM](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L640-L647)
+- [LMM](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L736)
+- [Goodness of fit of LMM](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L744-L751)
 
 
 ### Table S2 | Estimates with 95% CI from the models of social complexity
 
-Estimates with 95% CI from the models of social complexity. Estimates are raw beta estimates with the logit link. Time is SC change per millennium. Transformed estimates are plotted in Fig. S3. \*P < 0.05; \*\*\*P < 0.001.
+Estimates with 95% CI from the models of social complexity. Estimates are raw beta estimates with the logit link. Time is SC change per century. Transformed estimates are plotted in Fig. S2.
 
 Code:
 - [Model 1](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L739-L740)
@@ -224,12 +222,12 @@ Code:
 Transforming the beta estimates from the logit link revealed that in Model 1, the average estimated rate of SC change per century Pre-MG was 0.01 and Post-MG was 0.006; and in Model 2, the average estimated rate of SC change Pre-MG was 0.03 and Post-MG was 0.007.
 
 Code:
-- [Model 1](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L784)
-- [Model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L941)
+- [Model 1](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L843)
+- [Model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L999)
 
 
 
-### Figure S3 | Estimated regression lines with 95% CI from models in Tab. S2 plotted over scatterplots of raw data.
+### Figure S2 | Estimated regression lines with 95% CI from models in Tab. S2 plotted over scatterplots of raw data.
 
 The two plots differ by the timespan of analyzed data (either 2000 or 700 years Pre- and Post-MGs). Note that 0 on this axis represents widely disparate times, ranging from 2900 BCE to 1100 CE. Also note the sudden jump between Pre- and Post-MG regression lines produced by the way Whitehouse et al. treat conquered NGAs (section S2.1).
 
@@ -238,8 +236,8 @@ The two plots differ by the timespan of analyzed data (either 2000 or 700 years 
 </p>
 
 Code:
-- [Figure S3A](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L777-L841)
-- [Figure S3B](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L934-L1008)
+- [Figure S3A](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L881-L946)
+- [Figure S3B](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L1039-L1106)
 
 
 

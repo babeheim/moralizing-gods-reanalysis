@@ -307,53 +307,6 @@ dat.MG.700 <- dat.MG
 }
 
 
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-## 2. SC growth plot ####
-
-### 2.1. SC by MGs +/- 700 ####
-
-##?OUR_COMMENT:: This plot is based on Whitehouse et al. raw data. 
-# We used discrete data (data are sampled by centuries) and plotted mean data with
-# standard errors for each century.
-# However, please keep in mind that these are just raw data, not taking into account the
-# various nesting effects. We will explore those below.
-
-{
-dat.p <- dat.MG.700
-  
-g1 <- ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) + 
-  stat_summary(fun.data=mean_se, geom="pointrange") + 
-  scale_color_manual(values = alpha(c("coral1","aquamarine3"), .8), labels = c("NA", "Present"),
-                     name = "Moralizing Gods") + 
-  scale_x_continuous(limits = c(0,1400),
-                     breaks = c(0,200,400,600,700,800,1000,1200,1400),
-                     labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
-  geom_vline(xintercept = 650,
-             color = "grey", size=9, alpha = 0.3) + 
-  annotate("text", label = "", x = 650, y = 0.35, size = 4, colour = "black", angle = 90) +
-  labs(y="", x="") + 
-  ylim(c(0.1,1)) +
-  ggtitle("") +
-  theme_bw() + 
-    theme(
-      #panel.border = element_blank(),
-      panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank(),
-      plot.title = element_text(hjust = 0.5, size = rel(1)),
-      axis.line = element_line(colour = "black"),
-      legend.position = c(0.35,0.95),
-      legend.justification = c("right", "top"),
-      legend.text = element_text(size = rel(1)),
-      legend.title = element_text(size = rel(1)),
-      legend.key.size = unit(0.8, "cm"),
-      axis.title = element_text(size = rel(1.5)),
-      axis.text= element_text(size = rel(1)),
-      plot.margin=unit(c(0.1,0.1,0.1,0.1),"cm"),
-      strip.text.x = element_text(size = rel(1)))
-    
-##?OUR_COMMENT:: Save the plot if needed
-#ggsave("./temp/PrePost_MG.png",width = 6,height = 6, dpi = 300)
-
 ##?OUR_COMMENT:: Compute the between-century rate of SC change before MGs
 MG.change <- ((mean(dat.MG.700$Mean[dat.MG.700$Time == (700)], na.rm = T)/
                  mean(dat.MG.700$Mean[dat.MG.700$Time == (600)],na.rm = T))-1)*100
@@ -366,109 +319,146 @@ for(i in 1:6){
 cbind(MG.change,mean(change, na.rm = T))
 
 
+
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+## 2. SC growth plot ####
+
+### 2.1. SC by MGs +/- 700 ####
+
+##?OUR_COMMENT:: This plot is based on Whitehouse et al. raw data. 
+# We used discrete data (data are sampled by centuries) and plotted mean data with
+# standard errors for each century.
+# However, please keep in mind that these are just raw data, not taking into account the
+# various nesting effects. We will explore those below.
+# Also, we need to append one more century of post-MG data to each site such that
+# there would be seven centuies from year zero for both pre- and post-MG.
+
+
+
+dat.plots <- dat.MG.700
+dat.plots <- rbind(dat.plots,
+                   dat.MG.2000[28,],
+                   dat.MG.2000[1*40+28,],
+                   dat.MG.2000[2*40+28,],
+                   dat.MG.2000[3*40+28,],
+                   dat.MG.2000[4*40+28,],
+                   dat.MG.2000[5*40+28,],
+                   dat.MG.2000[6*40+28,],
+                   dat.MG.2000[7*40+28,],
+                   dat.MG.2000[8*40+28,],
+                   dat.MG.2000[9*40+28,],
+                   dat.MG.2000[10*40+28,],
+                   dat.MG.2000[11*40+28,])
+                   
+dat.plots$Time[dat.plots$Time == 2700] <- 1400
+
+{
+dat.p <- as.data.frame(dat.plots %>% group_by(Time) %>% summarise(M = mean(Mean),
+                                          sd=sd(Mean), n = length(Mean)))
+                                          
+dat.p$SE <- dat.p$sd/sqrt(dat.p$n)                                            
+dat.p$UE <- dat.p$M + dat.p$SE
+dat.p$LE <- dat.p$M - dat.p$SE
+dat.p$MoralisingGods <- as.factor(c(0,0,0,0,0,0,0,1,2,2,2,2,2,2,2))
+
+dat.p$M7 <- dat.p$M
+dat.p$M7[c(1:5,9:14)] <- NA
+dat.p$M7[7] <- (dat.p$M7[6]+dat.p$M7[8])/2
+dat.p$M8 <- dat.p$M
+dat.p$M8[c(1:6,9:14)] <- NA
+dat.p$M9 <- dat.p$M
+dat.p$M9[c(1:7,10:14)] <- NA
+dat.p$M10 <- dat.p$M
+dat.p$M10[c(1:7,11:14)] <- NA
+dat.p$M10[9] <- (dat.p$M10[8]+dat.p$M10[10])/2
+
+
+
+g1 <- ggplot(dat.p) + 
+  geom_vline(xintercept = 700,
+             color = "grey", size=2, alpha = 0.5) + 
+  annotate("text", label = "MGs first documented", x = 720, y = 0.35, size = 4,
+           colour = "black", angle = 90) +
+  
+  geom_line(aes(Time, M7), color="steelblue4", alpha = 0.2, size = 1) +
+  geom_line(aes(Time, M8), color="steelblue4", alpha = 0.6, size = 1) +
+  geom_line(aes(Time, M9), color="red3", alpha = 0.6, size = 1) +
+  geom_line(aes(Time, M10), color="red3", alpha = 0.2, size = 1) +
+  
+  geom_point(aes(Time, M, color=MoralisingGods, shape = MoralisingGods), size = 2) +
+  geom_errorbar(aes(Time, ymin = LE, ymax = UE, color=MoralisingGods), width = 0) +
+  
+  annotate("text", label = "d1", x = 650, y = 0.61, size = 3, colour = "black", angle = 0) +
+  annotate("text", label = "d1", x = 750, y = 0.725, size = 3, colour = "black", angle = 0) +
+  annotate("text", label = "d2", x = 550, y = 0.55, size = 3, colour = "black", angle = 0) +
+  annotate("text", label = "d2", x = 850, y = 0.76, size = 3, colour = "black", angle = 0) +
+  scale_color_manual(values = alpha(c("steelblue4","black", "red3"), .8),
+                     labels = c("NA","First appearance", "Present"),
+                     name = "") + 
+  scale_shape_manual(values = c(17,15, 19), labels = c("NA","First appearance", "Present"),
+                     name = "") + 
+  scale_x_continuous(limits = c(0,1400),
+                     breaks = c(0,200,400,600,700,800,1000,1200,1400),
+                     labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
+    labs(y="", x="") + 
+  ylim(c(0.1,1)) +
+  ggtitle("") +
+  theme_bw() + 
+    theme(
+      #panel.border = element_blank(),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      plot.title = element_text(hjust = 0.5, size = rel(1)),
+      axis.line = element_line(colour = "black"),
+      legend.position = c(0.41,0.99),
+      legend.justification = c("right", "top"),
+      legend.text = element_text(size = rel(1)),
+      legend.title = element_text(size = rel(1)),
+      legend.key.size = unit(0.8, "cm"),
+      axis.title = element_text(size = rel(1.5)),
+      axis.text= element_text(size = rel(1)),
+      plot.margin=unit(c(0.1,0.1,0.1,0.1),"cm"),
+      strip.text.x = element_text(size = rel(1)))
+    
+##?OUR_COMMENT:: Save the plot if needed
+#ggsave("./temp/PrePost_MG.png",width = 6,height = 6, dpi = 300)
+
+
+
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ### 2.2. Emerge SC by MGs +/- 700 ####
 
 NGAs.emerge <- c("Konya Plain", "Latium", "Paris Basin", 
                  "Middle Yellow River Valley", "Orkhon Valley",
                  "Susiana", "Upper Egypt")
-dat.p <- dat.MG.700[dat.MG.700$NGA %in% NGAs.emerge,]
 
-g2 <- ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) + 
-  stat_summary(fun.data=mean_se, geom="pointrange", shape=18) + 
-  scale_color_manual(values = alpha(c("coral1","aquamarine3"), .8), labels = c("NA", "Present"),
+dat.p <- dat.plots[dat.plots$NGA %in% NGAs.emerge,]
+
+dat.p <- as.data.frame(dat.p %>% group_by(Time) %>% summarise(M = mean(Mean),
+                                                                   sd=sd(Mean), n = length(Mean)))
+
+dat.p$SE <- dat.p$sd/sqrt(dat.p$n)                                            
+dat.p$UE <- dat.p$M + dat.p$SE
+dat.p$LE <- dat.p$M - dat.p$SE
+dat.p$MoralisingGods <- as.factor(c(0,0,0,0,0,0,0,1,2,2,2,2,2,2,2))
+
+
+g2 <- ggplot(dat.p) + 
+  geom_vline(xintercept = 700,
+             color = "grey", size=2, alpha = 0.5) + 
+  annotate("text", label = "MGs emerge", x = 720, y = 0.35, size = 4, colour = "black", angle = 90) +
+  geom_point(aes(Time, M, color=MoralisingGods, shape = MoralisingGods), size = 2) +
+  geom_errorbar(aes(Time, ymin = LE, ymax = UE, color=MoralisingGods), width = 0) +
+  
+  scale_color_manual(values = alpha(c("steelblue4","black", "red3"), .8),
+                     labels = c("NA","First appearance", "Present"),
+                     name = "Moralizing Gods") + 
+  scale_shape_manual(values = c(17,15, 19), labels = c("NA","First appearance", "Present"),
                      name = "Moralizing Gods") + 
   scale_x_continuous(limits = c(0,1400),
                      breaks = c(0,200,400,600,700,800,1000,1200,1400),
                      labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
-  geom_vline(xintercept = 650,
-             color = "grey", size=9, alpha = 0.3) + 
-  annotate("text", label = "MGs emerge", x = 650, y = 0.3, size = 4, colour = "black",
-           angle = 90, alpha = 0.7) +
-  labs(y="", x="") + 
-  ylim(c(0.1,1)) +
-  ggtitle("") +
-  theme_bw() + 
-  theme(
-    #panel.border = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    plot.title = element_text(hjust = 0.5, size = rel(1)),
-    axis.line = element_line(colour = "black"),
-    legend.position = "",
-    legend.justification = c("right", "top"),
-    legend.text = element_text(size = rel(1)),
-    legend.title = element_text(size = rel(1)),
-    legend.key.size = unit(0.8, "cm"),
-    axis.title = element_text(size = rel(1)),
-    axis.text= element_text(size = rel(1)),
-    plot.margin=unit(c(0.1,0.1,0.1,0.1),"cm"),
-    strip.text.x = element_text(size = rel(1)))
-
-##?OUR_COMMENT:: Save the plot if needed
-#ggsave("./temp/PrePost_MG_emerge.png",width = 5.5,height = 3.7, dpi = 300)
-
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 2.3. Concquered SC by MGs +/- 700 ####
-
-NGAs.conq <- c("Deccan","Kachi Plain", 
-              "Sogdiana")
-dat.p <- dat.MG.700[dat.MG.700$NGA %in% NGAs.conq,]
-
-g3 <- ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) + 
-  stat_summary(fun.data=mean_se, geom="pointrange", shape=17) + 
-  scale_color_manual(values = alpha(c("coral1","aquamarine3"), .8), labels = c("NA", "Present"),
-                     name = "Moralizing Gods") + 
-  scale_x_continuous(limits = c(0,1400),
-                     breaks = c(0,200,400,600,700,800,1000,1200,1400),
-                     labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
-  geom_vline(xintercept = 650,
-             color = "grey", size=9, alpha = 0.3) + 
-  annotate("text", label = "MGs via conquest", x = 650, y = 0.38, size = 4, colour = "black",
-           angle = 90, alpha = 0.7) +
-  labs(y="", x="") + 
-  ylim(c(0.1,1)) +
-  ggtitle("") +
-  theme_bw() + 
-  theme(
-    #panel.border = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    plot.title = element_text(hjust = 0.5, size = rel(1)),
-    axis.line = element_line(colour = "black"),
-    legend.position = "",
-    legend.justification = c("right", "top"),
-    legend.text = element_text(size = rel(1)),
-    legend.title = element_text(size = rel(1)),
-    legend.key.size = unit(0.8, "cm"),
-    axis.title = element_text(size = rel(1)),
-    axis.text= element_text(size = rel(1)),
-    plot.margin=unit(c(0.1,0.1,0.1,0.1),"cm"),
-    strip.text.x = element_text(size = rel(1)))
-
-
-##?OUR_COMMENT:: Save the plot if needed
-#ggsave("./temp/PrePost_MG_conq.png",width = 5.5,height = 3.7, dpi = 300)
-
-
-
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-### 2.4. Missionized SC by MGs +/- 700 ####
-
-NGAs.mission <- c("Kansai","Niger Inland Delta")
-dat.p <- dat.MG.700[dat.MG.700$NGA %in% NGAs.mission,]
-
-g4 <- ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) + 
-  stat_summary(fun.data=mean_se, geom="pointrange", shape=15) + 
-  scale_color_manual(values = alpha(c("coral1","aquamarine3"), .8), labels = c("NA", "Present"),
-                     name = "Moralizing Gods") + 
-  scale_x_continuous(limits = c(0,1400),
-                     breaks = c(0,200,400,600,700,800,1000,1200,1400),
-                     labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
-  geom_vline(xintercept = 650,
-             color = "grey", size=9, alpha = 0.3) + 
-  annotate("text", label = "MGs via mission", x = 650, y = 0.38, size = 4, colour = "black",
-           angle = 90, alpha = 0.7) +
   labs(y="", x="") + 
   ylim(c(0.1,1)) +
   ggtitle("") +
@@ -489,6 +479,119 @@ g4 <- ggplot(dat.p, aes(Time, Mean, color=MoralisingGods)) +
     plot.margin=unit(c(0.1,0.1,0.1,0.1),"cm"),
     strip.text.x = element_text(size = rel(1)))
 
+
+##?OUR_COMMENT:: Save the plot if needed
+#ggsave("./temp/PrePost_MG_emerge.png",width = 5.5,height = 3.7, dpi = 300)
+
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+### 2.3. Concquered SC by MGs +/- 700 ####
+
+NGAs.conq <- c("Deccan","Kachi Plain", 
+              "Sogdiana")
+dat.p <- dat.plots[dat.plots$NGA %in% NGAs.conq,]
+
+dat.p <- as.data.frame(dat.p %>% group_by(Time) %>% summarise(M = mean(Mean),
+                                                              sd=sd(Mean), n = length(Mean)))
+
+dat.p$SE <- dat.p$sd/sqrt(dat.p$n)                                            
+dat.p$UE <- dat.p$M + dat.p$SE
+dat.p$LE <- dat.p$M - dat.p$SE
+dat.p$MoralisingGods <- as.factor(c(0,0,0,0,0,0,0,1,2,2,2,2,2,2,2))
+
+
+g3 <- ggplot(dat.p) + 
+  geom_vline(xintercept = 700,
+             color = "grey", size=2, alpha = 0.5) + 
+  annotate("text", label = "MGs via conquest", x = 720, y = 0.35, size = 4, colour = "black", angle = 90) +
+  geom_point(aes(Time, M, color=MoralisingGods, shape = MoralisingGods), size = 2) +
+  geom_errorbar(aes(Time, ymin = LE, ymax = UE, color=MoralisingGods), width = 0) +
+  
+  scale_color_manual(values = alpha(c("steelblue4","black", "red3"), .8),
+                     labels = c("NA","First appearance", "Present"),
+                     name = "Moralizing Gods") + 
+  scale_shape_manual(values = c(17,15, 19), labels = c("NA","First appearance", "Present"),
+                     name = "Moralizing Gods") + 
+  scale_x_continuous(limits = c(0,1400),
+                     breaks = c(0,200,400,600,700,800,1000,1200,1400),
+                     labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
+  labs(y="", x="") + 
+  ylim(c(0.1,1)) +
+  ggtitle("") +
+  theme_bw() + 
+  theme(
+    #panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1)),
+    axis.line = element_line(colour = "black"),
+    legend.position = "",
+    legend.justification = c("right", "top"),
+    legend.text = element_text(size = rel(1)),
+    legend.title = element_text(size = rel(1)),
+    legend.key.size = unit(0.8, "cm"),
+    axis.title = element_text(size = rel(1.5)),
+    axis.text= element_text(size = rel(1)),
+    plot.margin=unit(c(0.1,0.1,0.1,0.1),"cm"),
+    strip.text.x = element_text(size = rel(1)))
+
+
+
+##?OUR_COMMENT:: Save the plot if needed
+#ggsave("./temp/PrePost_MG_conq.png",width = 5.5,height = 3.7, dpi = 300)
+
+
+
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+### 2.4. Missionized SC by MGs +/- 700 ####
+
+NGAs.mission <- c("Kansai","Niger Inland Delta")
+dat.p <- dat.plots[dat.plots$NGA %in% NGAs.mission,]
+
+dat.p <- as.data.frame(dat.p %>% group_by(Time) %>% summarise(M = mean(Mean),
+                                                              sd=sd(Mean), n = length(Mean)))
+
+dat.p$SE <- dat.p$sd/sqrt(dat.p$n)                                            
+dat.p$UE <- dat.p$M + dat.p$SE
+dat.p$LE <- dat.p$M - dat.p$SE
+dat.p$MoralisingGods <- as.factor(c(0,0,0,0,0,0,0,1,2,2,2,2,2,2,2))
+
+
+g4 <- ggplot(dat.p) + 
+  geom_vline(xintercept = 700,
+             color = "grey", size=2, alpha = 0.5) + 
+  annotate("text", label = "MGs via mission", x = 720, y = 0.35, size = 4, colour = "black", angle = 90) +
+  geom_point(aes(Time, M, color=MoralisingGods, shape = MoralisingGods), size = 2) +
+  geom_errorbar(aes(Time, ymin = LE, ymax = UE, color=MoralisingGods), width = 0) +
+  
+  scale_color_manual(values = alpha(c("steelblue4","black", "red3"), .8),
+                     labels = c("NA","First appearance", "Present"),
+                     name = "Moralizing Gods") + 
+  scale_shape_manual(values = c(17,15, 19), labels = c("NA","First appearance", "Present"),
+                     name = "Moralizing Gods") + 
+  scale_x_continuous(limits = c(0,1400),
+                     breaks = c(0,200,400,600,700,800,1000,1200,1400),
+                     labels = c("-700","-500","-300","-100","0","100","300","500","700")) +
+  labs(y="", x="") + 
+  ylim(c(0.1,1)) +
+  ggtitle("") +
+  theme_bw() + 
+  theme(
+    #panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = rel(1)),
+    axis.line = element_line(colour = "black"),
+    legend.position = "",
+    legend.justification = c("right", "top"),
+    legend.text = element_text(size = rel(1)),
+    legend.title = element_text(size = rel(1)),
+    legend.key.size = unit(0.8, "cm"),
+    axis.title = element_text(size = rel(1.5)),
+    axis.text= element_text(size = rel(1)),
+    plot.margin=unit(c(0.1,0.1,0.1,0.1),"cm"),
+    strip.text.x = element_text(size = rel(1)))
+
+
 ##?OUR_COMMENT:: Save the plot if needed
 #ggsave("./temp/PrePost_MG_mission.png",width = 5.5,height = 3.7, dpi = 300)
 }
@@ -499,6 +602,7 @@ gx <- annotate_figure(gx,
                 left = text_grob("Social Complexity", size = 14, rot = 90, face = "bold"),
                 bottom = text_grob("Time (years before/after MG)", size = 14, face = "bold"))
 ggsave("./temp/raw_data_plots.png", plot = gx, width = 10, height = 8, dpi = 600)
+
 
 
 

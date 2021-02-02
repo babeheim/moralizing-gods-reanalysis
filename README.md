@@ -120,6 +120,17 @@ Before statistical analyses were performed in Whitehouse, et al., all “unknown
 [Code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/09_explore_data/explore_data.r#L174-L221)
 
 
+###  Extended Data Figure 3 | Social complexity before and after the appearance of moralizing gods (MGs).
+
+Dots represent mean social complexity as calculated by Whitehouse, et al.1 (a combination of population and territory size, infrastructure, hierarchy, etc. standardized between 0-1) collapsed across NGAs. Bars represent +/- SE. The shading of lines connecting the dots in Figure A reflects the weight that the difference (d1...d7; displayed are only d1 and d2) between the social complexity of time point n and time point 0 receives in the t-test analysis performed by Whitehouse, et al.1 (i.e., differences in social complexity around time 0 are the heaviest, hence driving the forward bias). Note that the increase in social complexity from timepoint -100 to 0 is coded as pre-MG while the complexity often arrives via conquest or mission together with MGs. A. MGs “first appearance” in the archaeo-historical records follows a sharp increase (40%) in social complexity in the 12 geographical areas. B. The sharp increase in social complexity just before the appearance of MGs is partially caused by ascribing properties of conquerors to the conquered regions in the Deccan, Kachi Plain, and Sogdiana regions. C. Similarly, regions receiving MGs via mission (Kansai, Niger Inland Delta, Orkhon Valley) experience a sharp increase in social complexity. D. The remaining six NGAs where MGs were not first recorded through conquest by a larger empire or through mission show a steady rise in social complexity.
+
+<p align="center">
+  <img src="./output/SC_by_Pre_Post_MG.png" height="600">
+</p>
+
+Code:
+- [Extended Data Figure 3](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L325-L604)
+
 ## Key Findings of Reanalysis, Supplementary Material
 
 In observed societies with SC scores less than the median of 0.42, the model estimates moralizing gods will appear in only about 2% of cases (SE: 1%, Fig. 1A) each century.
@@ -148,16 +159,6 @@ Code:
 - [Between-century increase in SC for the preceding 700 years](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/11_fit_hierarchical_models/fit_hierarchical_models.r#L359-L365)
 
 
-### Figure S2 | Social complexity before and after the appearance of moralizing gods.
-
-Dots represent mean social complexity (SC) collapsed across NGAs. Bars represent +/- SE. The x-axis represents centered time before/after the presumed appearance of MGs at each NGA. Note that 0 on this axis represents widely disparate times, ranging from 2900 BCE to 1100 CE. A. The plot shows that MGs can be detected in the archaeo-historical records just after a sudden jump in social complexity that represents the smallest temporal unit in Whitehouse, et al.’s analysis (one century). B. The sudden jump in social complexity just before the appearance of MGs may be partially explained by the fact that 3 NGAs (Deccan, Kachi Plain, Sogdiana) were coded as having MGs only after these NGAs were integrated into larger empires with millions of inhabitants that already had MGs. C. Another proportion of the sudden jumps in social complexity may be explained by foreign mission (Kansai, Niger Inland Delta, Orkhon Valley). D. The remaining six NGAs that did not explicitly acquire MGs through being conquered by a larger empire or through mission show a steady rise in social complexity. Also note the sigmoid shape of the raw data typical for proportion data (see section S2.2).
-
-<p align="center">
-  <img src="./output/SC_by_Pre_Post_MG.png" height="600">
-</p>
-
-Code:
-- [Figure S2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L311-L501)
 
 
 However, for 11 out of 12 NGAs, MGs were always detected in Seshat during the first century of the polity’s existence, so any random placing of MGs within the polity time-span would always make the first appearance of MG more recent, i.e. only worsening the forward bias.

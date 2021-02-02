@@ -219,11 +219,11 @@ Code:
 - [Model 1](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L739-L740)
 - [Model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L894-L895)
 
-Transforming the beta estimates from the logit link revealed that in Model 1, the average estimated rate of SC change per century Pre-MG was 0.01 and Post-MG was 0.006; and in Model 2, the average estimated rate of SC change Pre-MG was 0.03 and Post-MG was 0.007.
+Transforming the beta estimates from the logit link revealed that in Model 1, the average estimated rate of social complexity change per century Pre-MG was 0.01 and Post-MG was 0.005; and in Model 2, the average estimated rate of social complexity change Pre-MG was 0.014 and Post-MG was 0.003.
 
 Code:
-- [Model 1](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L843)
-- [Model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L999)
+- [Model 1](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L889)
+- [Model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/11_fit_hierarchical_models/fit_hierarchical_models.r#L1047)
 
 
 
@@ -251,7 +251,7 @@ Code:
 - [Model](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/12_fit_revised_binomials/fit_revised_binomials.r#L139-L176)([stan code](https://github.com/babeheim/moralizing-gods-reanalysis/blob/master/12_fit_revised_binomials/stan/revised.stan))
 - [Table](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/13_explore_models/explore_models.r#L72-L100)
 
-### Figure S4 | Posterior predictions for the probability of moralizing gods present by year
+### Figure S3 | Posterior predictions for the probability of moralizing gods present by year
 
 Posterior predictions for the probability of moralizing gods present by year for Whitehouse, et al.’s main 12 NGAs in their analysis, drawn from the model described in Fig. 1A and Table S3 measured in years before their first documented appearance in the Seshat database. Posterior mean probability (black line) accompanied by 89% HPDI (red shading) indicates a high chance of MG presence in every site several centuries before recorded first appearance. Dashed lines indicate the first year at which 80% of posterior mass is above a probability of 0.5 (coin flip), used as a rough estimate of the “first emergence” of moralizing gods in Fig. 1B.
 
@@ -262,9 +262,9 @@ Code:
 - [Analysis](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/13_explore_models/explore_models.r#L419-L449)
 - [Figure](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/13_explore_models/explore_models.r#L480-L501)
 
-### Figure S5 | Posterior predictions for the probability of moralizing gods present by year 
+### Figure S4 | Posterior predictions for the probability of moralizing gods present by year 
 
-Posterior predictions for the probability of moralizing gods present by year for Whitehouse, et al.’s main 12 NGAs in their analysis, drawn from their original regression model, measured in years before their first documented appearance in the Seshat database (dashed lines). Posterior mean probability (black line) accompanied by 89% HPDI (red shading) predicts almost no chance of moralizing gods, in contrast to Figure S4.
+Posterior predictions for the probability of moralizing gods present by year for Whitehouse, et al.’s main 12 NGAs in their analysis, drawn from their original regression model, measured in years before their first documented appearance in the Seshat database (dashed lines). Posterior mean probability (black line) accompanied by 89% HPDI (red shading) predicts almost no chance of moralizing gods, in contrast to Figure S3.
 
 ![Posterior predictions for the probability of moralizing gods present by year](./output/revised_EDfig1_m1.png)
 
@@ -284,7 +284,7 @@ Code:
 - [Alternative model 2](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/12_fit_revised_binomials/fit_revised_binomials.r#L95-L135)
 - [Table](https://github.com/babeheim/moralizing-gods-reanalysis/blob/1abc2406495a5cd681c68a3d15db9fa67b01e00a/13_explore_models/explore_models.r#L11-L68)
 
-### Figure S6 | Estimated relationship between the probability of moral gods being observed and social complexity
+### Figure S5 | Estimated relationship between the probability of moral gods being observed and social complexity
 
 Estimated relationship between the probability of moral gods being observed and social complexity, for original model and two alternatives described in Table S4. Trend lines (black) are all held at average distance and language similarity, with 89% HPDI shading. Mean probabilities of “moralizing gods present”, for both “known” and “unknown” outcome values, are given as colored points with 89% HPDI intervals.
 

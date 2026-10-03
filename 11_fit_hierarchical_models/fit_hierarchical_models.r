@@ -806,9 +806,9 @@ ggplot() +
 ##?OUR_COMMENT:: First, let's compare the gaussian and beta models
 dat.MGn <- na.omit(subset(dat.MG.2000, select = c(Mean, Time, NGA)))
 
-summary(lm1 <- glmmadmb(Mean ~ Time + (1|NGA), data = dat.MGn, family = 'gaussian'))
+summary(lm1 <- glmmTMB(Mean ~ Time + (1|NGA), data = dat.MGn, family = gaussian()))
 
-summary(glm.b1 <- glmmadmb(Mean ~ Time + (1|NGA), data = dat.MGn, family = 'beta'))
+summary(glm.b1 <- glmmTMB(Mean ~ Time + (1|NGA), data = dat.MGn, family = beta_family()))
 
 a <- AICtab(lm1, glm.b1, sort = F)
 t <- matrix(c(a$dAIC[1],a$dAIC[2],a$df[1],a$df[2]),ncol=2,byrow=F)
@@ -821,7 +821,7 @@ t
 #______________________________________________________________________________________________
 #### 4.1.2. Beta models ####
 
-##?OUR_COMMENT:: glmmadmb doesn't handle NAs well, let's select the variables we will
+##?OUR_COMMENT:: glmmTMB doesn't handle NAs well, let's select the variables we will
   # work with and delete NAs manually
 dat.MG1 <- na.omit(subset(dat.MG.2000, select = c(Mean, Time, MoralisingGods, NGA, World.Region)))
 
@@ -835,13 +835,13 @@ dat.MG1$Time[dat.MG1$MoralisingGods == 1] <- dat.MG1$Time[dat.MG1$MoralisingGods
 dat.MG1$Time <- dat.MG1$Time/100
 
 
-summary(glm.b1 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.MG1, family = 'beta'))
+summary(glm.b1 <- glmmTMB(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.MG1, family = beta_family()))
 
-summary(glm.b2 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA) + (1|World.Region),
-                           data = dat.MG1, family = 'beta'))
+summary(glm.b2 <- glmmTMB(Mean ~ Time*MoralisingGods + (1|NGA) + (1|World.Region),
+                           data = dat.MG1, family = beta_family()))
 
-summary(glm.b3 <- glmmadmb(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region),
-                           data = dat.MG1, family = 'beta'))
+summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region),
+                           data = dat.MG1, family = beta_family()))
 
 ##?OUR_COMMENT:: Compare models' AIC
 a <- AICtab(glm.b3,glm.b2,glm.b1, sort = F)
@@ -850,18 +850,17 @@ colnames(t) <- c("dAIC","df")
 rownames(t) <- c("glm.b3","glm.b2","glm.b1")
 t
 
-cf <- summary(glm.b3)$coefficients[,1]
-se <- sqrt(diag(vcov(glm.b3)))
+cf <- fixef(glm.b3)$cond
+se <- sqrt(diag(vcov(glm.b3)$cond))
 ci <- cbind(est = cf, LL = cf - 1.96 * se,
-             UL = cf + 1.96 * se)
+            UL = cf + 1.96 * se)
 print(ci)
 
 
-##?OUR_COMMENT:: Assess goodness of fit. 
-  # We have to use the glmmTMB package because glmmADMB is not compatible with DHARMa.
+##?OUR_COMMENT:: Assess goodness of fit using DHARMa, which supports glmmTMB models.
 
 summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region),
-                          data = dat.MG1, family = 'beta_family'))
+                          data = dat.MG1, family = beta_family()))
 
 print("For explanation of this warning, see the code")
 simulationOutput = simulateResiduals(glm.b3)
@@ -882,7 +881,7 @@ testDispersion(simulationOutput = simulationOutput)
 
 ##?OUR_COMMENT:: refit the final model
 summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region),
-                          data = dat.MG1, family = 'beta_family'))
+                          data = dat.MG1, family = beta_family()))
 
 ##?OUR_COMMENT:: extract predicted values with 95% CI
 rez1 <- allEffects(glm.b3, xlevels=list(Time=seq(0, 19, 1)))
@@ -952,9 +951,9 @@ g1 <- ggplot(d) +
 
 ##?OUR_COMMENT:: Here, we use AIC to compare gaussian and beta assumptions.
 
-summary(lm1 <- glmmadmb(Mean ~ Time + (1|NGA), data = dat.MG.700, family = 'gaussian'))
+summary(lm1 <- glmmTMB(Mean ~ Time + (1|NGA), data = dat.MG.700, family = gaussian()))
 
-summary(glm.b1 <- glmmadmb(Mean ~ Time + (1|NGA), data = dat.MG.700, family = 'beta'))
+summary(glm.b1 <- glmmTMB(Mean ~ Time + (1|NGA), data = dat.MG.700, family = beta_family()))
 
 a <- AICtab(lm1, glm.b1, sort = F)
 t <- matrix(c(a$dAIC[1],a$dAIC[2],a$df[1],a$df[2]),ncol=2,byrow=F)
@@ -976,7 +975,7 @@ t
 # However, this would venture too far beyond the original assumptions of
 # Whitehouse et al.'s paper.
 
-##?OUR_COMMENT:: glmmadmb doesn't handle NAs well, let's select the variables we will
+##?OUR_COMMENT:: glmmTMB doesn't handle NAs well, let's select the variables we will
 # work with and delete NAs manually
 dat.MG2 <- na.omit(subset(dat.MG.700, select = c(Mean, Time, MoralisingGods, NGA, World.Region)))
 
@@ -990,14 +989,14 @@ dat.MG2$Time[dat.MG2$MoralisingGods == 1] <- dat.MG2$Time[dat.MG2$MoralisingGods
 dat.MG2$Time <- dat.MG2$Time/100
 
 
-summary(glm.b1 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.MG2,
-                           family = 'beta'))
+summary(glm.b1 <- glmmTMB(Mean ~ Time*MoralisingGods + (1|NGA), data = dat.MG2,
+                           family = beta_family()))
 
-summary(glm.b2 <- glmmadmb(Mean ~ Time*MoralisingGods + (1|NGA) + (1|World.Region),
-                           data = dat.MG2, family = 'beta'))
+summary(glm.b2 <- glmmTMB(Mean ~ Time*MoralisingGods + (1|NGA) + (1|World.Region),
+                           data = dat.MG2, family = beta_family()))
 
-summary(glm.b3 <- glmmadmb(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region),
-                           data = dat.MG2, family = 'beta'))
+summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA) + (1|World.Region),
+                           data = dat.MG2, family = beta_family()))
 
 a <- AICtab(glm.b3,glm.b2,glm.b1, sort = F)
 t <- matrix(c(a$dAIC[1],a$dAIC[2],a$dAIC[3],a$df[1],a$df[2],a$df[3]),ncol=2,byrow=F)
@@ -1006,8 +1005,8 @@ rownames(t) <- c("glm.b3","glm.b2","glm.b1")
 t
 ##?OUR_COMMENT:: The third model fits the data best. 
 
-cf <- summary(glm.b3)$coefficients[,1]
-se <- sqrt(diag(vcov(glm.b3)))
+cf <- fixef(glm.b3)$cond
+se <- sqrt(diag(vcov(glm.b3)$cond))
 ci <- cbind(est = cf, LL = cf - 1.96 * se,
             UL = cf + 1.96 * se)
 print(ci)
@@ -1015,11 +1014,10 @@ print(ci)
 
 ##?OUR_COMMENT:: Let's explore goodness-of-fit measures.
 
-##?OUR_COMMENT:: We have to use the glmmTMB package because glmmADMB is not compatible with
-# DHARMa
+##?OUR_COMMENT:: Assess goodness of fit using DHARMa, which supports glmmTMB models.
 
 summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA),
-                          data = dat.MG2, family = 'beta_family'))
+                          data = dat.MG2, family = beta_family()))
 
 print("For explanation of this warning, see the code")
 simulationOutput = simulateResiduals(glm.b3)
@@ -1040,7 +1038,7 @@ testDispersion(simulationOutput = simulationOutput)
 
 ##?OUR_COMMENT:: refit the final model
 summary(glm.b3 <- glmmTMB(Mean ~ Time*MoralisingGods + (Time|NGA),
-                          data = dat.MG2, family = 'beta_family'))
+                          data = dat.MG2, family = beta_family()))
 
 ##?OUR_COMMENT:: extract predicted values with 95% CI
 rez1 <- allEffects(glm.b3, xlevels=list(Time=seq(0, 6, 1)))

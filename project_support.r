@@ -5,11 +5,15 @@ library(dplyr)
 
 library(testthat)
 library(viridis)
+library(rstan)
 library(rethinking) # github.com/rmcelreath/rethinking
+# Additional package dependencies not discoverable from package metadata.
+# rethinking::ulam() uses digest internally but rethinking does not
+# currently declare digest in DESCRIPTION.
+requireNamespace("digest")
 
 library(dplyr)
 library(glmmTMB)
-library(glmmADMB)
 library(lme4)
 library(DHARMa)
 library(bbmle)
